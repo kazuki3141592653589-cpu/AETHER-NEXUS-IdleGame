@@ -65,12 +65,15 @@
 
         .header-link-btn {
             background: none;
-            border: 1px solid var(--accent-color);
-            color: var(--accent-color);
-            padding: 4px 10px;
-            border-radius: 4px;
-            cursor: pointer;
+            border: none;
+            color: var(--sub-text);
             font-size: 0.8rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .header-link-btn:hover {
+            color: var(--accent-color);
         }
 
         .container {
@@ -92,41 +95,41 @@
 
         .status-board {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .energy-display {
-            font-size: 2.8rem;
+            font-size: 2.3rem;
             font-weight: bold;
             color: #fff;
             text-shadow: 0 0 20px var(--accent-color);
         }
 
         .fps-display {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--sub-text);
             margin-top: 5px;
         }
 
         .core-container {
             position: relative;
-            width: 220px;
-            height: 220px;
+            width: 200px;
+            height: 200px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            margin: 20px 0;
+            margin: 15px 0;
             -webkit-tap-highlight-color: transparent;
         }
 
         .energy-core {
-            width: 160px;
-            height: 160px;
+            width: 150px;
+            height: 150px;
             background: radial-gradient(circle, #00f3ff 0%, #0066ff 60%, #020817 100%);
             border-radius: 50%;
-            box-shadow: 0 0 40px var(--accent-color), inset 0 0 25px #ffffff;
-            transition: transform 0.08s ease;
+            box-shadow: 0 0 30px var(--accent-color), inset 0 0 20px #ffffff;
+            transition: transform 0.1s ease;
             position: relative;
             display: flex;
             align-items: center;
@@ -134,16 +137,16 @@
         }
 
         .energy-core:active {
-            transform: scale(0.93);
+            transform: scale(0.95);
         }
 
         .core-ring {
             position: absolute;
-            width: 210px;
-            height: 210px;
+            width: 190px;
+            height: 190px;
             border: 2px dashed rgba(0, 243, 255, 0.5);
             border-radius: 50%;
-            animation: rotate 15s linear infinite;
+            animation: rotate 20s linear infinite;
         }
 
         @keyframes rotate {
@@ -156,19 +159,45 @@
             color: #00ffff;
             pointer-events: none;
             animation: floatUp 0.8s ease-out forwards;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             text-shadow: 0 0 5px #000;
             z-index: 100;
         }
 
         @keyframes floatUp {
             0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-70px) scale(1.3); }
+            100% { opacity: 0; transform: translateY(-60px) scale(1.2); }
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: rgba(2, 8, 23, 0.95);
+            border-top: 1px solid rgba(0, 243, 255, 0.3);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 14px;
+            text-align: center;
+            background: none;
+            border: none;
+            color: var(--sub-text);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-top: 2px solid transparent;
+        }
+
+        .nav-tab.active {
+            color: var(--accent-color);
+            background: rgba(0, 243, 255, 0.05);
+            border-top-color: var(--accent-color);
+            text-shadow: var(--glow);
         }
 
         .sub-panel {
             width: 100%;
-            max-width: 420px;
+            max-width: 450px;
             background: var(--panel-bg);
             border-left: 1px solid rgba(0, 243, 255, 0.2);
             display: flex;
@@ -208,7 +237,7 @@
         .panel-content {
             flex: 1;
             overflow-y: auto;
-            padding: 15px;
+            padding: 12px;
         }
 
         .item-card {
@@ -267,17 +296,16 @@
             display: flex;
             justify-content: center;
             gap: 8px;
-            padding: 12px;
-            background: rgba(5, 11, 20, 0.95);
+            padding: 10px;
+            background: rgba(2, 8, 23, 0.95);
             flex-wrap: wrap;
-            border-top: 1px solid rgba(0, 243, 255, 0.2);
         }
 
         .menu-btn {
             background: rgba(0, 243, 255, 0.1);
             border: 1px solid var(--accent-color);
             color: var(--accent-color);
-            padding: 8px 14px;
+            padding: 8px 12px;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
@@ -308,7 +336,8 @@
             border: 1px solid var(--accent-color);
             border-radius: 8px;
             width: 90%;
-            max-width: 450px;
+            max-width: 500px;
+            max-height: 80vh;
             display: flex;
             flex-direction: column;
             box-shadow: 0 0 25px rgba(0, 243, 255, 0.3);
@@ -318,43 +347,35 @@
             padding: 15px;
             background: rgba(0, 243, 255, 0.1);
             border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-weight: bold;
         }
 
         .modal-body {
             padding: 20px;
+            overflow-y: auto;
             font-size: 0.9rem;
             line-height: 1.6;
+            color: var(--text-color);
+        }
+
+        .name-input-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
         }
 
         .name-input {
-            width: 100%;
+            flex: 1;
             background: rgba(2, 8, 23, 0.8);
             border: 1px solid var(--accent-color);
             border-radius: 4px;
-            padding: 10px;
+            padding: 8px 12px;
             color: #fff;
-            font-size: 1rem;
+            font-size: 0.95rem;
             outline: none;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .ranking-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            font-size: 0.85rem;
-        }
-
-        .ranking-table th, .ranking-table td {
-            padding: 8px;
-            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
-            text-align: left;
-        }
-
-        .ranking-table th {
-            color: var(--accent-color);
         }
 
         @media (min-width: 768px) {
@@ -368,7 +389,7 @@
             .sub-panel {
                 position: relative;
                 transform: translateX(0);
-                max-width: 380px;
+                max-width: 400px;
                 height: 100%;
             }
             .menu-toggle-bar {
@@ -380,9 +401,10 @@
 <body>
 
     <header>
-        <span>AETHER NEXUS</span>
+        <span id="header-title">AETHER NEXUS</span>
         <div class="header-links">
-            <button class="header-link-btn" onclick="openPanel('ranking')">🌐 ランキング</button>
+            <button class="header-link-btn" onclick="openModal('privacy-modal')">規約</button>
+            <button class="header-link-btn" onclick="openModal('contact-modal')">問合せ</button>
         </div>
     </header>
 
@@ -401,14 +423,15 @@
             <div class="menu-toggle-bar">
                 <button class="menu-btn" onclick="openPanel('generators')">発電機</button>
                 <button class="menu-btn" onclick="openPanel('upgrades')">強化</button>
-                <button class="menu-btn" onclick="openPanel('ranking')">🌐 ランキング</button>
+                <button class="menu-btn" onclick="openPanel('prestige')">転生</button>
+                <button class="menu-btn" onclick="openPanel('ranking')">🏆 称号・実績</button>
             </div>
         </div>
 
         <!-- 発電機パネル -->
         <div id="panel-generators" class="sub-panel">
             <div class="panel-header">
-                <span>自動発電機</span>
+                <span>自動発電機（長押しで連続購入）</span>
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
             </div>
             <div class="panel-content" id="generator-list"></div>
@@ -417,42 +440,117 @@
         <!-- アップグレードパネル -->
         <div id="panel-upgrades" class="sub-panel">
             <div class="panel-header">
-                <span>タップ性能強化</span>
+                <span>タップ性能強化（長押しで連続購入）</span>
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
             </div>
             <div class="panel-content" id="upgrade-list"></div>
         </div>
 
-        <!-- ランキングパネル -->
-        <div id="panel-ranking" class="sub-panel">
+        <!-- 転生パネル -->
+        <div id="panel-prestige" class="sub-panel">
             <div class="panel-header">
-                <span>🌐 オンラインランキング</span>
+                <span>次元転生 (プレステージ)</span>
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
             </div>
-            <div class="panel-content" style="text-align: center;">
+            <div class="panel-content" style="padding: 15px; text-align: center;">
+                <h3 style="margin-top: 5px; color: var(--accent-color);">次元歪曲システム</h3>
+                <p style="color: var(--sub-text); font-size: 0.85rem; margin-bottom: 12px;">すべてのエネルギーと設備を初期化する代わりに、次回の獲得倍率を上昇させます。</p>
+                
+                <div style="background: rgba(0, 243, 255, 0.1); border: 1px solid var(--accent-color); border-radius: 6px; padding: 12px; margin-bottom: 15px; text-align: left; font-size: 0.85rem;">
+                    <div style="font-weight: bold; color: var(--accent-color); margin-bottom: 6px; border-bottom: 1px solid rgba(0,243,255,0.2); padding-bottom: 4px;">📌 転生条件：</div>
+                    <div>• 累計エネルギー: <span id="prestige-progress" style="color:#fff; font-weight:bold;">0</span> / 1,000,000 Λ</div>
+                </div>
+
+                <div style="margin: 10px 0; font-size: 1rem;">
+                    獲得予定倍率: <span style="color: var(--accent-color); font-weight: bold;">+<span id="prestige-gain">1.0</span>x</span>
+                </div>
+                <button id="prestige-btn" class="buy-btn" style="padding: 12px 24px; font-size: 0.95rem; width: 100%; margin-top: 10px;" onclick="doPrestige()" disabled>条件未達成</button>
+            </div>
+        </div>
+
+        <!-- 称号・実績・ランキングパネル -->
+        <div id="panel-ranking" class="sub-panel">
+            <div class="panel-header">
+                <span>🏆 称号・実績・ランキング</span>
+                <button class="close-btn" onclick="closePanel()">閉じる</button>
+            </div>
+            <div class="panel-content" style="padding: 15px; text-align: center;">
+                <p style="color: var(--sub-text); font-size: 0.85rem; margin-top:0;">プレイヤー名と、PC参加型の文明ランキングです。</p>
+                
                 <div style="text-align: left; background: rgba(0,243,255,0.05); border: 1px solid rgba(0,243,255,0.3); border-radius: 6px; padding: 10px; margin-bottom: 12px;">
-                    <div style="font-size: 0.8rem; color: var(--sub-text); margin-bottom: 4px;">プレイヤー名</div>
-                    <div style="display: flex; gap: 8px;">
-                        <input type="text" id="player-name-input" class="name-input" maxlength="15" style="margin-bottom: 0; text-align: left; padding: 6px 10px;">
+                    <div style="font-size: 0.8rem; color: var(--sub-text); margin-bottom: 4px;">プレイヤー名変更</div>
+                    <div class="name-input-group">
+                        <input type="text" id="player-name-input" class="name-input" maxlength="15" placeholder="名前を入力">
                         <button class="buy-btn" style="padding: 6px 12px; font-size: 0.85rem;" onclick="updatePlayerName()">変更</button>
                     </div>
                 </div>
 
-                <button class="buy-btn" style="width: 100%; padding: 10px; margin-bottom: 15px;" onclick="syncScoreToFirebase()">スコアをサーバーに送信</button>
+                <div id="player-rank-display" style="background: rgba(0,243,255,0.1); border: 1px solid var(--accent-color); border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+                    <div style="font-size: 0.75rem; color: var(--sub-text);">現在の称号 (<span id="display-name" style="color:#fff;">名無しの開拓者</span>)</div>
+                    <div id="rank-title" style="font-size: 1.1rem; font-weight: bold; color: #fff; margin: 4px 0;">見習いエネルギー士</div>
+                    <div id="rank-desc" style="font-size: 0.8rem; color: var(--accent-color);">一歩目を踏み出したばかりの文明</div>
+                </div>
 
-                <div style="text-align: left; font-weight: bold; color: var(--accent-color); margin-bottom: 5px;">🔥 上位ランキング (上位10名)</div>
-                <table class="ranking-table">
-                    <thead>
-                        <tr>
-                            <th>順位</th>
-                            <th>名前</th>
-                            <th>累計エネルギー</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ranking-tbody">
-                        <tr><td colspan="3" style="text-align: center; color: var(--sub-text);">読み込み中...</td></tr>
-                    </tbody>
-                </table>
+                <div style="text-align: left; font-size: 0.82rem; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; margin-bottom: 12px;">
+                    <div>• 累計獲得エネルギー: <span id="stat-total" style="color:#fff; font-weight:bold;">0 Λ</span></div>
+                    <div>• 総タップ回数: <span id="stat-taps" style="color:#fff; font-weight:bold;">0 回</span></div>
+                </div>
+
+                <div style="text-align: left; font-size: 0.82rem; margin-bottom: 12px;">
+                    <div style="font-weight: bold; margin-bottom: 6px; color: var(--sub-text);">📊 PC・AI混同 文明発展ランキング</div>
+                    <div style="background: rgba(2,15,35,0.7); border: 1px solid rgba(0,243,255,0.2); border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 4px;" id="ranking-list-container">
+                        <!-- 動的ランキングリスト -->
+                    </div>
+                </div>
+
+                <div style="text-align: left; font-size: 0.8rem; margin-bottom: 15px;">
+                    <div style="font-weight: bold; margin-bottom: 4px; color: var(--sub-text);">【称号一覧】</div>
+                    <ul style="padding-left: 18px; line-height: 1.6; margin: 0; color: var(--sub-text);">
+                        <li><strong>見習いエネルギー士</strong> (累計 0 Λ〜)</li>
+                        <li><strong>次元開拓者</strong> (累計 1M Λ〜)</li>
+                        <li><strong>星系エナジロジスト</strong> (累計 1B Λ〜)</li>
+                        <li><strong>宇宙文明マスター</strong> (累計 1T Λ〜)</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <button class="buy-btn" style="background: #aa2222; font-size: 0.75rem; padding: 6px 10px;" onclick="resetSaveData()">セーブデータをリセット</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-tabs" id="nav-tabs-bar">
+        <button class="nav-tab active" onclick="switchTab('generators')">発電機</button>
+        <button class="nav-tab" onclick="switchTab('upgrades')">強化</button>
+        <button class="nav-tab" onclick="switchTab('prestige')">転生</button>
+        <button class="nav-tab" onclick="switchTab('ranking')">🏆 称号・実績</button>
+    </div>
+
+    <!-- プライバシーポリシーモーダル -->
+    <div id="privacy-modal" class="modal-overlay" onclick="outsideClose(event, 'privacy-modal')">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span>プライバシーポリシー</span>
+                <button class="close-btn" onclick="closeModal('privacy-modal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>1. 個人情報の収集について</strong><br>当ゲーム「AETHER NEXUS」では、ユーザーの皆様がプレイされるにあたって、個人情報を原則として収集いたしません。</p>
+                <p><strong>2. ローカルストレージの使用</strong><br>ゲームの進行状況やセーブデータは、お使いのブラウザ内のストレージにのみ保存されます。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- お問い合わせモーダル -->
+    <div id="contact-modal" class="modal-overlay" onclick="outsideClose(event, 'contact-modal')">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span>お問い合わせ</span>
+                <button class="close-btn" onclick="closeModal('contact-modal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <p>「AETHER NEXUS」をお楽しみいただきありがとうございます。</p>
+                <p><strong>連絡先メールアドレス：</strong><br><span style="color: var(--accent-color);">support@example.com</span></p>
             </div>
         </div>
     </div>
@@ -460,100 +558,66 @@
     <!-- 初回名前入力モーダル -->
     <div id="name-modal" class="modal-overlay">
         <div class="modal-box">
-            <div class="modal-header">パイロット登録</div>
+            <div class="modal-header">
+                <span>パイロット登録</span>
+            </div>
             <div class="modal-body" style="text-align: center;">
-                <p style="margin-top: 0;">AETHER NEXUSへようこそ。<br>ランキングに登録する名前を入力してください。</p>
-                <input type="text" id="initial-name-input" class="name-input" maxlength="15" value="開拓者">
-                <button class="buy-btn" style="width: 100%; padding: 10px;" onclick="saveInitialName()">ゲームを開始</button>
+                <p style="margin-top: 0;">AETHER NEXUSへようこそ。<br>ランキングに登録するあなたの名前を入力してください。</p>
+                <input type="text" id="initial-name-input" class="name-input" maxlength="15" value="開拓者" style="width: 100%; margin-bottom: 15px; text-align: center;">
+                <button class="buy-btn" style="width: 100%; padding: 10px;" onclick="saveInitialName()">ゲームを開始する</button>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDK & ランキング通信ロジック -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAEXvNobXa_JcH8Dsk-AdPOX1uhtbQmTNM",
-            authDomain: "only-27b78.firebaseapp.com",
-            projectId: "only-27b78",
-            storageBucket: "only-27b78.firebasestorage.app",
-            messagingSenderId: "931912886094",
-            appId: "1:931912886094:web:df29525a6ac2684765601f",
-            measurementId: "G-JWRGC9ZERS"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        window.syncScoreToFirebase = async function() {
-            try {
-                let uid = localStorage.getItem('aether_uid');
-                if (!uid) {
-                    uid = 'user_' + Math.random().toString(36).substring(2, 9);
-                    localStorage.setItem('aether_uid', uid);
-                }
-
-                await setDoc(doc(db, "rankings", uid), {
-                    name: game.playerName,
-                    score: Math.floor(game.totalEarned),
-                    updatedAt: Date.now()
-                });
-                alert("スコアをランキングに送信しました！");
-                loadOnlineRanking();
-            } catch (e) {
-                console.error("送信エラー:", e);
-                alert("送信に失敗しました。");
-            }
-        };
-
-        async function loadOnlineRanking() {
-            const tbody = document.getElementById('ranking-tbody');
-            tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--sub-text);">読み込み中...</td></tr>`;
-            try {
-                const q = query(collection(db, "rankings"), orderBy("score", "desc"), limit(10));
-                const querySnapshot = await getDocs(q);
-                
-                tbody.innerHTML = "";
-                let rank = 1;
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${rank}位</td><td>${escapeHtml(data.name)}</td><td>${formatNumber(data.score)} Λ</td>`;
-                    tbody.appendChild(tr);
-                    rank++;
-                });
-                if (rank === 1) {
-                    tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--sub-text);">まだデータがありません</td></tr>`;
-                }
-            } catch (e) {
-                console.error("取得エラー:", e);
-                tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: #ff6b6b;">読み込みエラー</td></tr>`;
-            }
-        }
-
-        function escapeHtml(str) {
-            return str.replace(/[&'`"<>]/g, (match) => {
-                return { '&': '&amp;', "'": '&#x27;', '`': '&#x60;', '"': '&quot;', '<': '&lt;', '>': '&gt;' }[match];
-            });
-        }
-
-        loadOnlineRanking();
-        window.loadOnlineRanking = loadOnlineRanking;
-    </script>
-
-    <!-- ゲーム本体のロジック -->
     <script>
         let game = {
             playerName: "開拓者",
             energy: 0,
             totalEarned: 0,
+            totalTaps: 0,
             tapPower: 1,
             multiplier: 1.0,
             generators: [],
-            upgrades: []
+            upgrades: [],
+            lastSaveTime: Date.now()
         };
+
+        // PC・AIライバルたちの初期データ
+        let pcRivals = [
+            { name: "恒星開拓者Aegis (PC)", score: 10000000000000 },
+            { name: "ノヴァ・テスラ (PC)", score: 5200000000 },
+            { name: "量子ドリーマー (AI)", score: 480000000 },
+            { name: "オメガ・ドライブ (PC)", score: 50000 },
+            { name: "ネオ・エナジー (AI)", score: 1200 }
+        ];
+
+        let audioCtx = null;
+        function playTapSound() {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.08);
+
+                gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.08);
+            } catch (e) {}
+        }
 
         const generatorData = [
             { name: "小型発電セル", baseCost: 15, baseProd: 0.5 },
@@ -563,30 +627,78 @@
             { name: "電磁コイル", baseCost: 130000, baseProd: 1400 },
             { name: "水流ジェネレーター", baseCost: 1400000, baseProd: 7800 },
             { name: "風力ユニット", baseCost: 20000000, baseProd: 44000 },
-            { name: "蓄電コンバーター", baseCost: 330000000, baseProd: 260000 }
+            { name: "蓄電コンバーター", baseCost: 330000000, baseProd: 260000 },
+            { name: "高効率発電機", baseCost: 5100000000, baseProd: 1600000 },
+            { name: "エネルギー炉", baseCost: 75000000000, baseProd: 10000000 },
+            { name: "プラズマ炉", baseCost: 1000000000000, baseProd: 65000000 },
+            { name: "核融合セル", baseCost: 14000000000000, baseProd: 430000000 },
+            { name: "重力発電機", baseCost: 200000000000000, baseProd: 2900000000 },
+            { name: "量子コンバーター", baseCost: 3000000000000000, baseProd: 21000000000 },
+            { name: "ダークエネルギー炉", baseCost: 45000000000000000, baseProd: 150000000000 },
+            { name: "時空タービン", baseCost: 700000000000000000, baseProd: 1100000000000 },
+            { name: "空間圧縮機", baseCost: 11000000000000000000, baseProd: 8000000000000 },
+            { name: "真空発電機", baseCost: 180000000000000000000, baseProd: 60000000000000 },
+            { name: "フォトン炉", baseCost: 3000000000000000000000, baseProd: 450000000000000 },
+            { name: "超伝導ジェネレーター", baseCost: 50000000000000000000000, baseProd: 3400000000000000 },
+            { name: "量子炉", baseCost: 850000000000000000000000, baseProd: 26000000000000000 },
+            { name: "重力井戸", baseCost: 15000000000000000000000000, baseProd: 200000000000000000 },
+            { name: "ワームホール発電機", baseCost: 250000000000000000000000000, baseProd: 1600000000000000000 },
+            { name: "次元変換器", baseCost: 4300000000000000000000000000, baseProd: 13000000000000000000 },
+            { name: "星核リアクター", baseCost: 75000000000000000000000000000, baseProd: 100000000000000000000 },
+            { name: "恒星収集装置", baseCost: 1300000000000000000000000000000, baseProd: 800000000000000000000 },
+            { name: "ブラックホール炉", baseCost: 23000000000000000000000000000000, baseProd: 6500000000000000000000 },
+            { name: "ダークマター炉", baseCost: 400000000000000000000000000000000, baseProd: 53000000000000000000000 },
+            { name: "時間抽出器", baseCost: 7000000000000000000000000000000000, baseProd: 430000000000000000000000 },
+            { name: "宇宙エネルギー変換器", baseCost: 120000000000000000000000000000000000, baseProd: 3500000000000000000000000 },
+            { name: "人工恒星", baseCost: 2100000000000000000000000000000000000, baseProd: 29000000000000000000000000 },
+            { name: "次元炉", baseCost: 37000000000000000000000000000000000000, baseProd: 240000000000000000000000000 },
+            { name: "宇宙核融合炉", baseCost: 650000000000000000000000000000000000000, baseProd: 2000000000000000000000000000 },
+            { name: "超空間発電機", baseCost: 11500000000000000000000000000000000000000, baseProd: 17000000000000000000000000000 },
+            { name: "銀河エネルギー収集器", baseCost: 200000000000000000000000000000000000000000, baseProd: 140000000000000000000000000000 },
+            { name: "時間軸リアクター", baseCost: 3500000000000000000000000000000000000000000, baseProd: 1200000000000000000000000000000 },
+            { name: "多次元コア", baseCost: 60000000000000000000000000000000000000000000, baseProd: 10000000000000000000000000000000 },
+            { name: "虚数エネルギー炉", baseCost: 100000000000000000000000000000000000000000000, baseProd: 85000000000000000000000000000000 },
+            { name: "宇宙網コンバーター", baseCost: 1800000000000000000000000000000000000000000000, baseProd: 720000000000000000000000000000000 },
+            { name: "超新星エンジン", baseCost: 32000000000000000000000000000000000000000000000, baseProd: 6000000000000000000000000000000000 },
+            { name: "星系制御炉", baseCost: 550000000000000000000000000000000000000000000000, baseProd: 50000000000000000000000000000000000 },
+            { name: "銀河炉心", baseCost: 1000000000000000000000000000000000000000000000000, baseProd: 420000000000000000000000000000000000 },
+            { name: "次元統合機", baseCost: 18000000000000000000000000000000000000000000000000, baseProd: 3500000000000000000000000000000000000 },
+            { name: "時間永久機関", baseCost: 320000000000000000000000000000000000000000000000000, baseProd: 30000000000000000000000000000000000000 },
+            { name: "宇宙構造体", baseCost: 5800000000000000000000000000000000000000000000000000, baseProd: 250000000000000000000000000000000000000 },
+            { name: "無限エネルギー機関", baseCost: 10000000000000000000000000000000000000000000000000000, baseProd: 2100000000000000000000000000000000000000 },
+            { name: "多次元ネットワーク", baseCost: 180000000000000000000000000000000000000000000000000000, baseProd: 18000000000000000000000000000000000000000 },
+            { name: "宇宙創成炉", baseCost: 3200000000000000000000000000000000000000000000000000000, baseProd: 150000000000000000000000000000000000000000 },
+            { name: "虚空エンジン", baseCost: 60000000000000000000000000000000000000000000000000000000, baseProd: 1300000000000000000000000000000000000000000 },
+            { name: "無限次元オメガコア", baseCost: 1000000000000000000000000000000000000000000000000000000000, baseProd: 11000000000000000000000000000000000000000000 }
         ];
 
         const upgradeData = [
-            { id: 'tap1', name: '超導電パルス', cost: 50, powerAdd: 1, level: 0, max: 20 },
-            { id: 'tap2', name: 'クォーク・ブースター', cost: 500, powerAdd: 5, level: 0, max: 20 }
+            { id: 'tap1', name: '超導電パルス', cost: 50, powerAdd: 1, level: 0, max: 50 },
+            { id: 'tap2', name: 'クォーク・ブースター', cost: 500, powerAdd: 5, level: 0, max: 50 },
+            { id: 'tap3', name: 'プラズマ・ストライク', cost: 5000, powerAdd: 25, level: 0, max: 50 }
         ];
 
         function initGame() {
             if (!loadGame()) {
                 game.generators = generatorData.map(g => ({ ...g, count: 0, cost: g.baseCost }));
                 game.upgrades = upgradeData.map(u => ({ ...u }));
+                // 初回は名前入力モーダルを表示
                 document.getElementById('name-modal').classList.add('open');
             } else {
                 document.getElementById('name-modal').classList.remove('open');
             }
             document.getElementById('player-name-input').value = game.playerName;
+            document.getElementById('display-name').innerText = game.playerName;
             renderGenerators();
             renderUpgrades();
         }
 
         function saveInitialName() {
             const inputVal = document.getElementById('initial-name-input').value.trim();
-            if (inputVal) game.playerName = inputVal;
+            if (inputVal) {
+                game.playerName = inputVal;
+            }
+            document.getElementById('display-name').innerText = game.playerName;
             document.getElementById('name-modal').classList.remove('open');
             saveGame();
         }
@@ -595,6 +707,7 @@
             const inputVal = document.getElementById('player-name-input').value.trim();
             if (inputVal) {
                 game.playerName = inputVal;
+                document.getElementById('display-name').innerText = game.playerName;
                 saveGame();
                 alert(`プレイヤー名を "${game.playerName}" に変更しました！`);
             } else {
@@ -603,27 +716,38 @@
         }
 
         function saveGame() {
-            localStorage.setItem('aether_nexus_save', JSON.stringify(game));
+            game.lastSaveTime = Date.now();
+            localStorage.setItem('aether_nexus_save_v2', JSON.stringify(game));
         }
 
         function loadGame() {
-            const saved = localStorage.getItem('aether_nexus_save');
+            const saved = localStorage.getItem('aether_nexus_save_v2');
             if (!saved) return false;
             try {
                 const data = JSON.parse(saved);
                 game.playerName = data.playerName || "開拓者";
                 game.energy = data.energy || 0;
                 game.totalEarned = data.totalEarned || 0;
+                game.totalTaps = data.totalTaps || 0;
                 game.tapPower = data.tapPower || 1;
                 game.multiplier = data.multiplier || 1.0;
 
                 game.generators = generatorData.map((g, i) => {
                     const savedGen = data.generators && data.generators[i];
-                    return { ...g, count: savedGen ? savedGen.count : 0, cost: savedGen ? savedGen.cost : g.baseCost };
+                    return {
+                        ...g,
+                        count: savedGen ? savedGen.count : 0,
+                        cost: savedGen ? savedGen.cost : g.baseCost
+                    };
                 });
+
                 game.upgrades = upgradeData.map((u, i) => {
                     const savedUp = data.upgrades && data.upgrades[i];
-                    return { ...u, level: savedUp ? savedUp.level : 0, cost: savedUp ? savedUp.cost : u.cost };
+                    return {
+                        ...u,
+                        level: savedUp ? savedUp.level : 0,
+                        cost: savedUp ? savedUp.cost : u.cost
+                    };
                 });
                 return true;
             } catch (e) {
@@ -631,18 +755,28 @@
             }
         }
 
+        function resetSaveData() {
+            if (confirm("本当にすべてのセーブデータを消去して最初からやり直しますか？")) {
+                localStorage.removeItem('aether_nexus_save_v2');
+                location.reload();
+            }
+        }
+
         function formatNumber(num) {
             if (num < 1000) return num.toFixed(0);
-            const suffixes = ["", "KΛ", "MΛ", "GΛ", "TΛ", "PΛ"];
+            const suffixes = ["", "KΛ", "MΛ", "GΛ", "TΛ", "PΛ", "EΛ", "ZΛ", "YΛ"];
             const i = Math.floor(Math.log10(num) / 3);
             if (i >= suffixes.length) return num.toExponential(2);
-            return `${(num / Math.pow(10, i * 3)).toFixed(2)} ${suffixes[i]}`;
+            const val = num / Math.pow(10, i * 3);
+            return `${val.toFixed(2)} ${suffixes[i]}`;
         }
 
         document.getElementById('core-btn').addEventListener('click', (e) => {
+            playTapSound();
             let gain = game.tapPower * game.multiplier;
             game.energy += gain;
             game.totalEarned += gain;
+            game.totalTaps++;
             createFloatingText(e.clientX, e.clientY, `+${formatNumber(gain)}`);
         });
 
@@ -658,7 +792,7 @@
 
         function buyGenerator(index) {
             let gen = game.generators[index];
-            if (game.energy >= gen.cost) {
+            if (game.energy + 0.000001 >= gen.cost) {
                 game.energy -= gen.cost;
                 gen.count++;
                 gen.cost = Math.floor(gen.baseCost * Math.pow(1.15, gen.count));
@@ -668,7 +802,7 @@
 
         function buyUpgrade(index) {
             let up = game.upgrades[index];
-            if (game.energy >= up.cost && up.level < up.max) {
+            if (game.energy + 0.000001 >= up.cost && up.level < up.max) {
                 game.energy -= up.cost;
                 game.tapPower += up.powerAdd;
                 up.level++;
@@ -678,39 +812,61 @@
         }
 
         let holdInterval = null;
-        function startHolding(event, type, index) {
+        function startHolding(event, actionType, index) {
             event.preventDefault();
             stopHolding();
-            executeAction(type, index);
-            holdInterval = setInterval(() => executeAction(type, index), 120);
+            executeAction(actionType, index);
+            holdInterval = setInterval(() => {
+                executeAction(actionType, index);
+            }, 120);
         }
+
         function stopHolding() {
-            if (holdInterval) { clearInterval(holdInterval); holdInterval = null; }
+            if (holdInterval) {
+                clearInterval(holdInterval);
+                holdInterval = null;
+            }
         }
+
         function executeAction(type, index) {
             if (type === 'gen') buyGenerator(index);
             if (type === 'up') buyUpgrade(index);
         }
 
         function renderGenerators() {
-            document.getElementById('generator-list').innerHTML = game.generators.map((gen, i) => `
+            const container = document.getElementById('generator-list');
+            container.innerHTML = game.generators.map((gen, i) => `
                 <div class="item-card">
-                    <div class="item-info"><span class="item-name">${gen.name}</span><span class="item-level">所持: ${gen.count}</span></div>
+                    <div class="item-info">
+                        <span class="item-name">${gen.name}</span>
+                        <span class="item-level">所持: ${gen.count}</span>
+                    </div>
                     <div class="item-details">
                         <span>生産: ${formatNumber(gen.baseProd * gen.count)} Λ/s</span>
-                        <button class="buy-btn" onmousedown="startHolding(event, 'gen', ${i})" onmouseup="stopHolding()" onmouseleave="stopHolding()" ontouchstart="startHolding(event, 'gen', ${i})" ontouchend="stopHolding()" ontouchcancel="stopHolding()">${formatNumber(gen.cost)} Λ</button>
+                        <button class="buy-btn" id="gen-btn-${i}" 
+                            onmousedown="startHolding(event, 'gen', ${i})" onmouseup="stopHolding()" onmouseleave="stopHolding()"
+                            ontouchstart="startHolding(event, 'gen', ${i})" ontouchend="stopHolding()" ontouchcancel="stopHolding()">
+                            ${formatNumber(gen.cost)} Λ
+                        </button>
                     </div>
                 </div>
             `).join('');
         }
 
         function renderUpgrades() {
-            document.getElementById('upgrade-list').innerHTML = game.upgrades.map((up, i) => `
+            const container = document.getElementById('upgrade-list');
+            container.innerHTML = game.upgrades.map((up, i) => `
                 <div class="item-card">
-                    <div class="item-info"><span class="item-name">${up.name} (Lv.${up.level}/${up.max})</span></div>
+                    <div class="item-info">
+                        <span class="item-name">${up.name} (Lv.${up.level}/${up.max})</span>
+                    </div>
                     <div class="item-details">
-                        <span>+${up.powerAdd} タップ</span>
-                        <button class="buy-btn" onmousedown="startHolding(event, 'up', ${i})" onmouseup="stopHolding()" onmouseleave="stopHolding()" ontouchstart="startHolding(event, 'up', ${i})" ontouchend="stopHolding()" ontouchcancel="stopHolding()">${up.level >= up.max ? 'MAX' : formatNumber(up.cost) + ' Λ'}</button>
+                        <span>効果: +${up.powerAdd} タップ出力</span>
+                        <button class="buy-btn" id="up-btn-${i}" 
+                            onmousedown="startHolding(event, 'up', ${i})" onmouseup="stopHolding()" onmouseleave="stopHolding()"
+                            ontouchstart="startHolding(event, 'up', ${i})" ontouchend="stopHolding()" ontouchcancel="stopHolding()">
+                            ${up.level >= up.max ? 'MAX' : formatNumber(up.cost) + ' Λ'}
+                        </button>
                     </div>
                 </div>
             `).join('');
@@ -724,41 +880,155 @@
             lastTime = now;
 
             let totalCps = 0;
-            game.generators.forEach(gen => { totalCps += gen.baseProd * gen.count; });
+            game.generators.forEach(gen => {
+                totalCps += gen.baseProd * gen.count;
+            });
 
             let frameGain = totalCps * delta * game.multiplier;
             game.energy += frameGain;
             game.totalEarned += frameGain;
 
             saveTimer += delta;
-            if (saveTimer >= 5) { saveGame(); saveTimer = 0; }
+            if (saveTimer >= 5) {
+                saveGame();
+                saveTimer = 0;
+            }
 
             document.getElementById('energy-val').innerText = formatNumber(game.energy);
             document.getElementById('cps-val').innerText = formatNumber(totalCps * game.multiplier);
             document.getElementById('mult-val').innerText = game.multiplier.toFixed(1);
+            
+            const prestigeTarget = 1000000;
+            let canPrestige = game.totalEarned >= prestigeTarget;
 
+            document.getElementById('prestige-progress').innerText = formatNumber(Math.min(game.totalEarned, prestigeTarget));
+            document.getElementById('prestige-gain').innerText = (1.0 + game.totalEarned / prestigeTarget).toFixed(1);
+
+            const prestigeBtn = document.getElementById('prestige-btn');
+            if (canPrestige) {
+                prestigeBtn.disabled = false;
+                prestigeBtn.innerText = "次元転生を実行";
+            } else {
+                prestigeBtn.disabled = true;
+                prestigeBtn.innerText = "条件未達成";
+            }
+
+            updateRankingAndTitle();
             updateButtonStates();
             requestAnimationFrame(gameLoop);
         }
 
+        function updateRankingAndTitle() {
+            let title = "見習いエネルギー士";
+            let desc = "一歩目を踏み出したばかりの文明";
+            if (game.totalEarned >= 1000000000000) {
+                title = "宇宙文明マスター";
+                desc = "宇宙全体のエネルギーを掌る最高峰";
+            } else if (game.totalEarned >= 1000000000) {
+                title = "星系エナジロジスト";
+                desc = "複数星系のエネルギーを束ねる存在";
+            } else if (game.totalEarned >= 1000000) {
+                title = "次元開拓者";
+                desc = "次元転生を成し遂げた進化した文明";
+            }
+            
+            document.getElementById('rank-title').innerText = title;
+            document.getElementById('rank-desc').innerText = desc;
+            
+            const statTotal = document.getElementById('stat-total');
+            const statTaps = document.getElementById('stat-taps');
+            if (statTotal) statTotal.innerText = formatNumber(game.totalEarned) + " Λ";
+            if (statTaps) statTaps.innerText = game.totalTaps + " 回";
+
+            // ランキングの構築（プレイヤー＋PCライバル）
+            let allParticipants = [
+                { name: game.playerName, score: game.totalEarned, isPlayer: true },
+                ...pcRivals
+            ];
+
+            // スコア順にソート
+            allParticipants.sort((a, b) => b.score - a.score);
+
+            const container = document.getElementById('ranking-list-container');
+            container.innerHTML = allParticipants.map((p, index) => {
+                let rankColors = ["#ffd700", "#c0c0c0", "#cd7f32"];
+                let colorStyle = rankColors[index] ? `color: ${rankColors[index]};` : (p.isPlayer ? "color: var(--accent-color); font-weight: bold;" : "color: var(--text-color);");
+                let playerHighlight = p.isPlayer ? "background: rgba(0,243,255,0.15); border-left: 3px solid var(--accent-color);" : "";
+                
+                return `
+                    <div style="display: flex; justify-content: space-between; ${colorStyle} ${playerHighlight} padding: 4px 6px; border-radius: 4px;">
+                        <span>${index + 1}位: ${p.name} ${p.isPlayer ? '(あなた)' : ''}</span>
+                        <span>${formatNumber(p.score)} Λ</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
         function updateButtonStates() {
             game.generators.forEach((gen, i) => {
-                const btn = document.querySelectorAll('#generator-list .buy-btn')[i];
-                if (btn) btn.disabled = game.energy < gen.cost;
+                const btn = document.getElementById(`gen-btn-${i}`);
+                if (btn) btn.disabled = (game.energy + 0.000001) < gen.cost;
             });
             game.upgrades.forEach((up, i) => {
-                const btn = document.querySelectorAll('#upgrade-list .buy-btn')[i];
-                if (btn) btn.disabled = game.energy < up.cost || up.level >= up.max;
+                const btn = document.getElementById(`up-btn-${i}`);
+                if (btn) btn.disabled = (game.energy + 0.000001) < up.cost || up.level >= up.max;
             });
         }
 
-        function openPanel(name) {
+        function openPanel(panelName) {
             document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('open'));
-            document.getElementById(`panel-${name}`).classList.add('open');
+            document.getElementById(`panel-${panelName}`).classList.add('open');
         }
+
         function closePanel() {
             document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('open'));
         }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            openPanel(tabName);
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('open');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('open');
+        }
+
+        function outsideClose(event, modalId) {
+            if (event.target.classList.contains('modal-overlay')) {
+                closeModal(modalId);
+            }
+        }
+
+        function doPrestige() {
+            let prestigeTarget = 1000000;
+            let gain = 1.0 + game.totalEarned / prestigeTarget;
+            
+            let canPrestige = game.totalEarned >= prestigeTarget;
+
+            if (!canPrestige) {
+                alert("転生条件を満たしていません！");
+                return;
+            }
+            if (confirm("次元転生を実行しますか？ すべての設備とエネルギーがリセットされ、次回からの獲得倍率が上昇します。")) {
+                game.multiplier *= gain;
+                game.energy = 0;
+                game.totalEarned = 0;
+                game.totalTaps = 0;
+                game.tapPower = 1;
+                initGame();
+                saveGame();
+                closePanel();
+            }
+        }
+
+        window.addEventListener('beforeunload', () => {
+            saveGame();
+        });
 
         initGame();
         requestAnimationFrame(gameLoop);
