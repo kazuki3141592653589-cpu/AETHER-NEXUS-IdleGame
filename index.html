@@ -556,7 +556,7 @@
     </div>
 
     <!-- 初回名前入力モーダル -->
-    <div id="name-modal" class="modal-overlay" style="opacity: 1; pointer-events: auto;">
+    <div id="name-modal" class="modal-overlay">
         <div class="modal-box">
             <div class="modal-header">
                 <span>パイロット登録</span>
@@ -682,6 +682,8 @@
             if (!loadGame()) {
                 game.generators = generatorData.map(g => ({ ...g, count: 0, cost: g.baseCost }));
                 game.upgrades = upgradeData.map(u => ({ ...u }));
+                // 初回は名前入力モーダルを表示
+                document.getElementById('name-modal').classList.add('open');
             } else {
                 document.getElementById('name-modal').classList.remove('open');
             }
