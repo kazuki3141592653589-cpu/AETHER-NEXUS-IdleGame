@@ -385,7 +385,7 @@
     <header>
         <span>AETHER NEXUS</span>
         <div class="header-links">
-            <button class="header-link-btn" onclick="openModal('ranking-modal')">🏆 ランキング</button>
+            <button class="header-link-btn" onclick="openModal('ranking-modal')">🏆 称号・実績</button>
             <button class="header-link-btn" onclick="openModal('privacy-modal')">規約</button>
             <button class="header-link-btn" onclick="openModal('contact-modal')">問合せ</button>
         </div>
@@ -413,7 +413,7 @@
         <!-- 発電機パネル -->
         <div id="panel-generators" class="sub-panel">
             <div class="panel-header">
-                <span>自動発電機（長押しで連続購入可）</span>
+                <span>自動発電機（長押しで連続購入）</span>
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
             </div>
             <div class="panel-content" id="generator-list"></div>
@@ -422,7 +422,7 @@
         <!-- アップグレードパネル -->
         <div id="panel-upgrades" class="sub-panel">
             <div class="panel-header">
-                <span>タップ性能強化</span>
+                <span>タップ性能強化（長押しで連続購入）</span>
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
             </div>
             <div class="panel-content" id="upgrade-list"></div>
@@ -463,28 +463,35 @@
         <button class="nav-tab" onclick="switchTab('prestige')">転生</button>
     </div>
 
-    <!-- ランキングモーダル -->
+    <!-- ランキング・称号モーダル -->
     <div id="ranking-modal" class="modal-overlay" onclick="outsideClose(event, 'ranking-modal')">
         <div class="modal-box">
             <div class="modal-header">
-                <span>🏆 プレイヤーランク（称号）</span>
+                <span>🏆 プレイヤー称号・実績</span>
                 <button class="close-btn" onclick="closeModal('ranking-modal')">✕</button>
             </div>
             <div class="modal-body" style="text-align: center;">
-                <p style="color: var(--sub-text); font-size: 0.85rem;">あなたのやり込み度に応じた現在の文明ランクです。</p>
+                <p style="color: var(--sub-text); font-size: 0.85rem;">あなたのやり込み度に応じた現在の文明称号です。</p>
                 <div id="player-rank-display" style="background: rgba(0,243,255,0.1); border: 1px solid var(--accent-color); border-radius: 8px; padding: 15px; margin: 15px 0;">
                     <div style="font-size: 0.8rem; color: var(--sub-text);">現在の称号</div>
                     <div id="rank-title" style="font-size: 1.2rem; font-weight: bold; color: #fff; margin: 5px 0;">見習いエネルギー士</div>
                     <div id="rank-desc" style="font-size: 0.85rem; color: var(--accent-color);">一歩目を踏み出したばかりの文明</div>
                 </div>
+                <div style="text-align: left; font-size: 0.85rem; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; margin-bottom: 12px;">
+                    <div>• 累計獲得エネルギー: <span id="stat-total" style="color:#fff; font-weight:bold;">0 Λ</span></div>
+                    <div>• 総タップ回数: <span id="stat-taps" style="color:#fff; font-weight:bold;">0 回</span></div>
+                </div>
                 <div style="text-align: left; font-size: 0.85rem;">
-                    <div style="font-weight: bold; margin-bottom: 8px; color: var(--sub-text);">【ランク一覧】</div>
+                    <div style="font-weight: bold; margin-bottom: 8px; color: var(--sub-text);">【称号一覧】</div>
                     <ul style="padding-left: 20px; line-height: 1.8;">
                         <li><strong>見習いエネルギー士</strong> (累計 0 Λ〜)</li>
-                        <li><strong>次元開拓者</strong> (累計 1M Λ〜 / 転生解放)</li>
+                        <li><strong>次元開拓者</strong> (累計 1M Λ〜)</li>
                         <li><strong>星系エナジロジスト</strong> (累計 1B Λ〜)</li>
                         <li><strong>宇宙文明マスター</strong> (累計 1T Λ〜)</li>
                     </ul>
+                </div>
+                <div style="margin-top: 15px;">
+                    <button class="buy-btn" style="background: #aa2222; font-size: 0.8rem; padding: 6px 12px;" onclick="resetSaveData()">セーブデータをリセット</button>
                 </div>
             </div>
         </div>
@@ -522,10 +529,12 @@
         let game = {
             energy: 0,
             totalEarned: 0,
+            totalTaps: 0,
             tapPower: 1,
             multiplier: 1.0,
             generators: [],
-            upgrades: []
+            upgrades: [],
+            lastSaveTime: Date.now()
         };
 
         let audioCtx = null;
@@ -616,10 +625,84 @@
         ];
 
         function initGame() {
-            game.generators = generatorData.map(g => ({ ...g, count: 0, cost: g.baseCost }));
-            game.upgrades = upgradeData.map(u => ({ ...u }));
+            // セーブデータの読み込みを試みる
+            if (!loadGame()) {
+                game.generators = generatorData.map(g => ({ ...g, count: 0, cost: g.baseCost }));
+                game.upgrades = upgradeData.map(u => ({ ...u }));
+            }
             renderGenerators();
             renderUpgrades();
+        }
+
+        // セーブ機能
+        function saveGame() {
+            game.lastSaveTime = Date.now();
+            localStorage.setItem('aether_nexus_save', JSON.stringify(game));
+        }
+
+        // ロード機能 ＆ オフラインボーナス計算
+        function loadGame() {
+            const saved = localStorage.getItem('aether_nexus_save');
+            if (!saved) return false;
+            try {
+                const data = JSON.parse(saved);
+                game.energy = data.energy || 0;
+                game.totalEarned = data.totalEarned || 0;
+                game.totalTaps = data.totalTaps || 0;
+                game.tapPower = data.tapPower || 1;
+                game.multiplier = data.multiplier || 1.0;
+
+                // 発電機のロード
+                game.generators = generatorData.map((g, i) => {
+                    const savedGen = data.generators && data.generators[i];
+                    return {
+                        ...g,
+                        count: savedGen ? savedGen.count : 0,
+                        cost: savedGen ? savedGen.cost : g.baseCost
+                    };
+                });
+
+                // アップグレードのロード
+                game.upgrades = upgradeData.map((u, i) => {
+                    const savedUp = data.upgrades && data.upgrades[i];
+                    return {
+                        ...u,
+                        level: savedUp ? savedUp.level : 0,
+                        cost: savedUp ? savedUp.cost : u.cost
+                    };
+                });
+
+                // 💡 オフライン放置報酬の計算
+                if (data.lastSaveTime) {
+                    const elapsedSeconds = (Date.now() - data.lastSaveTime) / 1000;
+                    if (elapsedSeconds > 5) {
+                        let totalCps = 0;
+                        game.generators.forEach(gen => {
+                            totalCps += gen.baseProd * gen.count;
+                        });
+                        let offlineGain = totalCps * elapsedSeconds * game.multiplier;
+                        if (offlineGain > 0) {
+                            game.energy += offlineGain;
+                            game.totalEarned += offlineGain;
+                            setTimeout(() => {
+                                alert(`おかえりなさい！\n不在の間に自動発電で ${formatNumber(offlineGain)} Λ のエネルギーを獲得しました！`);
+                            }, 500);
+                        }
+                    }
+                }
+                return true;
+            } catch (e) {
+                console.error("セーブデータの読み込みに失敗しました", e);
+                return false;
+            }
+        }
+
+        // セーブデータリセット
+        function resetSaveData() {
+            if (confirm("本当にすべてのセーブデータを消去して最初からやり直しますか？")) {
+                localStorage.removeItem('aether_nexus_save');
+                location.reload();
+            }
         }
 
         function formatNumber(num) {
@@ -636,6 +719,7 @@
             let gain = game.tapPower * game.multiplier;
             game.energy += gain;
             game.totalEarned += gain;
+            game.totalTaps++;
             createFloatingText(e.clientX, e.clientY, `+${formatNumber(gain)}`);
         });
 
@@ -651,7 +735,6 @@
 
         function buyGenerator(index) {
             let gen = game.generators[index];
-            // 💡 わずかな小数点以下の誤差を許容するため、比較時に0.000001の余裕を持たせる
             if (game.energy + 0.000001 >= gen.cost) {
                 game.energy -= gen.cost;
                 gen.count++;
@@ -662,7 +745,6 @@
 
         function buyUpgrade(index) {
             let up = game.upgrades[index];
-            // 💡 わずかな小数点以下の誤差を許容するため、比較時に0.000001の余裕を持たせる
             if (game.energy + 0.000001 >= up.cost && up.level < up.max) {
                 game.energy -= up.cost;
                 game.tapPower += up.powerAdd;
@@ -673,18 +755,33 @@
         }
 
         let holdInterval = null;
-        function startHolding(actionType, index) {
+        let activeHoldButton = null;
+
+        function startHolding(event, actionType, index) {
+            event.preventDefault();
             stopHolding();
+
+            activeHoldButton = event.currentTarget;
             executeAction(actionType, index);
+
             holdInterval = setInterval(() => {
+                if (actionType === 'gen' && game.energy + 0.000001 < game.generators[index].cost) {
+                    stopHolding();
+                    return;
+                }
+                if (actionType === 'up' && (game.energy + 0.000001 < game.upgrades[index].cost || game.upgrades[index].level >= game.upgrades[index].max)) {
+                    stopHolding();
+                    return;
+                }
                 executeAction(actionType, index);
-            }, 100);
+            }, 120);
         }
 
         function stopHolding() {
             if (holdInterval) {
                 clearInterval(holdInterval);
                 holdInterval = null;
+                activeHoldButton = null;
             }
         }
 
@@ -704,8 +801,8 @@
                     <div class="item-details">
                         <span>生産: ${formatNumber(gen.baseProd * gen.count)} Λ/s</span>
                         <button class="buy-btn" id="gen-btn-${i}" 
-                            onmousedown="startHolding('gen', ${i})" onmouseup="stopHolding()" onmouseleave="stopHolding()"
-                            ontouchstart="startHolding('gen', ${i})" ontouchend="stopHolding()" ontouchcancel="stopHolding()">
+                            onmousedown="startHolding(event, 'gen', ${i})" onmouseup="stopHolding()" onmouseleave="stopHolding()"
+                            ontouchstart="startHolding(event, 'gen', ${i})" ontouchend="stopHolding()" ontouchcancel="stopHolding()">
                             ${formatNumber(gen.cost)} Λ
                         </button>
                     </div>
@@ -723,8 +820,8 @@
                     <div class="item-details">
                         <span>効果: +${up.powerAdd} タップ出力</span>
                         <button class="buy-btn" id="up-btn-${i}" 
-                            onmousedown="startHolding('up', ${i})" onmouseup="stopHolding()" onmouseleave="stopHolding()"
-                            ontouchstart="startHolding('up', ${i})" ontouchend="stopHolding()" ontouchcancel="stopHolding()">
+                            onmousedown="startHolding(event, 'up', ${i})" onmouseup="stopHolding()" onmouseleave="stopHolding()"
+                            ontouchstart="startHolding(event, 'up', ${i})" ontouchend="stopHolding()" ontouchcancel="stopHolding()">
                             ${up.level >= up.max ? 'MAX' : formatNumber(up.cost) + ' Λ'}
                         </button>
                     </div>
@@ -733,6 +830,8 @@
         }
 
         let lastTime = performance.now();
+        let saveTimer = 0;
+
         function gameLoop(now) {
             const delta = (now - lastTime) / 1000;
             lastTime = now;
@@ -745,6 +844,13 @@
             let frameGain = totalCps * delta * game.multiplier;
             game.energy += frameGain;
             game.totalEarned += frameGain;
+
+            // 💡 5秒ごとに自動セーブを実行
+            saveTimer += delta;
+            if (saveTimer >= 5) {
+                saveGame();
+                saveTimer = 0;
+            }
 
             document.getElementById('energy-val').innerText = formatNumber(game.energy);
             document.getElementById('cps-val').innerText = formatNumber(totalCps * game.multiplier);
@@ -789,20 +895,23 @@
             }
             document.getElementById('rank-title').innerText = title;
             document.getElementById('rank-desc').innerText = desc;
+            
+            const statTotal = document.getElementById('stat-total');
+            const statTaps = document.getElementById('stat-taps');
+            if (statTotal) statTotal.innerText = formatNumber(game.totalEarned) + " Λ";
+            if (statTaps) statTaps.innerText = game.totalTaps + " 回";
         }
 
         function updateButtonStates() {
             game.generators.forEach((gen, i) => {
                 const btn = document.getElementById(`gen-btn-${i}`);
                 if (btn) {
-                    // 💡 ボタンの有効・無効判定も誤差を考慮
                     btn.disabled = (game.energy + 0.000001) < gen.cost;
                 }
             });
             game.upgrades.forEach((up, i) => {
                 const btn = document.getElementById(`up-btn-${i}`);
                 if (btn) {
-                    // 💡 ボタンの有効・無効判定も誤差を考慮
                     btn.disabled = (game.energy + 0.000001) < up.cost || up.level >= up.max;
                 }
             });
@@ -855,11 +964,18 @@
                 game.multiplier *= gain;
                 game.energy = 0;
                 game.totalEarned = 0;
+                game.totalTaps = 0;
                 game.tapPower = 1;
                 initGame();
+                saveGame();
                 closePanel();
             }
         }
+
+        // ページを離れる時にもセーブ
+        window.addEventListener('beforeunload', () => {
+            saveGame();
+        });
 
         initGame();
         requestAnimationFrame(gameLoop);
