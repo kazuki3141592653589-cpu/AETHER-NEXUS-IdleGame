@@ -492,7 +492,7 @@
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
             </div>
             <div class="panel-content" style="padding: 15px; text-align: center;">
-                <p style="color: var(--sub-text); font-size: 0.85rem; margin-top:0;">プレイヤー名と、オンラインサーバー上の文明ランキングです。</p>
+                <p style="color: var(--sub-text); font-size: 0.85rem; margin-top:0;">プレイヤー名と、オンラインサーバー上の文明ランキングです（自動同期）</p>
                 
                 <div style="text-align: left; background: rgba(0,243,255,0.05); border: 1px solid rgba(0,243,255,0.3); border-radius: 6px; padding: 10px; margin-bottom: 12px;">
                     <div style="font-size: 0.8rem; color: var(--sub-text); margin-bottom: 4px;">プレイヤー名変更</div>
@@ -501,8 +501,6 @@
                         <button class="buy-btn" style="padding: 6px 12px; font-size: 0.85rem;" onclick="updatePlayerName()">変更</button>
                     </div>
                 </div>
-
-                <button class="buy-btn" style="width: 100%; padding: 10px; margin-bottom: 15px;" onclick="syncScoreToFirebase()">🌐 スコアをサーバーに送信</button>
 
                 <div id="player-rank-display" style="background: rgba(0,243,255,0.1); border: 1px solid var(--accent-color); border-radius: 8px; padding: 12px; margin-bottom: 12px;">
                     <div style="font-size: 0.75rem; color: var(--sub-text);">現在の称号 (<span id="display-name" style="color:#fff;">名無しの開拓者</span>)</div>
@@ -628,17 +626,15 @@
                     score: Math.floor(game.totalEarned),
                     updatedAt: Date.now()
                 });
-                alert("スコアをランキングに送信しました！");
                 loadOnlineRanking();
             } catch (e) {
-                console.error("送信エラー:", e);
-                alert("送信に失敗しました。");
+                console.error("自動同期エラー:", e);
             }
         };
 
         async function loadOnlineRanking() {
             const tbody = document.getElementById('ranking-tbody');
-            tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--sub-text);">読み込み中...</td></tr>`;
+            if (!tbody) return;
             try {
                 const q = query(collection(db, "rankings"), orderBy("score", "desc"), limit(10));
                 const querySnapshot = await getDocs(q);
@@ -684,6 +680,8 @@
             upgrades: [],
             lastSaveTime: Date.now()
         };
+
+        let isResetting = false; // リセット判定用フラグ
 
         let audioCtx = null;
         function playTapSound() {
@@ -794,6 +792,7 @@
             document.getElementById('display-name').innerText = game.playerName;
             document.getElementById('name-modal').classList.remove('open');
             saveGame();
+            if (window.syncScoreToFirebase) window.syncScoreToFirebase();
         }
 
         function updatePlayerName() {
@@ -802,7 +801,8 @@
                 game.playerName = inputVal;
                 document.getElementById('display-name').innerText = game.playerName;
                 saveGame();
-                alert(`プレイヤー名を "${game.playerName}" に変更しました！`);
+                if (window.syncScoreToFirebase) window.syncScoreToFirebase();
+                alert(`プレイヤー名を "${game.playerName}" に変更し、ランキングを同期しました！`);
             } else {
                 alert("有効な名前を入力してください。");
             }
@@ -850,6 +850,7 @@
 
         function resetSaveData() {
             if (confirm("本当にすべてのセーブデータを消去して最初からやり直しますか？")) {
+                isResetting = true; // リセット中の自動セーブをブロック
                 localStorage.removeItem('aether_nexus_save_v2');
                 location.reload();
             }
@@ -967,6 +968,7 @@
 
         let lastTime = performance.now();
         let saveTimer = 0;
+        let syncTimer = 0;
 
         function gameLoop(now) {
             const delta = (now - lastTime) / 1000;
@@ -982,9 +984,16 @@
             game.totalEarned += frameGain;
 
             saveTimer += delta;
+            syncTimer += delta;
+
             if (saveTimer >= 5) {
                 saveGame();
                 saveTimer = 0;
+            }
+
+            if (syncTimer >= 60) {
+                if (window.syncScoreToFirebase) window.syncScoreToFirebase();
+                syncTimer = 0;
             }
 
             document.getElementById('energy-val').innerText = formatNumber(game.energy);
@@ -1048,6 +1057,9 @@
         function openPanel(panelName) {
             document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('open'));
             document.getElementById(`panel-${panelName}`).classList.add('open');
+            if (panelName === 'ranking' && window.loadOnlineRanking) {
+                window.loadOnlineRanking();
+            }
         }
 
         function closePanel() {
@@ -1092,12 +1104,16 @@
                 game.tapPower = 1;
                 initGame();
                 saveGame();
+                if (window.syncScoreToFirebase) window.syncScoreToFirebase();
                 closePanel();
             }
         }
 
         window.addEventListener('beforeunload', () => {
-            saveGame();
+            if (!isResetting) {
+                saveGame();
+                if (window.syncScoreToFirebase) window.syncScoreToFirebase();
+            }
         });
 
         initGame();
