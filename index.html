@@ -361,6 +361,23 @@
             color: var(--text-color);
         }
 
+        .name-input-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .name-input {
+            flex: 1;
+            background: rgba(2, 8, 23, 0.8);
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+            padding: 8px 12px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
         @media (min-width: 768px) {
             .container {
                 max-width: 1200px;
@@ -384,7 +401,7 @@
 <body>
 
     <header>
-        <span>AETHER NEXUS</span>
+        <span id="header-title">AETHER NEXUS</span>
         <div class="header-links">
             <button class="header-link-btn" onclick="openModal('privacy-modal')">規約</button>
             <button class="header-link-btn" onclick="openModal('contact-modal')">問合せ</button>
@@ -439,15 +456,9 @@
                 <h3 style="margin-top: 5px; color: var(--accent-color);">次元歪曲システム</h3>
                 <p style="color: var(--sub-text); font-size: 0.85rem; margin-bottom: 12px;">すべてのエネルギーと設備を初期化する代わりに、次回の獲得倍率を上昇させます。</p>
                 
-                <div style="background: rgba(0, 243, 255, 0.1); border: 1px solid var(--accent-color); border-radius: 6px; padding: 12px; margin-bottom: 15px; text-align: left; font-size: 0.82rem;">
-                    <div style="font-weight: bold; color: var(--accent-color); margin-bottom: 6px; border-bottom: 1px solid rgba(0,243,255,0.2); padding-bottom: 4px;">📌 いずれかの条件達成で転生可能：</div>
-                    <div style="margin-bottom: 6px;">• 累計エネルギー: <span id="prestige-progress" style="color:#fff; font-weight:bold;">0</span> / 1,000,000 Λ</div>
-                    <div style="color: #ffeb3b; font-weight: bold; margin-top: 4px;">📦 おすすめの設備組み合わせ例：</div>
-                    <div style="color: var(--sub-text); padding-left: 8px; line-height: 1.5; margin-top: 2px;">
-                        - 「小型発電セル」× <strong>55個</strong> 購入<br>
-                        - 「ミニタービン」× <strong>6個</strong> 購入<br>
-                        - 「ソーラーユニット」× <strong>1個</strong> 購入
-                    </div>
+                <div style="background: rgba(0, 243, 255, 0.1); border: 1px solid var(--accent-color); border-radius: 6px; padding: 12px; margin-bottom: 15px; text-align: left; font-size: 0.85rem;">
+                    <div style="font-weight: bold; color: var(--accent-color); margin-bottom: 6px; border-bottom: 1px solid rgba(0,243,255,0.2); padding-bottom: 4px;">📌 転生条件：</div>
+                    <div>• 累計エネルギー: <span id="prestige-progress" style="color:#fff; font-weight:bold;">0</span> / 1,000,000 Λ</div>
                 </div>
 
                 <div style="margin: 10px 0; font-size: 1rem;">
@@ -464,10 +475,18 @@
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
             </div>
             <div class="panel-content" style="padding: 15px; text-align: center;">
-                <p style="color: var(--sub-text); font-size: 0.85rem; margin-top:0;">あなたのやり込み度に応じた文明称号とランキングです。</p>
+                <p style="color: var(--sub-text); font-size: 0.85rem; margin-top:0;">プレイヤー名と、PC参加型の文明ランキングです。</p>
                 
+                <div style="text-align: left; background: rgba(0,243,255,0.05); border: 1px solid rgba(0,243,255,0.3); border-radius: 6px; padding: 10px; margin-bottom: 12px;">
+                    <div style="font-size: 0.8rem; color: var(--sub-text); margin-bottom: 4px;">プレイヤー名変更</div>
+                    <div class="name-input-group">
+                        <input type="text" id="player-name-input" class="name-input" maxlength="15" placeholder="名前を入力">
+                        <button class="buy-btn" style="padding: 6px 12px; font-size: 0.85rem;" onclick="updatePlayerName()">変更</button>
+                    </div>
+                </div>
+
                 <div id="player-rank-display" style="background: rgba(0,243,255,0.1); border: 1px solid var(--accent-color); border-radius: 8px; padding: 12px; margin-bottom: 12px;">
-                    <div style="font-size: 0.75rem; color: var(--sub-text);">現在の称号</div>
+                    <div style="font-size: 0.75rem; color: var(--sub-text);">現在の称号 (<span id="display-name" style="color:#fff;">名無しの開拓者</span>)</div>
                     <div id="rank-title" style="font-size: 1.1rem; font-weight: bold; color: #fff; margin: 4px 0;">見習いエネルギー士</div>
                     <div id="rank-desc" style="font-size: 0.8rem; color: var(--accent-color);">一歩目を踏み出したばかりの文明</div>
                 </div>
@@ -478,14 +497,9 @@
                 </div>
 
                 <div style="text-align: left; font-size: 0.82rem; margin-bottom: 12px;">
-                    <div style="font-weight: bold; margin-bottom: 6px; color: var(--sub-text);">📊 文明発展ランキング (模擬)</div>
-                    <div style="background: rgba(2,15,35,0.7); border: 1px solid rgba(0,243,255,0.2); border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 4px;">
-                        <div style="display: flex; justify-content: space-between; color: #ffd700;"><span>1位: 恒星開拓者Aegis</span><span>10.0T Λ</span></div>
-                        <div style="display: flex; justify-content: space-between; color: #c0c0c0;"><span>2位: ノヴァ・テスラ</span><span>5.2G Λ</span></div>
-                        <div style="display: flex; justify-content: space-between; color: #cd7f32;"><span>3位: 量子ドリーマー</span><span>480M Λ</span></div>
-                        <div id="player-rank-row" style="display: flex; justify-content: space-between; color: var(--accent-color); border-top: 1px dashed rgba(0,243,255,0.3); padding-top: 4px; margin-top: 2px; font-weight: bold;">
-                            <span>---位: あなた</span><span id="rank-my-score">0 Λ</span>
-                        </div>
+                    <div style="font-weight: bold; margin-bottom: 6px; color: var(--sub-text);">📊 PC・AI混同 文明発展ランキング</div>
+                    <div style="background: rgba(2,15,35,0.7); border: 1px solid rgba(0,243,255,0.2); border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 4px;" id="ranking-list-container">
+                        <!-- 動的ランキングリスト -->
                     </div>
                 </div>
 
@@ -510,7 +524,7 @@
         <button class="nav-tab active" onclick="switchTab('generators')">発電機</button>
         <button class="nav-tab" onclick="switchTab('upgrades')">強化</button>
         <button class="nav-tab" onclick="switchTab('prestige')">転生</button>
-        <button class="nav-tab" onclick="switchTab('ranking')">🏆 実績・ランキング</button>
+        <button class="nav-tab" onclick="switchTab('ranking')">🏆 称号・実績</button>
     </div>
 
     <!-- プライバシーポリシーモーダル -->
@@ -541,8 +555,23 @@
         </div>
     </div>
 
+    <!-- 初回名前入力モーダル -->
+    <div id="name-modal" class="modal-overlay" style="opacity: 1; pointer-events: auto;">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span>パイロット登録</span>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <p style="margin-top: 0;">AETHER NEXUSへようこそ。<br>ランキングに登録するあなたの名前を入力してください。</p>
+                <input type="text" id="initial-name-input" class="name-input" maxlength="15" value="開拓者" style="width: 100%; margin-bottom: 15px; text-align: center;">
+                <button class="buy-btn" style="width: 100%; padding: 10px;" onclick="saveInitialName()">ゲームを開始する</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let game = {
+            playerName: "開拓者",
             energy: 0,
             totalEarned: 0,
             totalTaps: 0,
@@ -552,6 +581,15 @@
             upgrades: [],
             lastSaveTime: Date.now()
         };
+
+        // PC・AIライバルたちの初期データ
+        let pcRivals = [
+            { name: "恒星開拓者Aegis (PC)", score: 10000000000000 },
+            { name: "ノヴァ・テスラ (PC)", score: 5200000000 },
+            { name: "量子ドリーマー (AI)", score: 480000000 },
+            { name: "オメガ・ドライブ (PC)", score: 50000 },
+            { name: "ネオ・エナジー (AI)", score: 1200 }
+        ];
 
         let audioCtx = null;
         function playTapSound() {
@@ -644,21 +682,48 @@
             if (!loadGame()) {
                 game.generators = generatorData.map(g => ({ ...g, count: 0, cost: g.baseCost }));
                 game.upgrades = upgradeData.map(u => ({ ...u }));
+            } else {
+                document.getElementById('name-modal').classList.remove('open');
             }
+            document.getElementById('player-name-input').value = game.playerName;
+            document.getElementById('display-name').innerText = game.playerName;
             renderGenerators();
             renderUpgrades();
         }
 
+        function saveInitialName() {
+            const inputVal = document.getElementById('initial-name-input').value.trim();
+            if (inputVal) {
+                game.playerName = inputVal;
+            }
+            document.getElementById('display-name').innerText = game.playerName;
+            document.getElementById('name-modal').classList.remove('open');
+            saveGame();
+        }
+
+        function updatePlayerName() {
+            const inputVal = document.getElementById('player-name-input').value.trim();
+            if (inputVal) {
+                game.playerName = inputVal;
+                document.getElementById('display-name').innerText = game.playerName;
+                saveGame();
+                alert(`プレイヤー名を "${game.playerName}" に変更しました！`);
+            } else {
+                alert("有効な名前を入力してください。");
+            }
+        }
+
         function saveGame() {
             game.lastSaveTime = Date.now();
-            localStorage.setItem('aether_nexus_save', JSON.stringify(game));
+            localStorage.setItem('aether_nexus_save_v2', JSON.stringify(game));
         }
 
         function loadGame() {
-            const saved = localStorage.getItem('aether_nexus_save');
+            const saved = localStorage.getItem('aether_nexus_save_v2');
             if (!saved) return false;
             try {
                 const data = JSON.parse(saved);
+                game.playerName = data.playerName || "開拓者";
                 game.energy = data.energy || 0;
                 game.totalEarned = data.totalEarned || 0;
                 game.totalTaps = data.totalTaps || 0;
@@ -682,34 +747,15 @@
                         cost: savedUp ? savedUp.cost : u.cost
                     };
                 });
-
-                if (data.lastSaveTime) {
-                    const elapsedSeconds = (Date.now() - data.lastSaveTime) / 1000;
-                    if (elapsedSeconds > 5) {
-                        let totalCps = 0;
-                        game.generators.forEach(gen => {
-                            totalCps += gen.baseProd * gen.count;
-                        });
-                        let offlineGain = totalCps * elapsedSeconds * game.multiplier;
-                        if (offlineGain > 0) {
-                            game.energy += offlineGain;
-                            game.totalEarned += offlineGain;
-                            setTimeout(() => {
-                                alert(`おかえりなさい！\n不在の間に自動発電で ${formatNumber(offlineGain)} Λ のエネルギーを獲得しました！`);
-                            }, 500);
-                        }
-                    }
-                }
                 return true;
             } catch (e) {
-                console.error("セーブデータの読み込みに失敗しました", e);
                 return false;
             }
         }
 
         function resetSaveData() {
             if (confirm("本当にすべてのセーブデータを消去して最初からやり直しますか？")) {
-                localStorage.removeItem('aether_nexus_save');
+                localStorage.removeItem('aether_nexus_save_v2');
                 location.reload();
             }
         }
@@ -764,24 +810,11 @@
         }
 
         let holdInterval = null;
-        let activeHoldButton = null;
-
         function startHolding(event, actionType, index) {
             event.preventDefault();
             stopHolding();
-
-            activeHoldButton = event.currentTarget;
             executeAction(actionType, index);
-
             holdInterval = setInterval(() => {
-                if (actionType === 'gen' && game.energy + 0.000001 < game.generators[index].cost) {
-                    stopHolding();
-                    return;
-                }
-                if (actionType === 'up' && (game.energy + 0.000001 < game.upgrades[index].cost || game.upgrades[index].level >= game.upgrades[index].max)) {
-                    stopHolding();
-                    return;
-                }
                 executeAction(actionType, index);
             }, 120);
         }
@@ -790,7 +823,6 @@
             if (holdInterval) {
                 clearInterval(holdInterval);
                 holdInterval = null;
-                activeHoldButton = null;
             }
         }
 
@@ -865,14 +897,10 @@
             document.getElementById('mult-val').innerText = game.multiplier.toFixed(1);
             
             const prestigeTarget = 1000000;
-            
-            let canPrestige = game.totalEarned >= prestigeTarget || 
-                              (game.generators[0] && game.generators[0].count >= 55) ||
-                              (game.generators[1] && game.generators[1].count >= 6) ||
-                              (game.generators[2] && game.generators[2].count >= 1);
+            let canPrestige = game.totalEarned >= prestigeTarget;
 
             document.getElementById('prestige-progress').innerText = formatNumber(Math.min(game.totalEarned, prestigeTarget));
-            document.getElementById('prestige-gain').innerText = (1.0 + Math.max(game.totalEarned, (game.generators[0]?.count || 0) * 18000) / prestigeTarget).toFixed(1);
+            document.getElementById('prestige-gain').innerText = (1.0 + game.totalEarned / prestigeTarget).toFixed(1);
 
             const prestigeBtn = document.getElementById('prestige-btn');
             if (canPrestige) {
@@ -883,27 +911,23 @@
                 prestigeBtn.innerText = "条件未達成";
             }
 
-            updateRankingTitle();
+            updateRankingAndTitle();
             updateButtonStates();
             requestAnimationFrame(gameLoop);
         }
 
-        function updateRankingTitle() {
+        function updateRankingAndTitle() {
             let title = "見習いエネルギー士";
             let desc = "一歩目を踏み出したばかりの文明";
-            let rankNum = "4位";
             if (game.totalEarned >= 1000000000000) {
                 title = "宇宙文明マスター";
                 desc = "宇宙全体のエネルギーを掌る最高峰";
-                rankNum = "1位";
             } else if (game.totalEarned >= 1000000000) {
                 title = "星系エナジロジスト";
                 desc = "複数星系のエネルギーを束ねる存在";
-                rankNum = "2位";
             } else if (game.totalEarned >= 1000000) {
                 title = "次元開拓者";
                 desc = "次元転生を成し遂げた進化した文明";
-                rankNum = "3位";
             }
             
             document.getElementById('rank-title').innerText = title;
@@ -914,25 +938,38 @@
             if (statTotal) statTotal.innerText = formatNumber(game.totalEarned) + " Λ";
             if (statTaps) statTaps.innerText = game.totalTaps + " 回";
 
-            const myScoreRow = document.getElementById('player-rank-row');
-            if (myScoreRow) {
-                myScoreRow.querySelector('span:first-child').innerText = `${rankNum}: あなた`;
-                document.getElementById('rank-my-score').innerText = formatNumber(game.totalEarned) + " Λ";
-            }
+            // ランキングの構築（プレイヤー＋PCライバル）
+            let allParticipants = [
+                { name: game.playerName, score: game.totalEarned, isPlayer: true },
+                ...pcRivals
+            ];
+
+            // スコア順にソート
+            allParticipants.sort((a, b) => b.score - a.score);
+
+            const container = document.getElementById('ranking-list-container');
+            container.innerHTML = allParticipants.map((p, index) => {
+                let rankColors = ["#ffd700", "#c0c0c0", "#cd7f32"];
+                let colorStyle = rankColors[index] ? `color: ${rankColors[index]};` : (p.isPlayer ? "color: var(--accent-color); font-weight: bold;" : "color: var(--text-color);");
+                let playerHighlight = p.isPlayer ? "background: rgba(0,243,255,0.15); border-left: 3px solid var(--accent-color);" : "";
+                
+                return `
+                    <div style="display: flex; justify-content: space-between; ${colorStyle} ${playerHighlight} padding: 4px 6px; border-radius: 4px;">
+                        <span>${index + 1}位: ${p.name} ${p.isPlayer ? '(あなた)' : ''}</span>
+                        <span>${formatNumber(p.score)} Λ</span>
+                    </div>
+                `;
+            }).join('');
         }
 
         function updateButtonStates() {
             game.generators.forEach((gen, i) => {
                 const btn = document.getElementById(`gen-btn-${i}`);
-                if (btn) {
-                    btn.disabled = (game.energy + 0.000001) < gen.cost;
-                }
+                if (btn) btn.disabled = (game.energy + 0.000001) < gen.cost;
             });
             game.upgrades.forEach((up, i) => {
                 const btn = document.getElementById(`up-btn-${i}`);
-                if (btn) {
-                    btn.disabled = (game.energy + 0.000001) < up.cost || up.level >= up.max;
-                }
+                if (btn) btn.disabled = (game.energy + 0.000001) < up.cost || up.level >= up.max;
             });
         }
 
@@ -967,13 +1004,9 @@
 
         function doPrestige() {
             let prestigeTarget = 1000000;
-            let currentProgress = Math.max(game.totalEarned, (game.generators[0]?.count || 0) * 18000);
-            let gain = 1.0 + currentProgress / prestigeTarget;
+            let gain = 1.0 + game.totalEarned / prestigeTarget;
             
-            let canPrestige = game.totalEarned >= prestigeTarget || 
-                              (game.generators[0] && game.generators[0].count >= 55) ||
-                              (game.generators[1] && game.generators[1].count >= 6) ||
-                              (game.generators[2] && game.generators[2].count >= 1);
+            let canPrestige = game.totalEarned >= prestigeTarget;
 
             if (!canPrestige) {
                 alert("転生条件を満たしていません！");
