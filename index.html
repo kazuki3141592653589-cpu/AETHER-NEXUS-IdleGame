@@ -462,10 +462,16 @@
             <div class="panel-content" style="padding: 20px; text-align: center;">
                 <h3>次元歪曲システム</h3>
                 <p style="color: var(--sub-text); font-size: 0.9rem;">すべてのエネルギーと設備を初期化する代わりに、次回の獲得倍率を上昇させます。</p>
-                <div style="margin: 20px 0; font-size: 1.1rem;">
+                
+                <div style="background: rgba(0, 243, 255, 0.05); border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 6px; padding: 12px; margin: 15px 0; text-align: left; font-size: 0.85rem;">
+                    <div style="font-weight: bold; color: var(--accent-color); margin-bottom: 5px;">【転生条件】</div>
+                    <div>・累計獲得エネルギー: <span id="prestige-progress">0</span> / 1,000,000 Λ</div>
+                </div>
+
+                <div style="margin: 15px 0; font-size: 1.1rem;">
                     獲得予定倍率: +<span id="prestige-gain">1.0</span>x
                 </div>
-                <button class="buy-btn" style="padding: 12px 24px; font-size: 1rem;" onclick="doPrestige()">次元転生を実行</button>
+                <button id="prestige-btn" class="buy-btn" style="padding: 12px 24px; font-size: 1rem;" onclick="doPrestige()" disabled>条件未達成</button>
             </div>
         </div>
     </div>
@@ -517,6 +523,38 @@
             generators: [],
             upgrades: []
         };
+
+        // Web Audio APIを用いた未来的なタップ音生成システム
+        let audioCtx = null;
+        function playTapSound() {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                osc.type = 'sine';
+                // タップ時に高い音から低い音へピッチがキュッと下降するSF風効果音
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.08);
+
+                gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.08);
+            } catch (e) {
+                // 自動再生ポリシー対策のエラー等は無視
+            }
+        }
 
         const generatorData = [
             { name: "小型発電セル", baseCost: 15, baseProd: 0.5 },
@@ -594,6 +632,8 @@
         }
 
         document.getElementById('core-btn').addEventListener('click', (e) => {
+            playTapSound(); // タップ音を再生
+
             let gain = game.tapPower * game.multiplier;
             game.energy += gain;
             game.totalEarned += gain;
@@ -683,7 +723,20 @@
             document.getElementById('energy-val').innerText = formatNumber(game.energy);
             document.getElementById('cps-val').innerText = formatNumber(totalCps * game.multiplier);
             document.getElementById('mult-val').innerText = game.multiplier.toFixed(1);
-            document.getElementById('prestige-gain').innerText = (1.0 + game.totalEarned / 1000000).toFixed(1);
+            
+            // 転生ステータスの更新
+            const prestigeTarget = 1000000;
+            document.getElementById('prestige-progress').innerText = formatNumber(Math.min(game.totalEarned, prestigeTarget));
+            document.getElementById('prestige-gain').innerText = (1.0 + game.totalEarned / prestigeTarget).toFixed(1);
+
+            const prestigeBtn = document.getElementById('prestige-btn');
+            if (game.totalEarned >= prestigeTarget) {
+                prestigeBtn.disabled = false;
+                prestigeBtn.innerText = "次元転生を実行";
+            } else {
+                prestigeBtn.disabled = true;
+                prestigeBtn.innerText = "条件未達成";
+            }
 
             updateButtonStates();
             requestAnimationFrame(gameLoop);
@@ -726,12 +779,13 @@
         }
 
         function doPrestige() {
-            let gain = 1.0 + game.totalEarned / 1000000;
-            if (gain < 1.1) {
-                alert("エネルギーが足りません！もっと稼いでから転生してください。");
+            let prestigeTarget = 1000000;
+            let gain = 1.0 + game.totalEarned / prestigeTarget;
+            if (game.totalEarned < prestigeTarget) {
+                alert("累計獲得エネルギーが1,000,000 Λに達していません！");
                 return;
             }
-            if (confirm("次元転生を実行しますか？ すべての設備とエネルギーがリセットされます。")) {
+            if (confirm("次元転生を実行しますか？ すべての設備とエネルギーがリセットされ、次回からの獲得倍率が上昇します。")) {
                 game.multiplier *= gain;
                 game.energy = 0;
                 game.totalEarned = 0;
