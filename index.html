@@ -378,6 +378,23 @@
             outline: none;
         }
 
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+
+        .ranking-table th, .ranking-table td {
+            padding: 8px;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+            text-align: left;
+        }
+
+        .ranking-table th {
+            color: var(--accent-color);
+        }
+
         @media (min-width: 768px) {
             .container {
                 max-width: 1200px;
@@ -475,7 +492,7 @@
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
             </div>
             <div class="panel-content" style="padding: 15px; text-align: center;">
-                <p style="color: var(--sub-text); font-size: 0.85rem; margin-top:0;">プレイヤー名と、PC参加型の文明ランキングです。</p>
+                <p style="color: var(--sub-text); font-size: 0.85rem; margin-top:0;">プレイヤー名と、オンラインサーバー上の文明ランキングです。</p>
                 
                 <div style="text-align: left; background: rgba(0,243,255,0.05); border: 1px solid rgba(0,243,255,0.3); border-radius: 6px; padding: 10px; margin-bottom: 12px;">
                     <div style="font-size: 0.8rem; color: var(--sub-text); margin-bottom: 4px;">プレイヤー名変更</div>
@@ -484,6 +501,8 @@
                         <button class="buy-btn" style="padding: 6px 12px; font-size: 0.85rem;" onclick="updatePlayerName()">変更</button>
                     </div>
                 </div>
+
+                <button class="buy-btn" style="width: 100%; padding: 10px; margin-bottom: 15px;" onclick="syncScoreToFirebase()">🌐 スコアをサーバーに送信</button>
 
                 <div id="player-rank-display" style="background: rgba(0,243,255,0.1); border: 1px solid var(--accent-color); border-radius: 8px; padding: 12px; margin-bottom: 12px;">
                     <div style="font-size: 0.75rem; color: var(--sub-text);">現在の称号 (<span id="display-name" style="color:#fff;">名無しの開拓者</span>)</div>
@@ -497,10 +516,19 @@
                 </div>
 
                 <div style="text-align: left; font-size: 0.82rem; margin-bottom: 12px;">
-                    <div style="font-weight: bold; margin-bottom: 6px; color: var(--sub-text);">📊 PC・AI混同 文明発展ランキング</div>
-                    <div style="background: rgba(2,15,35,0.7); border: 1px solid rgba(0,243,255,0.2); border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 4px;" id="ranking-list-container">
-                        <!-- 動的ランキングリスト -->
-                    </div>
+                    <div style="font-weight: bold; margin-bottom: 6px; color: var(--sub-text);">🔥 オンラインランキング (上位10名)</div>
+                    <table class="ranking-table">
+                        <thead>
+                            <tr>
+                                <th>順位</th>
+                                <th>名前</th>
+                                <th>累計エネルギー</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ranking-tbody">
+                            <tr><td colspan="3" style="text-align: center; color: var(--sub-text);">読み込み中...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
 
                 <div style="text-align: left; font-size: 0.8rem; margin-bottom: 15px;">
@@ -569,6 +597,81 @@
         </div>
     </div>
 
+    <!-- Firebase SDK & オンラインランキング通信ロジック -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+        import { getFirestore, collection, doc, setDoc, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAEXvNobXa_JcH8Dsk-AdPOX1uhtbQmTNM",
+            authDomain: "only-27b78.firebaseapp.com",
+            projectId: "only-27b78",
+            storageBucket: "only-27b78.firebasestorage.app",
+            messagingSenderId: "931912886094",
+            appId: "1:931912886094:web:df29525a6ac2684765601f",
+            measurementId: "G-JWRGC9ZERS"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.syncScoreToFirebase = async function() {
+            try {
+                let uid = localStorage.getItem('aether_uid');
+                if (!uid) {
+                    uid = 'user_' + Math.random().toString(36).substring(2, 9);
+                    localStorage.setItem('aether_uid', uid);
+                }
+
+                await setDoc(doc(db, "rankings", uid), {
+                    name: game.playerName,
+                    score: Math.floor(game.totalEarned),
+                    updatedAt: Date.now()
+                });
+                alert("スコアをランキングに送信しました！");
+                loadOnlineRanking();
+            } catch (e) {
+                console.error("送信エラー:", e);
+                alert("送信に失敗しました。");
+            }
+        };
+
+        async function loadOnlineRanking() {
+            const tbody = document.getElementById('ranking-tbody');
+            tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--sub-text);">読み込み中...</td></tr>`;
+            try {
+                const q = query(collection(db, "rankings"), orderBy("score", "desc"), limit(10));
+                const querySnapshot = await getDocs(q);
+                
+                tbody.innerHTML = "";
+                let rank = 1;
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${rank}位</td><td>${escapeHtml(data.name)}</td><td>${formatNumber(data.score)} Λ</td>`;
+                    tbody.appendChild(tr);
+                    rank++;
+                });
+                if (rank === 1) {
+                    tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--sub-text);">まだデータがありません</td></tr>`;
+                }
+            } catch (e) {
+                console.error("取得エラー:", e);
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: #ff6b6b;">読み込みエラー</td></tr>`;
+            }
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/[&'`"<>]/g, (match) => {
+                return { '&': '&amp;', "'": '&#x27;', '`': '&#x60;', '"': '&quot;', '<': '&lt;', '>': '&gt;' }[match];
+            });
+        }
+
+        loadOnlineRanking();
+        window.loadOnlineRanking = loadOnlineRanking;
+    </script>
+
+    <!-- ゲーム本体のロジック -->
     <script>
         let game = {
             playerName: "開拓者",
@@ -581,15 +684,6 @@
             upgrades: [],
             lastSaveTime: Date.now()
         };
-
-        // PC・AIライバルたちの初期データ
-        let pcRivals = [
-            { name: "恒星開拓者Aegis (PC)", score: 10000000000000 },
-            { name: "ノヴァ・テスラ (PC)", score: 5200000000 },
-            { name: "量子ドリーマー (AI)", score: 480000000 },
-            { name: "オメガ・ドライブ (PC)", score: 50000 },
-            { name: "ネオ・エナジー (AI)", score: 1200 }
-        ];
 
         let audioCtx = null;
         function playTapSound() {
@@ -682,7 +776,6 @@
             if (!loadGame()) {
                 game.generators = generatorData.map(g => ({ ...g, count: 0, cost: g.baseCost }));
                 game.upgrades = upgradeData.map(u => ({ ...u }));
-                // 初回は名前入力モーダルを表示
                 document.getElementById('name-modal').classList.add('open');
             } else {
                 document.getElementById('name-modal').classList.remove('open');
@@ -913,12 +1006,12 @@
                 prestigeBtn.innerText = "条件未達成";
             }
 
-            updateRankingAndTitle();
+            updateTitleAndStats();
             updateButtonStates();
             requestAnimationFrame(gameLoop);
         }
 
-        function updateRankingAndTitle() {
+        function updateTitleAndStats() {
             let title = "見習いエネルギー士";
             let desc = "一歩目を踏み出したばかりの文明";
             if (game.totalEarned >= 1000000000000) {
@@ -939,29 +1032,6 @@
             const statTaps = document.getElementById('stat-taps');
             if (statTotal) statTotal.innerText = formatNumber(game.totalEarned) + " Λ";
             if (statTaps) statTaps.innerText = game.totalTaps + " 回";
-
-            // ランキングの構築（プレイヤー＋PCライバル）
-            let allParticipants = [
-                { name: game.playerName, score: game.totalEarned, isPlayer: true },
-                ...pcRivals
-            ];
-
-            // スコア順にソート
-            allParticipants.sort((a, b) => b.score - a.score);
-
-            const container = document.getElementById('ranking-list-container');
-            container.innerHTML = allParticipants.map((p, index) => {
-                let rankColors = ["#ffd700", "#c0c0c0", "#cd7f32"];
-                let colorStyle = rankColors[index] ? `color: ${rankColors[index]};` : (p.isPlayer ? "color: var(--accent-color); font-weight: bold;" : "color: var(--text-color);");
-                let playerHighlight = p.isPlayer ? "background: rgba(0,243,255,0.15); border-left: 3px solid var(--accent-color);" : "";
-                
-                return `
-                    <div style="display: flex; justify-content: space-between; ${colorStyle} ${playerHighlight} padding: 4px 6px; border-radius: 4px;">
-                        <span>${index + 1}位: ${p.name} ${p.isPlayer ? '(あなた)' : ''}</span>
-                        <span>${formatNumber(p.score)} Λ</span>
-                    </div>
-                `;
-            }).join('');
         }
 
         function updateButtonStates() {
