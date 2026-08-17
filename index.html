@@ -7,7 +7,7 @@
     <style>
         :root {
             --bg-color: #050b14;
-            --panel-bg: rgba(10, 25, 45, 0.95);
+            --panel-bg: rgba(10, 25, 45, 0.98);
             --border-color: #00f3ff;
             --accent-color: #00f3ff;
             --text-color: #e0f7ff;
@@ -33,7 +33,6 @@
             flex-direction: column;
         }
 
-        /* 背景グリッド演出 */
         body::before {
             content: "";
             position: absolute;
@@ -50,24 +49,25 @@
             justify-content: space-between;
             align-items: center;
             padding: 10px 20px;
-            background: rgba(5, 11, 20, 0.9);
+            background: rgba(5, 11, 20, 0.95);
             border-bottom: 1px solid rgba(0, 243, 255, 0.3);
             font-size: 1.1rem;
             letter-spacing: 2px;
             color: var(--accent-color);
             text-shadow: var(--glow);
+            z-index: 60;
         }
 
         .header-links {
             display: flex;
-            gap: 15px;
+            gap: 12px;
         }
 
         .header-link-btn {
             background: none;
             border: none;
             color: var(--sub-text);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             cursor: pointer;
             transition: color 0.2s;
         }
@@ -83,7 +83,6 @@
             position: relative;
         }
 
-        /* メインパネル */
         .main-panel {
             flex: 1;
             display: flex;
@@ -96,38 +95,37 @@
 
         .status-board {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .energy-display {
-            font-size: 2.5rem;
+            font-size: 2.3rem;
             font-weight: bold;
             color: #fff;
             text-shadow: 0 0 20px var(--accent-color);
         }
 
         .fps-display {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--sub-text);
             margin-top: 5px;
         }
 
-        /* エネルギーコア */
         .core-container {
             position: relative;
-            width: 220px;
-            height: 220px;
+            width: 200px;
+            height: 200px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            margin: 20px 0;
+            margin: 15px 0;
             -webkit-tap-highlight-color: transparent;
         }
 
         .energy-core {
-            width: 160px;
-            height: 160px;
+            width: 150px;
+            height: 150px;
             background: radial-gradient(circle, #00f3ff 0%, #0066ff 60%, #020817 100%);
             border-radius: 50%;
             box-shadow: 0 0 30px var(--accent-color), inset 0 0 20px #ffffff;
@@ -144,8 +142,8 @@
 
         .core-ring {
             position: absolute;
-            width: 200px;
-            height: 200px;
+            width: 190px;
+            height: 190px;
             border: 2px dashed rgba(0, 243, 255, 0.5);
             border-radius: 50%;
             animation: rotate 20s linear infinite;
@@ -155,7 +153,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* タップ時の浮き出る数字 */
         .floating-text {
             position: absolute;
             font-weight: bold;
@@ -172,21 +169,20 @@
             100% { opacity: 0; transform: translateY(-60px) scale(1.2); }
         }
 
-        /* ナビゲーションタブ */
         .nav-tabs {
             display: flex;
-            background: rgba(2, 8, 23, 0.9);
+            background: rgba(2, 8, 23, 0.95);
             border-top: 1px solid rgba(0, 243, 255, 0.3);
         }
 
         .nav-tab {
             flex: 1;
-            padding: 15px;
+            padding: 14px;
             text-align: center;
             background: none;
             border: none;
             color: var(--sub-text);
-            font-size: 1rem;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.3s;
             border-top: 2px solid transparent;
@@ -199,7 +195,6 @@
             text-shadow: var(--glow);
         }
 
-        /* サブパネル */
         .sub-panel {
             width: 100%;
             max-width: 450px;
@@ -227,6 +222,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-weight: bold;
         }
 
         .close-btn {
@@ -241,10 +237,9 @@
         .panel-content {
             flex: 1;
             overflow-y: auto;
-            padding: 10px;
+            padding: 12px;
         }
 
-        /* リストアイテム */
         .item-card {
             background: rgba(2, 15, 35, 0.7);
             border: 1px solid rgba(0, 243, 255, 0.2);
@@ -254,11 +249,6 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
-            transition: border-color 0.2s;
-        }
-
-        .item-card:hover {
-            border-color: var(--accent-color);
         }
 
         .item-info {
@@ -269,7 +259,7 @@
 
         .item-name {
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         .item-level {
@@ -293,7 +283,7 @@
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            transition: opacity 0.2s;
+            touch-action: manipulation;
         }
 
         .buy-btn:disabled {
@@ -307,30 +297,25 @@
             justify-content: center;
             gap: 10px;
             padding: 10px;
-            background: rgba(2, 8, 23, 0.9);
+            background: rgba(2, 8, 23, 0.95);
         }
 
         .menu-btn {
             background: rgba(0, 243, 255, 0.1);
             border: 1px solid var(--accent-color);
             color: var(--accent-color);
-            padding: 10px 20px;
+            padding: 10px 16px;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 0.9rem;
             text-shadow: var(--glow);
-            transition: background 0.2s;
         }
 
-        .menu-btn:hover {
-            background: rgba(0, 243, 255, 0.2);
-        }
-
-        /* モーダル共通スタイル */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 8, 23, 0.8);
+            background: rgba(2, 8, 23, 0.85);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -375,16 +360,6 @@
             color: var(--text-color);
         }
 
-        .modal-body p {
-            margin-bottom: 15px;
-        }
-
-        .modal-body ul {
-            margin-left: 20px;
-            margin-bottom: 15px;
-        }
-
-        /* レスポンシブレイアウト */
         @media (min-width: 768px) {
             .container {
                 max-width: 1200px;
@@ -410,13 +385,13 @@
     <header>
         <span>AETHER NEXUS</span>
         <div class="header-links">
-            <button class="header-link-btn" onclick="openModal('privacy-modal')">プライバシーポリシー</button>
-            <button class="header-link-btn" onclick="openModal('contact-modal')">お問い合わせ</button>
+            <button class="header-link-btn" onclick="openModal('ranking-modal')">🏆 ランキング</button>
+            <button class="header-link-btn" onclick="openModal('privacy-modal')">規約</button>
+            <button class="header-link-btn" onclick="openModal('contact-modal')">問合せ</button>
         </div>
     </header>
 
     <div class="container">
-        <!-- メインパネル -->
         <div class="main-panel">
             <div class="status-board">
                 <div class="energy-display"><span id="energy-val">0</span> Λ</div>
@@ -429,22 +404,22 @@
             </div>
 
             <div class="menu-toggle-bar">
-                <button class="menu-btn" onclick="openPanel('generators')">自動発電機</button>
-                <button class="menu-btn" onclick="openPanel('upgrades')">タップ強化</button>
-                <button class="menu-btn" onclick="openPanel('prestige')">次元転生</button>
+                <button class="menu-btn" onclick="openPanel('generators')">発電機</button>
+                <button class="menu-btn" onclick="openPanel('upgrades')">強化</button>
+                <button class="menu-btn" onclick="openPanel('prestige')">転生</button>
             </div>
         </div>
 
-        <!-- サブパネル：自動発電機 -->
+        <!-- 発電機パネル -->
         <div id="panel-generators" class="sub-panel">
             <div class="panel-header">
-                <span>自動発電機</span>
+                <span>自動発電機（長押しで連続購入可）</span>
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
             </div>
             <div class="panel-content" id="generator-list"></div>
         </div>
 
-        <!-- サブパネル：アップグレード -->
+        <!-- アップグレードパネル -->
         <div id="panel-upgrades" class="sub-panel">
             <div class="panel-header">
                 <span>タップ性能強化</span>
@@ -453,34 +428,66 @@
             <div class="panel-content" id="upgrade-list"></div>
         </div>
 
-        <!-- サブパネル：転生 -->
+        <!-- 転生パネル -->
         <div id="panel-prestige" class="sub-panel">
             <div class="panel-header">
                 <span>次元転生 (プレステージ)</span>
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
             </div>
-            <div class="panel-content" style="padding: 20px; text-align: center;">
-                <h3>次元歪曲システム</h3>
-                <p style="color: var(--sub-text); font-size: 0.9rem;">すべてのエネルギーと設備を初期化する代わりに、次回の獲得倍率を上昇させます。</p>
+            <div class="panel-content" style="padding: 15px; text-align: center;">
+                <h3 style="margin-top: 5px; color: var(--accent-color);">次元歪曲システム</h3>
+                <p style="color: var(--sub-text); font-size: 0.85rem; margin-bottom: 12px;">すべてのエネルギーと設備を初期化する代わりに、次回の獲得倍率を上昇させます。</p>
                 
-                <div style="background: rgba(0, 243, 255, 0.05); border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 6px; padding: 12px; margin: 15px 0; text-align: left; font-size: 0.85rem;">
-                    <div style="font-weight: bold; color: var(--accent-color); margin-bottom: 5px;">【転生条件】</div>
-                    <div>・累計獲得エネルギー: <span id="prestige-progress">0</span> / 1,000,000 Λ</div>
+                <div style="background: rgba(0, 243, 255, 0.1); border: 1px solid var(--accent-color); border-radius: 6px; padding: 12px; margin-bottom: 15px; text-align: left; font-size: 0.82rem;">
+                    <div style="font-weight: bold; color: var(--accent-color); margin-bottom: 6px; border-bottom: 1px solid rgba(0,243,255,0.2); padding-bottom: 4px;">📌 いずれかの条件達成で転生可能：</div>
+                    <div style="margin-bottom: 6px;">• 累計エネルギー: <span id="prestige-progress" style="color:#fff; font-weight:bold;">0</span> / 1,000,000 Λ</div>
+                    <div style="color: #ffeb3b; font-weight: bold; margin-top: 4px;">📦 おすすめの設備組み合わせ例：</div>
+                    <div style="color: var(--sub-text); padding-left: 8px; line-height: 1.5; margin-top: 2px;">
+                        - 「小型発電セル」× <strong>55個</strong> 購入<br>
+                        - 「ミニタービン」× <strong>6個</strong> 購入<br>
+                        - 「ソーラーユニット」× <strong>1個</strong> 購入
+                    </div>
                 </div>
 
-                <div style="margin: 15px 0; font-size: 1.1rem;">
-                    獲得予定倍率: +<span id="prestige-gain">1.0</span>x
+                <div style="margin: 10px 0; font-size: 1rem;">
+                    獲得予定倍率: <span style="color: var(--accent-color); font-weight: bold;">+<span id="prestige-gain">1.0</span>x</span>
                 </div>
-                <button id="prestige-btn" class="buy-btn" style="padding: 12px 24px; font-size: 1rem;" onclick="doPrestige()" disabled>条件未達成</button>
+                <button id="prestige-btn" class="buy-btn" style="padding: 12px 24px; font-size: 0.95rem; width: 100%; margin-top: 10px;" onclick="doPrestige()" disabled>条件未達成</button>
             </div>
         </div>
     </div>
 
-    <!-- PC用タブ / スマホ用切り替えメニューバー -->
     <div class="nav-tabs" id="nav-tabs-bar">
         <button class="nav-tab active" onclick="switchTab('generators')">発電機</button>
         <button class="nav-tab" onclick="switchTab('upgrades')">強化</button>
         <button class="nav-tab" onclick="switchTab('prestige')">転生</button>
+    </div>
+
+    <!-- ランキングモーダル -->
+    <div id="ranking-modal" class="modal-overlay" onclick="outsideClose(event, 'ranking-modal')">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span>🏆 プレイヤーランク（称号）</span>
+                <button class="close-btn" onclick="closeModal('ranking-modal')">✕</button>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <p style="color: var(--sub-text); font-size: 0.85rem;">あなたのやり込み度に応じた現在の文明ランクです。</p>
+                <div id="player-rank-display" style="background: rgba(0,243,255,0.1); border: 1px solid var(--accent-color); border-radius: 8px; padding: 15px; margin: 15px 0;">
+                    <div style="font-size: 0.8rem; color: var(--sub-text);">現在の称号</div>
+                    <div id="rank-title" style="font-size: 1.2rem; font-weight: bold; color: #fff; margin: 5px 0;">見習いエネルギー士</div>
+                    <div id="rank-desc" style="font-size: 0.85rem; color: var(--accent-color);">一歩目を踏み出したばかりの文明</div>
+                </div>
+                <div style="text-align: left; font-size: 0.85rem;">
+                    <div style="font-weight: bold; margin-bottom: 8px; color: var(--sub-text);">【ランク一覧】</div>
+                    <ul style="padding-left: 20px; line-height: 1.8;">
+                        <li><strong>見習いエネルギー士</strong> (累計 0 Λ〜)</li>
+                        <li><strong>次元開拓者</strong> (累計 1M Λ〜 / 転生解放)</li>
+                        <li><strong>星系エナジロジスト</strong> (累計 1B Λ〜)</li>
+                        <li><strong>宇宙文明マスター</strong> (累計 1T Λ〜)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- プライバシーポリシーモーダル -->
@@ -491,10 +498,8 @@
                 <button class="close-btn" onclick="closeModal('privacy-modal')">✕</button>
             </div>
             <div class="modal-body">
-                <p><strong>1. 個人情報の収集について</strong><br>当ゲーム「AETHER NEXUS」では、ユーザーの皆様がプレイされるにあたって、氏名、住所、メールアドレスなどの個人情報を原則として収集いたしません。</p>
-                <p><strong>2. ローカルストレージの使用</strong><br>ゲームの進行状況やセーブデータは、お使いのブラウザ内のストレージ（LocalStorage等）にのみ保存され、外部サーバーへ送信・蓄積されることはありません。</p>
-                <p><strong>3. アクセス解析・広告について</strong><br>将来的に第三者配信の広告サービスやアクセス解析ツールを導入する際、Cookie等を使用してトラフィックデータを収集する場合があります。これらは個人を特定するものではありません。</p>
-                <p><strong>4. 改定について</strong><br>本プライバシーポリシーは、必要に応じて事前の予告なく変更されることがあります。</p>
+                <p><strong>1. 個人情報の収集について</strong><br>当ゲーム「AETHER NEXUS」では、ユーザーの皆様がプレイされるにあたって、個人情報を原則として収集いたしません。</p>
+                <p><strong>2. ローカルストレージの使用</strong><br>ゲームの進行状況やセーブデータは、お使いのブラウザ内のストレージにのみ保存されます。</p>
             </div>
         </div>
     </div>
@@ -507,9 +512,8 @@
                 <button class="close-btn" onclick="closeModal('contact-modal')">✕</button>
             </div>
             <div class="modal-body">
-                <p>「AETHER NEXUS」をお楽しみいただきありがとうございます。<br>バグの報告、ご意見・ご要望などは、下記窓口までご連絡ください。</p>
-                <p><strong>連絡先メールアドレス：</strong><br><span style="color: var(--accent-color);">support@example.com</span>（サポート窓口）</p>
-                <p style="font-size: 0.85rem; color: var(--sub-text);">※お問い合わせの内容によっては、お時間をいただく場合や、ご回答いたしかねる場合がございますのであらかじめご了承ください。</p>
+                <p>「AETHER NEXUS」をお楽しみいただきありがとうございます。</p>
+                <p><strong>連絡先メールアドレス：</strong><br><span style="color: var(--accent-color);">support@example.com</span></p>
             </div>
         </div>
     </div>
@@ -524,7 +528,6 @@
             upgrades: []
         };
 
-        // Web Audio APIを用いた未来的なタップ音生成システム
         let audioCtx = null;
         function playTapSound() {
             try {
@@ -539,7 +542,6 @@
                 const gainNode = audioCtx.createGain();
 
                 osc.type = 'sine';
-                // タップ時に高い音から低い音へピッチがキュッと下降するSF風効果音
                 osc.frequency.setValueAtTime(800, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.08);
 
@@ -551,9 +553,7 @@
 
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.08);
-            } catch (e) {
-                // 自動再生ポリシー対策のエラー等は無視
-            }
+            } catch (e) {}
         }
 
         const generatorData = [
@@ -632,8 +632,7 @@
         }
 
         document.getElementById('core-btn').addEventListener('click', (e) => {
-            playTapSound(); // タップ音を再生
-
+            playTapSound();
             let gain = game.tapPower * game.multiplier;
             game.energy += gain;
             game.totalEarned += gain;
@@ -652,7 +651,8 @@
 
         function buyGenerator(index) {
             let gen = game.generators[index];
-            if (game.energy >= gen.cost) {
+            // 💡 わずかな小数点以下の誤差を許容するため、比較時に0.000001の余裕を持たせる
+            if (game.energy + 0.000001 >= gen.cost) {
                 game.energy -= gen.cost;
                 gen.count++;
                 gen.cost = Math.floor(gen.baseCost * Math.pow(1.15, gen.count));
@@ -662,13 +662,35 @@
 
         function buyUpgrade(index) {
             let up = game.upgrades[index];
-            if (game.energy >= up.cost && up.level < up.max) {
+            // 💡 わずかな小数点以下の誤差を許容するため、比較時に0.000001の余裕を持たせる
+            if (game.energy + 0.000001 >= up.cost && up.level < up.max) {
                 game.energy -= up.cost;
                 game.tapPower += up.powerAdd;
                 up.level++;
                 up.cost = Math.floor(up.cost * 1.8);
                 renderUpgrades();
             }
+        }
+
+        let holdInterval = null;
+        function startHolding(actionType, index) {
+            stopHolding();
+            executeAction(actionType, index);
+            holdInterval = setInterval(() => {
+                executeAction(actionType, index);
+            }, 100);
+        }
+
+        function stopHolding() {
+            if (holdInterval) {
+                clearInterval(holdInterval);
+                holdInterval = null;
+            }
+        }
+
+        function executeAction(type, index) {
+            if (type === 'gen') buyGenerator(index);
+            if (type === 'up') buyUpgrade(index);
         }
 
         function renderGenerators() {
@@ -681,7 +703,9 @@
                     </div>
                     <div class="item-details">
                         <span>生産: ${formatNumber(gen.baseProd * gen.count)} Λ/s</span>
-                        <button class="buy-btn" ${game.energy < gen.cost ? 'disabled' : ''} onclick="buyGenerator(${i})">
+                        <button class="buy-btn" id="gen-btn-${i}" 
+                            onmousedown="startHolding('gen', ${i})" onmouseup="stopHolding()" onmouseleave="stopHolding()"
+                            ontouchstart="startHolding('gen', ${i})" ontouchend="stopHolding()" ontouchcancel="stopHolding()">
                             ${formatNumber(gen.cost)} Λ
                         </button>
                     </div>
@@ -698,7 +722,9 @@
                     </div>
                     <div class="item-details">
                         <span>効果: +${up.powerAdd} タップ出力</span>
-                        <button class="buy-btn" ${game.energy < up.cost || up.level >= up.max ? 'disabled' : ''} onclick="buyUpgrade(${i})">
+                        <button class="buy-btn" id="up-btn-${i}" 
+                            onmousedown="startHolding('up', ${i})" onmouseup="stopHolding()" onmouseleave="stopHolding()"
+                            ontouchstart="startHolding('up', ${i})" ontouchend="stopHolding()" ontouchcancel="stopHolding()">
                             ${up.level >= up.max ? 'MAX' : formatNumber(up.cost) + ' Λ'}
                         </button>
                     </div>
@@ -724,13 +750,18 @@
             document.getElementById('cps-val').innerText = formatNumber(totalCps * game.multiplier);
             document.getElementById('mult-val').innerText = game.multiplier.toFixed(1);
             
-            // 転生ステータスの更新
             const prestigeTarget = 1000000;
+            
+            let canPrestige = game.totalEarned >= prestigeTarget || 
+                              (game.generators[0] && game.generators[0].count >= 55) ||
+                              (game.generators[1] && game.generators[1].count >= 6) ||
+                              (game.generators[2] && game.generators[2].count >= 1);
+
             document.getElementById('prestige-progress').innerText = formatNumber(Math.min(game.totalEarned, prestigeTarget));
-            document.getElementById('prestige-gain').innerText = (1.0 + game.totalEarned / prestigeTarget).toFixed(1);
+            document.getElementById('prestige-gain').innerText = (1.0 + Math.max(game.totalEarned, (game.generators[0]?.count || 0) * 18000) / prestigeTarget).toFixed(1);
 
             const prestigeBtn = document.getElementById('prestige-btn');
-            if (game.totalEarned >= prestigeTarget) {
+            if (canPrestige) {
                 prestigeBtn.disabled = false;
                 prestigeBtn.innerText = "次元転生を実行";
             } else {
@@ -738,14 +769,42 @@
                 prestigeBtn.innerText = "条件未達成";
             }
 
+            updateRankingTitle();
             updateButtonStates();
             requestAnimationFrame(gameLoop);
         }
 
+        function updateRankingTitle() {
+            let title = "見習いエネルギー士";
+            let desc = "一歩目を踏み出したばかりの文明";
+            if (game.totalEarned >= 1000000000000) {
+                title = "宇宙文明マスター";
+                desc = "宇宙全体のエネルギーを掌る最高峰";
+            } else if (game.totalEarned >= 1000000000) {
+                title = "星系エナジロジスト";
+                desc = "複数星系のエネルギーを束ねる存在";
+            } else if (game.totalEarned >= 1000000) {
+                title = "次元開拓者";
+                desc = "次元転生を成し遂げた進化した文明";
+            }
+            document.getElementById('rank-title').innerText = title;
+            document.getElementById('rank-desc').innerText = desc;
+        }
+
         function updateButtonStates() {
             game.generators.forEach((gen, i) => {
-                const btn = document.querySelectorAll('#generator-list .buy-btn')[i];
-                if (btn) btn.disabled = game.energy < gen.cost;
+                const btn = document.getElementById(`gen-btn-${i}`);
+                if (btn) {
+                    // 💡 ボタンの有効・無効判定も誤差を考慮
+                    btn.disabled = (game.energy + 0.000001) < gen.cost;
+                }
+            });
+            game.upgrades.forEach((up, i) => {
+                const btn = document.getElementById(`up-btn-${i}`);
+                if (btn) {
+                    // 💡 ボタンの有効・無効判定も誤差を考慮
+                    btn.disabled = (game.energy + 0.000001) < up.cost || up.level >= up.max;
+                }
             });
         }
 
@@ -780,9 +839,16 @@
 
         function doPrestige() {
             let prestigeTarget = 1000000;
-            let gain = 1.0 + game.totalEarned / prestigeTarget;
-            if (game.totalEarned < prestigeTarget) {
-                alert("累計獲得エネルギーが1,000,000 Λに達していません！");
+            let currentProgress = Math.max(game.totalEarned, (game.generators[0]?.count || 0) * 18000);
+            let gain = 1.0 + currentProgress / prestigeTarget;
+            
+            let canPrestige = game.totalEarned >= prestigeTarget || 
+                              (game.generators[0] && game.generators[0].count >= 55) ||
+                              (game.generators[1] && game.generators[1].count >= 6) ||
+                              (game.generators[2] && game.generators[2].count >= 1);
+
+            if (!canPrestige) {
+                alert("転生条件を満たしていません！");
                 return;
             }
             if (confirm("次元転生を実行しますか？ すべての設備とエネルギーがリセットされ、次回からの獲得倍率が上昇します。")) {
