@@ -295,20 +295,21 @@
         .menu-toggle-bar {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             padding: 10px;
             background: rgba(2, 8, 23, 0.95);
+            flex-wrap: wrap;
         }
 
         .menu-btn {
             background: rgba(0, 243, 255, 0.1);
             border: 1px solid var(--accent-color);
             color: var(--accent-color);
-            padding: 10px 16px;
+            padding: 8px 12px;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             text-shadow: var(--glow);
         }
 
@@ -385,7 +386,6 @@
     <header>
         <span>AETHER NEXUS</span>
         <div class="header-links">
-            <button class="header-link-btn" onclick="openModal('ranking-modal')">🏆 称号・実績</button>
             <button class="header-link-btn" onclick="openModal('privacy-modal')">規約</button>
             <button class="header-link-btn" onclick="openModal('contact-modal')">問合せ</button>
         </div>
@@ -407,6 +407,7 @@
                 <button class="menu-btn" onclick="openPanel('generators')">発電機</button>
                 <button class="menu-btn" onclick="openPanel('upgrades')">強化</button>
                 <button class="menu-btn" onclick="openPanel('prestige')">転生</button>
+                <button class="menu-btn" onclick="openPanel('ranking')">🏆 称号・実績</button>
             </div>
         </div>
 
@@ -455,46 +456,61 @@
                 <button id="prestige-btn" class="buy-btn" style="padding: 12px 24px; font-size: 0.95rem; width: 100%; margin-top: 10px;" onclick="doPrestige()" disabled>条件未達成</button>
             </div>
         </div>
-    </div>
 
-    <div class="nav-tabs" id="nav-tabs-bar">
-        <button class="nav-tab active" onclick="switchTab('generators')">発電機</button>
-        <button class="nav-tab" onclick="switchTab('upgrades')">強化</button>
-        <button class="nav-tab" onclick="switchTab('prestige')">転生</button>
-    </div>
-
-    <!-- ランキング・称号モーダル -->
-    <div id="ranking-modal" class="modal-overlay" onclick="outsideClose(event, 'ranking-modal')">
-        <div class="modal-box">
-            <div class="modal-header">
-                <span>🏆 プレイヤー称号・実績</span>
-                <button class="close-btn" onclick="closeModal('ranking-modal')">✕</button>
+        <!-- 称号・実績・ランキングパネル -->
+        <div id="panel-ranking" class="sub-panel">
+            <div class="panel-header">
+                <span>🏆 称号・実績・ランキング</span>
+                <button class="close-btn" onclick="closePanel()">閉じる</button>
             </div>
-            <div class="modal-body" style="text-align: center;">
-                <p style="color: var(--sub-text); font-size: 0.85rem;">あなたのやり込み度に応じた現在の文明称号です。</p>
-                <div id="player-rank-display" style="background: rgba(0,243,255,0.1); border: 1px solid var(--accent-color); border-radius: 8px; padding: 15px; margin: 15px 0;">
-                    <div style="font-size: 0.8rem; color: var(--sub-text);">現在の称号</div>
-                    <div id="rank-title" style="font-size: 1.2rem; font-weight: bold; color: #fff; margin: 5px 0;">見習いエネルギー士</div>
-                    <div id="rank-desc" style="font-size: 0.85rem; color: var(--accent-color);">一歩目を踏み出したばかりの文明</div>
+            <div class="panel-content" style="padding: 15px; text-align: center;">
+                <p style="color: var(--sub-text); font-size: 0.85rem; margin-top:0;">あなたのやり込み度に応じた文明称号とランキングです。</p>
+                
+                <div id="player-rank-display" style="background: rgba(0,243,255,0.1); border: 1px solid var(--accent-color); border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+                    <div style="font-size: 0.75rem; color: var(--sub-text);">現在の称号</div>
+                    <div id="rank-title" style="font-size: 1.1rem; font-weight: bold; color: #fff; margin: 4px 0;">見習いエネルギー士</div>
+                    <div id="rank-desc" style="font-size: 0.8rem; color: var(--accent-color);">一歩目を踏み出したばかりの文明</div>
                 </div>
-                <div style="text-align: left; font-size: 0.85rem; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; margin-bottom: 12px;">
+
+                <div style="text-align: left; font-size: 0.82rem; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; margin-bottom: 12px;">
                     <div>• 累計獲得エネルギー: <span id="stat-total" style="color:#fff; font-weight:bold;">0 Λ</span></div>
                     <div>• 総タップ回数: <span id="stat-taps" style="color:#fff; font-weight:bold;">0 回</span></div>
                 </div>
-                <div style="text-align: left; font-size: 0.85rem;">
-                    <div style="font-weight: bold; margin-bottom: 8px; color: var(--sub-text);">【称号一覧】</div>
-                    <ul style="padding-left: 20px; line-height: 1.8;">
+
+                <div style="text-align: left; font-size: 0.82rem; margin-bottom: 12px;">
+                    <div style="font-weight: bold; margin-bottom: 6px; color: var(--sub-text);">📊 文明発展ランキング (模擬)</div>
+                    <div style="background: rgba(2,15,35,0.7); border: 1px solid rgba(0,243,255,0.2); border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 4px;">
+                        <div style="display: flex; justify-content: space-between; color: #ffd700;"><span>1位: 恒星開拓者Aegis</span><span>10.0T Λ</span></div>
+                        <div style="display: flex; justify-content: space-between; color: #c0c0c0;"><span>2位: ノヴァ・テスラ</span><span>5.2G Λ</span></div>
+                        <div style="display: flex; justify-content: space-between; color: #cd7f32;"><span>3位: 量子ドリーマー</span><span>480M Λ</span></div>
+                        <div id="player-rank-row" style="display: flex; justify-content: space-between; color: var(--accent-color); border-top: 1px dashed rgba(0,243,255,0.3); padding-top: 4px; margin-top: 2px; font-weight: bold;">
+                            <span>---位: あなた</span><span id="rank-my-score">0 Λ</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: left; font-size: 0.8rem; margin-bottom: 15px;">
+                    <div style="font-weight: bold; margin-bottom: 4px; color: var(--sub-text);">【称号一覧】</div>
+                    <ul style="padding-left: 18px; line-height: 1.6; margin: 0; color: var(--sub-text);">
                         <li><strong>見習いエネルギー士</strong> (累計 0 Λ〜)</li>
                         <li><strong>次元開拓者</strong> (累計 1M Λ〜)</li>
                         <li><strong>星系エナジロジスト</strong> (累計 1B Λ〜)</li>
                         <li><strong>宇宙文明マスター</strong> (累計 1T Λ〜)</li>
                     </ul>
                 </div>
-                <div style="margin-top: 15px;">
-                    <button class="buy-btn" style="background: #aa2222; font-size: 0.8rem; padding: 6px 12px;" onclick="resetSaveData()">セーブデータをリセット</button>
+
+                <div>
+                    <button class="buy-btn" style="background: #aa2222; font-size: 0.75rem; padding: 6px 10px;" onclick="resetSaveData()">セーブデータをリセット</button>
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="nav-tabs" id="nav-tabs-bar">
+        <button class="nav-tab active" onclick="switchTab('generators')">発電機</button>
+        <button class="nav-tab" onclick="switchTab('upgrades')">強化</button>
+        <button class="nav-tab" onclick="switchTab('prestige')">転生</button>
+        <button class="nav-tab" onclick="switchTab('ranking')">🏆 実績・ランキング</button>
     </div>
 
     <!-- プライバシーポリシーモーダル -->
@@ -625,7 +641,6 @@
         ];
 
         function initGame() {
-            // セーブデータの読み込みを試みる
             if (!loadGame()) {
                 game.generators = generatorData.map(g => ({ ...g, count: 0, cost: g.baseCost }));
                 game.upgrades = upgradeData.map(u => ({ ...u }));
@@ -634,13 +649,11 @@
             renderUpgrades();
         }
 
-        // セーブ機能
         function saveGame() {
             game.lastSaveTime = Date.now();
             localStorage.setItem('aether_nexus_save', JSON.stringify(game));
         }
 
-        // ロード機能 ＆ オフラインボーナス計算
         function loadGame() {
             const saved = localStorage.getItem('aether_nexus_save');
             if (!saved) return false;
@@ -652,7 +665,6 @@
                 game.tapPower = data.tapPower || 1;
                 game.multiplier = data.multiplier || 1.0;
 
-                // 発電機のロード
                 game.generators = generatorData.map((g, i) => {
                     const savedGen = data.generators && data.generators[i];
                     return {
@@ -662,7 +674,6 @@
                     };
                 });
 
-                // アップグレードのロード
                 game.upgrades = upgradeData.map((u, i) => {
                     const savedUp = data.upgrades && data.upgrades[i];
                     return {
@@ -672,7 +683,6 @@
                     };
                 });
 
-                // 💡 オフライン放置報酬の計算
                 if (data.lastSaveTime) {
                     const elapsedSeconds = (Date.now() - data.lastSaveTime) / 1000;
                     if (elapsedSeconds > 5) {
@@ -697,7 +707,6 @@
             }
         }
 
-        // セーブデータリセット
         function resetSaveData() {
             if (confirm("本当にすべてのセーブデータを消去して最初からやり直しますか？")) {
                 localStorage.removeItem('aether_nexus_save');
@@ -845,7 +854,6 @@
             game.energy += frameGain;
             game.totalEarned += frameGain;
 
-            // 💡 5秒ごとに自動セーブを実行
             saveTimer += delta;
             if (saveTimer >= 5) {
                 saveGame();
@@ -883,16 +891,21 @@
         function updateRankingTitle() {
             let title = "見習いエネルギー士";
             let desc = "一歩目を踏み出したばかりの文明";
+            let rankNum = "4位";
             if (game.totalEarned >= 1000000000000) {
                 title = "宇宙文明マスター";
                 desc = "宇宙全体のエネルギーを掌る最高峰";
+                rankNum = "1位";
             } else if (game.totalEarned >= 1000000000) {
                 title = "星系エナジロジスト";
                 desc = "複数星系のエネルギーを束ねる存在";
+                rankNum = "2位";
             } else if (game.totalEarned >= 1000000) {
                 title = "次元開拓者";
                 desc = "次元転生を成し遂げた進化した文明";
+                rankNum = "3位";
             }
+            
             document.getElementById('rank-title').innerText = title;
             document.getElementById('rank-desc').innerText = desc;
             
@@ -900,6 +913,12 @@
             const statTaps = document.getElementById('stat-taps');
             if (statTotal) statTotal.innerText = formatNumber(game.totalEarned) + " Λ";
             if (statTaps) statTaps.innerText = game.totalTaps + " 回";
+
+            const myScoreRow = document.getElementById('player-rank-row');
+            if (myScoreRow) {
+                myScoreRow.querySelector('span:first-child').innerText = `${rankNum}: あなた`;
+                document.getElementById('rank-my-score').innerText = formatNumber(game.totalEarned) + " Λ";
+            }
         }
 
         function updateButtonStates() {
@@ -972,7 +991,6 @@
             }
         }
 
-        // ページを離れる時にもセーブ
         window.addEventListener('beforeunload', () => {
             saveGame();
         });
