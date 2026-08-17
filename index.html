@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>AETHER NEXUS - 未来エネルギー放置ゲーム</title>
+    <style>
+        :root {
+            --bg-color: #050b14;
+            --panel-bg: rgba(10, 25, 45, 0.95);
+            --border-color: #00f3ff;
+            --accent-color: #00f3ff;
+            --text-color: #e0f7ff;
+            --sub-text: #8ab4f8;
+            --glow: 0 0 15px rgba(0, 243, 255, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 背景グリッド演出 */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -1;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: rgba(5, 11, 20, 0.9);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            color: var(--accent-color);
+            text-shadow: var(--glow);
+        }
+
+        .header-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .header-link-btn {
+            background: none;
+            border: none;
+            color: var(--sub-text);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .header-link-btn:hover {
+            color: var(--accent-color);
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* メインパネル */
+        .main-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 20px;
+        }
+
+        .status-board {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .energy-display {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 20px var(--accent-color);
+        }
+
+        .fps-display {
+            font-size: 0.9rem;
+            color: var(--sub-text);
+            margin-top: 5px;
+        }
+
+        /* エネルギーコア */
+        .core-container {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 20px 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .energy-core {
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, #00f3ff 0%, #0066ff 60%, #020817 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 30px var(--accent-color), inset 0 0 20px #ffffff;
+            transition: transform 0.1s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .energy-core:active {
+            transform: scale(0.95);
+        }
+
+        .core-ring {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border: 2px dashed rgba(0, 243, 255, 0.5);
+            border-radius: 50%;
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* タップ時の浮き出る数字 */
+        .floating-text {
+            position: absolute;
+            font-weight: bold;
+            color: #00ffff;
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+            font-size: 1.2rem;
+            text-shadow: 0 0 5px #000;
+            z-index: 100;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-60px) scale(1.2); }
+        }
+
+        /* ナビゲーションタブ */
+        .nav-tabs {
+            display: flex;
+            background: rgba(2, 8, 23, 0.9);
+            border-top: 1px solid rgba(0, 243, 255, 0.3);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: none;
+            border: none;
+            color: var(--sub-text);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-top: 2px solid transparent;
+        }
+
+        .nav-tab.active {
+            color: var(--accent-color);
+            background: rgba(0, 243, 255, 0.05);
+            border-top-color: var(--accent-color);
+            text-shadow: var(--glow);
+        }
+
+        /* サブパネル */
+        .sub-panel {
+            width: 100%;
+            max-width: 450px;
+            background: var(--panel-bg);
+            border-left: 1px solid rgba(0, 243, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 50;
+        }
+
+        .sub-panel.open {
+            transform: translateX(0);
+        }
+
+        .panel-header {
+            padding: 15px;
+            background: rgba(0, 243, 255, 0.1);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        /* リストアイテム */
+        .item-card {
+            background: rgba(2, 15, 35, 0.7);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: border-color 0.2s;
+        }
+
+        .item-card:hover {
+            border-color: var(--accent-color);
+        }
+
+        .item-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-name {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .item-level {
+            font-size: 0.85rem;
+            color: var(--sub-text);
+        }
+
+        .item-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #a0c4ff;
+        }
+
+        .buy-btn {
+            background: linear-gradient(135deg, #0066ff, #00f3ff);
+            border: none;
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+
+        .buy-btn:disabled {
+            background: #2a3a50;
+            color: #6c7a9c;
+            cursor: not-allowed;
+        }
+
+        .menu-toggle-bar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(2, 8, 23, 0.9);
+        }
+
+        .menu-btn {
+            background: rgba(0, 243, 255, 0.1);
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            text-shadow: var(--glow);
+            transition: background 0.2s;
+        }
+
+        .menu-btn:hover {
+            background: rgba(0, 243, 255, 0.2);
+        }
+
+        /* モーダル共通スタイル */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 8, 23, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: var(--panel-bg);
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.3);
+        }
+
+        .modal-header {
+            padding: 15px;
+            background: rgba(0, 243, 255, 0.1);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-color);
+        }
+
+        .modal-body p {
+            margin-bottom: 15px;
+        }
+
+        .modal-body ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        /* レスポンシブレイアウト */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                width: 100%;
+                border: 1px solid rgba(0, 243, 255, 0.2);
+                border-top: none;
+            }
+            .sub-panel {
+                position: relative;
+                transform: translateX(0);
+                max-width: 400px;
+                height: 100%;
+            }
+            .menu-toggle-bar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <span>AETHER NEXUS</span>
+        <div class="header-links">
+            <button class="header-link-btn" onclick="openModal('privacy-modal')">プライバシーポリシー</button>
+            <button class="header-link-btn" onclick="openModal('contact-modal')">お問い合わせ</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- メインパネル -->
+        <div class="main-panel">
+            <div class="status-board">
+                <div class="energy-display"><span id="energy-val">0</span> Λ</div>
+                <div class="fps-display">自動発電: <span id="cps-val">0</span> Λ/s | 倍率: x<span id="mult-val">1.0</span></div>
+            </div>
+
+            <div class="core-container" id="core-btn">
+                <div class="core-ring"></div>
+                <div class="energy-core"></div>
+            </div>
+
+            <div class="menu-toggle-bar">
+                <button class="menu-btn" onclick="openPanel('generators')">自動発電機</button>
+                <button class="menu-btn" onclick="openPanel('upgrades')">タップ強化</button>
+                <button class="menu-btn" onclick="openPanel('prestige')">次元転生</button>
+            </div>
+        </div>
+
+        <!-- サブパネル：自動発電機 -->
+        <div id="panel-generators" class="sub-panel">
+            <div class="panel-header">
+                <span>自動発電機</span>
+                <button class="close-btn" onclick="closePanel()">閉じる</button>
+            </div>
+            <div class="panel-content" id="generator-list"></div>
+        </div>
+
+        <!-- サブパネル：アップグレード -->
+        <div id="panel-upgrades" class="sub-panel">
+            <div class="panel-header">
+                <span>タップ性能強化</span>
+                <button class="close-btn" onclick="closePanel()">閉じる</button>
+            </div>
+            <div class="panel-content" id="upgrade-list"></div>
+        </div>
+
+        <!-- サブパネル：転生 -->
+        <div id="panel-prestige" class="sub-panel">
+            <div class="panel-header">
+                <span>次元転生 (プレステージ)</span>
+                <button class="close-btn" onclick="closePanel()">閉じる</button>
+            </div>
+            <div class="panel-content" style="padding: 20px; text-align: center;">
+                <h3>次元歪曲システム</h3>
+                <p style="color: var(--sub-text); font-size: 0.9rem;">すべてのエネルギーと設備を初期化する代わりに、次回の獲得倍率を上昇させます。</p>
+                <div style="margin: 20px 0; font-size: 1.1rem;">
+                    獲得予定倍率: +<span id="prestige-gain">1.0</span>x
+                </div>
+                <button class="buy-btn" style="padding: 12px 24px; font-size: 1rem;" onclick="doPrestige()">次元転生を実行</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PC用タブ / スマホ用切り替えメニューバー -->
+    <div class="nav-tabs" id="nav-tabs-bar">
+        <button class="nav-tab active" onclick="switchTab('generators')">発電機</button>
+        <button class="nav-tab" onclick="switchTab('upgrades')">強化</button>
+        <button class="nav-tab" onclick="switchTab('prestige')">転生</button>
+    </div>
+
+    <!-- プライバシーポリシーモーダル -->
+    <div id="privacy-modal" class="modal-overlay" onclick="outsideClose(event, 'privacy-modal')">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span>プライバシーポリシー</span>
+                <button class="close-btn" onclick="closeModal('privacy-modal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>1. 個人情報の収集について</strong><br>当ゲーム「AETHER NEXUS」では、ユーザーの皆様がプレイされるにあたって、氏名、住所、メールアドレスなどの個人情報を原則として収集いたしません。</p>
+                <p><strong>2. ローカルストレージの使用</strong><br>ゲームの進行状況やセーブデータは、お使いのブラウザ内のストレージ（LocalStorage等）にのみ保存され、外部サーバーへ送信・蓄積されることはありません。</p>
+                <p><strong>3. アクセス解析・広告について</strong><br>将来的に第三者配信の広告サービスやアクセス解析ツールを導入する際、Cookie等を使用してトラフィックデータを収集する場合があります。これらは個人を特定するものではありません。</p>
+                <p><strong>4. 改定について</strong><br>本プライバシーポリシーは、必要に応じて事前の予告なく変更されることがあります。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- お問い合わせモーダル -->
+    <div id="contact-modal" class="modal-overlay" onclick="outsideClose(event, 'contact-modal')">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span>お問い合わせ</span>
+                <button class="close-btn" onclick="closeModal('contact-modal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <p>「AETHER NEXUS」をお楽しみいただきありがとうございます。<br>バグの報告、ご意見・ご要望などは、下記窓口までご連絡ください。</p>
+                <p><strong>連絡先メールアドレス：</strong><br><span style="color: var(--accent-color);">support@example.com</span>（サポート窓口）</p>
+                <p style="font-size: 0.85rem; color: var(--sub-text);">※お問い合わせの内容によっては、お時間をいただく場合や、ご回答いたしかねる場合がございますのであらかじめご了承ください。</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let game = {
+            energy: 0,
+            totalEarned: 0,
+            tapPower: 1,
+            multiplier: 1.0,
+            generators: [],
+            upgrades: []
+        };
+
+        const generatorData = [
+            { name: "小型発電セル", baseCost: 15, baseProd: 0.5 },
+            { name: "ミニタービン", baseCost: 100, baseProd: 4 },
+            { name: "ソーラーユニット", baseCost: 1100, baseProd: 32 },
+            { name: "熱交換器", baseCost: 12000, baseProd: 260 },
+            { name: "電磁コイル", baseCost: 130000, baseProd: 1400 },
+            { name: "水流ジェネレーター", baseCost: 1400000, baseProd: 7800 },
+            { name: "風力ユニット", baseCost: 20000000, baseProd: 44000 },
+            { name: "蓄電コンバーター", baseCost: 330000000, baseProd: 260000 },
+            { name: "高効率発電機", baseCost: 5100000000, baseProd: 1600000 },
+            { name: "エネルギー炉", baseCost: 75000000000, baseProd: 10000000 },
+            { name: "プラズマ炉", baseCost: 1000000000000, baseProd: 65000000 },
+            { name: "核融合セル", baseCost: 14000000000000, baseProd: 430000000 },
+            { name: "重力発電機", baseCost: 200000000000000, baseProd: 2900000000 },
+            { name: "量子コンバーター", baseCost: 3000000000000000, baseProd: 21000000000 },
+            { name: "ダークエネルギー炉", baseCost: 45000000000000000, baseProd: 150000000000 },
+            { name: "時空タービン", baseCost: 700000000000000000, baseProd: 1100000000000 },
+            { name: "空間圧縮機", baseCost: 11000000000000000000, baseProd: 8000000000000 },
+            { name: "真空発電機", baseCost: 180000000000000000000, baseProd: 60000000000000 },
+            { name: "フォトン炉", baseCost: 3000000000000000000000, baseProd: 450000000000000 },
+            { name: "超伝導ジェネレーター", baseCost: 50000000000000000000000, baseProd: 3400000000000000 },
+            { name: "量子炉", baseCost: 850000000000000000000000, baseProd: 26000000000000000 },
+            { name: "重力井戸", baseCost: 15000000000000000000000000, baseProd: 200000000000000000 },
+            { name: "ワームホール発電機", baseCost: 250000000000000000000000000, baseProd: 1600000000000000000 },
+            { name: "次元変換器", baseCost: 4300000000000000000000000000, baseProd: 13000000000000000000 },
+            { name: "星核リアクター", baseCost: 75000000000000000000000000000, baseProd: 100000000000000000000 },
+            { name: "恒星収集装置", baseCost: 1300000000000000000000000000000, baseProd: 800000000000000000000 },
+            { name: "ブラックホール炉", baseCost: 23000000000000000000000000000000, baseProd: 6500000000000000000000 },
+            { name: "ダークマター炉", baseCost: 400000000000000000000000000000000, baseProd: 53000000000000000000000 },
+            { name: "時間抽出器", baseCost: 7000000000000000000000000000000000, baseProd: 430000000000000000000000 },
+            { name: "宇宙エネルギー変換器", baseCost: 120000000000000000000000000000000000, baseProd: 3500000000000000000000000 },
+            { name: "人工恒星", baseCost: 2100000000000000000000000000000000000, baseProd: 29000000000000000000000000 },
+            { name: "次元炉", baseCost: 37000000000000000000000000000000000000, baseProd: 240000000000000000000000000 },
+            { name: "宇宙核融合炉", baseCost: 650000000000000000000000000000000000000, baseProd: 2000000000000000000000000000 },
+            { name: "超空間発電機", baseCost: 11500000000000000000000000000000000000000, baseProd: 17000000000000000000000000000 },
+            { name: "銀河エネルギー収集器", baseCost: 200000000000000000000000000000000000000000, baseProd: 140000000000000000000000000000 },
+            { name: "時間軸リアクター", baseCost: 3500000000000000000000000000000000000000000, baseProd: 1200000000000000000000000000000 },
+            { name: "多次元コア", baseCost: 60000000000000000000000000000000000000000000, baseProd: 10000000000000000000000000000000 },
+            { name: "虚数エネルギー炉", baseCost: 100000000000000000000000000000000000000000000, baseProd: 85000000000000000000000000000000 },
+            { name: "宇宙網コンバーター", baseCost: 1800000000000000000000000000000000000000000000, baseProd: 720000000000000000000000000000000 },
+            { name: "超新星エンジン", baseCost: 32000000000000000000000000000000000000000000000, baseProd: 6000000000000000000000000000000000 },
+            { name: "星系制御炉", baseCost: 550000000000000000000000000000000000000000000000, baseProd: 50000000000000000000000000000000000 },
+            { name: "銀河炉心", baseCost: 1000000000000000000000000000000000000000000000000, baseProd: 420000000000000000000000000000000000 },
+            { name: "次元統合機", baseCost: 18000000000000000000000000000000000000000000000000, baseProd: 3500000000000000000000000000000000000 },
+            { name: "時間永久機関", baseCost: 320000000000000000000000000000000000000000000000000, baseProd: 30000000000000000000000000000000000000 },
+            { name: "宇宙構造体", baseCost: 5800000000000000000000000000000000000000000000000000, baseProd: 250000000000000000000000000000000000000 },
+            { name: "無限エネルギー機関", baseCost: 10000000000000000000000000000000000000000000000000000, baseProd: 2100000000000000000000000000000000000000 },
+            { name: "多次元ネットワーク", baseCost: 180000000000000000000000000000000000000000000000000000, baseProd: 18000000000000000000000000000000000000000 },
+            { name: "宇宙創成炉", baseCost: 3200000000000000000000000000000000000000000000000000000, baseProd: 150000000000000000000000000000000000000000 },
+            { name: "虚空エンジン", baseCost: 60000000000000000000000000000000000000000000000000000000, baseProd: 1300000000000000000000000000000000000000000 },
+            { name: "無限次元オメガコア", baseCost: 1000000000000000000000000000000000000000000000000000000000, baseProd: 11000000000000000000000000000000000000000000 }
+        ];
+
+        const upgradeData = [
+            { id: 'tap1', name: '超導電パルス', cost: 50, powerAdd: 1, level: 0, max: 50 },
+            { id: 'tap2', name: 'クォーク・ブースター', cost: 500, powerAdd: 5, level: 0, max: 50 },
+            { id: 'tap3', name: 'プラズマ・ストライク', cost: 5000, powerAdd: 25, level: 0, max: 50 }
+        ];
+
+        function initGame() {
+            game.generators = generatorData.map(g => ({ ...g, count: 0, cost: g.baseCost }));
+            game.upgrades = upgradeData.map(u => ({ ...u }));
+            renderGenerators();
+            renderUpgrades();
+        }
+
+        function formatNumber(num) {
+            if (num < 1000) return num.toFixed(0);
+            const suffixes = ["", "KΛ", "MΛ", "GΛ", "TΛ", "PΛ", "EΛ", "ZΛ", "YΛ"];
+            const i = Math.floor(Math.log10(num) / 3);
+            if (i >= suffixes.length) return num.toExponential(2);
+            const val = num / Math.pow(10, i * 3);
+            return `${val.toFixed(2)} ${suffixes[i]}`;
+        }
+
+        document.getElementById('core-btn').addEventListener('click', (e) => {
+            let gain = game.tapPower * game.multiplier;
+            game.energy += gain;
+            game.totalEarned += gain;
+            createFloatingText(e.clientX, e.clientY, `+${formatNumber(gain)}`);
+        });
+
+        function createFloatingText(x, y, text) {
+            const el = document.createElement('div');
+            el.className = 'floating-text';
+            el.innerText = text;
+            el.style.left = `${x - 20}px`;
+            el.style.top = `${y - 30}px`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 800);
+        }
+
+        function buyGenerator(index) {
+            let gen = game.generators[index];
+            if (game.energy >= gen.cost) {
+                game.energy -= gen.cost;
+                gen.count++;
+                gen.cost = Math.floor(gen.baseCost * Math.pow(1.15, gen.count));
+                renderGenerators();
+            }
+        }
+
+        function buyUpgrade(index) {
+            let up = game.upgrades[index];
+            if (game.energy >= up.cost && up.level < up.max) {
+                game.energy -= up.cost;
+                game.tapPower += up.powerAdd;
+                up.level++;
+                up.cost = Math.floor(up.cost * 1.8);
+                renderUpgrades();
+            }
+        }
+
+        function renderGenerators() {
+            const container = document.getElementById('generator-list');
+            container.innerHTML = game.generators.map((gen, i) => `
+                <div class="item-card">
+                    <div class="item-info">
+                        <span class="item-name">${gen.name}</span>
+                        <span class="item-level">所持: ${gen.count}</span>
+                    </div>
+                    <div class="item-details">
+                        <span>生産: ${formatNumber(gen.baseProd * gen.count)} Λ/s</span>
+                        <button class="buy-btn" ${game.energy < gen.cost ? 'disabled' : ''} onclick="buyGenerator(${i})">
+                            ${formatNumber(gen.cost)} Λ
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderUpgrades() {
+            const container = document.getElementById('upgrade-list');
+            container.innerHTML = game.upgrades.map((up, i) => `
+                <div class="item-card">
+                    <div class="item-info">
+                        <span class="item-name">${up.name} (Lv.${up.level}/${up.max})</span>
+                    </div>
+                    <div class="item-details">
+                        <span>効果: +${up.powerAdd} タップ出力</span>
+                        <button class="buy-btn" ${game.energy < up.cost || up.level >= up.max ? 'disabled' : ''} onclick="buyUpgrade(${i})">
+                            ${up.level >= up.max ? 'MAX' : formatNumber(up.cost) + ' Λ'}
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        let lastTime = performance.now();
+        function gameLoop(now) {
+            const delta = (now - lastTime) / 1000;
+            lastTime = now;
+
+            let totalCps = 0;
+            game.generators.forEach(gen => {
+                totalCps += gen.baseProd * gen.count;
+            });
+
+            let frameGain = totalCps * delta * game.multiplier;
+            game.energy += frameGain;
+            game.totalEarned += frameGain;
+
+            document.getElementById('energy-val').innerText = formatNumber(game.energy);
+            document.getElementById('cps-val').innerText = formatNumber(totalCps * game.multiplier);
+            document.getElementById('mult-val').innerText = game.multiplier.toFixed(1);
+            document.getElementById('prestige-gain').innerText = (1.0 + game.totalEarned / 1000000).toFixed(1);
+
+            updateButtonStates();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function updateButtonStates() {
+            game.generators.forEach((gen, i) => {
+                const btn = document.querySelectorAll('#generator-list .buy-btn')[i];
+                if (btn) btn.disabled = game.energy < gen.cost;
+            });
+        }
+
+        function openPanel(panelName) {
+            document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('open'));
+            document.getElementById(`panel-${panelName}`).classList.add('open');
+        }
+
+        function closePanel() {
+            document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('open'));
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            openPanel(tabName);
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('open');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('open');
+        }
+
+        function outsideClose(event, modalId) {
+            if (event.target.classList.contains('modal-overlay')) {
+                closeModal(modalId);
+            }
+        }
+
+        function doPrestige() {
+            let gain = 1.0 + game.totalEarned / 1000000;
+            if (gain < 1.1) {
+                alert("エネルギーが足りません！もっと稼いでから転生してください。");
+                return;
+            }
+            if (confirm("次元転生を実行しますか？ すべての設備とエネルギーがリセットされます。")) {
+                game.multiplier *= gain;
+                game.energy = 0;
+                game.totalEarned = 0;
+                game.tapPower = 1;
+                initGame();
+                closePanel();
+            }
+        }
+
+        initGame();
+        requestAnimationFrame(gameLoop);
+    </script>
+</body>
+</html>
