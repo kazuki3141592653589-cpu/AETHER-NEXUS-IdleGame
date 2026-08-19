@@ -445,7 +445,7 @@
                     </tbody>
                 </table>
 
-                <!-- ランキングパネル内にデータリセットボタンを配置 -->
+                <!-- ランキングパネル内にリセットボタンを配置 -->
                 <div style="margin-top: 30px; border-top: 1px dashed rgba(255, 107, 107, 0.3); padding-top: 20px; text-align: left;">
                     <div style="font-size: 0.8rem; color: #ff6b6b; margin-bottom: 8px; font-weight: bold;">⚠️ 危険なエリア</div>
                     <p style="font-size: 0.75rem; color: var(--sub-text); margin-top: 0; margin-bottom: 10px;">セーブデータを完全に消去して初期状態に戻します（元に戻せません）。</p>
@@ -781,10 +781,17 @@
             closePanel();
         }
 
+        // リセット中フラグ
+        let isResetting = false;
+
         function resetGameData() {
             if (confirm("本当にセーブデータを完全リセットしますか？この操作は取り消せません。")) {
+                isResetting = true; // 自動セーブブロック
                 localStorage.removeItem('aether_nexus_save');
-                location.reload();
+                alert("セーブデータをリセットしました。画面を再読み込みします。");
+                setTimeout(() => {
+                    location.reload();
+                }, 100);
             }
         }
 
@@ -865,6 +872,7 @@
         }
 
         function saveGame() {
+            if (isResetting) return; // リセット中ならセーブしない
             localStorage.setItem('aether_nexus_save', JSON.stringify(game));
         }
 
@@ -977,6 +985,8 @@
 
         let lastSync = 0;
         setInterval(() => {
+            if (isResetting) return; // リセット中なら定期処理停止
+
             const cps = calculateCPS();
             if (cps > 0) {
                 let add = cps;
