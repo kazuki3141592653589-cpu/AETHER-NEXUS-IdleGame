@@ -375,7 +375,7 @@
 
         <div id="panel-generators" class="sub-panel">
             <div class="panel-header">
-                <span>次元発電機（長押しで連続購入）</span>
+                <span>次元発電機</span>
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
             </div>
             <div class="panel-content" id="generator-list"></div>
@@ -383,7 +383,7 @@
 
         <div id="panel-upgrades" class="sub-panel">
             <div class="panel-header">
-                <span>タップ性能強化（長押しで連続購入）</span>
+                <span>タップ性能強化</span>
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
             </div>
             <div class="panel-content" id="upgrade-list"></div>
@@ -582,11 +582,12 @@
             prestigeMultiplier: 1,
             playerName: "名無しのパイロット",
             generators: [
-                { id: 1, name: "クォーク・タッパー", cost: 15, baseCost: 15, cps: 0.5, count: 0, mult: 1.15 },
-                { id: 2, name: "プラズマ・ジェネレーター", cost: 100, baseCost: 100, cps: 4, count: 0, mult: 1.15 },
-                { id: 3, name: "タキオン・コア", cost: 1100, baseCost: 1100, cps: 32, count: 0, mult: 1.15 },
-                { id: 4, name: "ダークマター・ハーベスター", cost: 12000, baseCost: 12000, cps: 260, count: 0, mult: 1.15 },
-                { id: 5, name: " singularity (特異点炉)", cost: 130000, baseCost: 130000, cps: 1400, count: 0, mult: 1.15 }
+                { id: 1, name: "小型発電セル", cost: 15, baseCost: 15, cps: 0.5, count: 0, mult: 1.15 },
+                { id: 2, name: "ミニタービン", cost: 100, baseCost: 100, cps: 4, count: 0, mult: 1.15 },
+                { id: 3, name: "ソーラーユニット", cost: 1100, baseCost: 1100, cps: 32, count: 0, mult: 1.15 },
+                { id: 4, name: "熱交換器", cost: 12000, baseCost: 12000, cps: 260, count: 0, mult: 1.15 },
+                { id: 5, name: "電磁コイル", cost: 130000, baseCost: 130000, cps: 1400, count: 0, mult: 1.15 },
+                { id: 6, name: "水流ジェネレーター", cost: 1400000, baseCost: 1400000, cps: 7800, count: 0, mult: 1.15 }
             ],
             upgrades: [
                 { id: 1, name: "サイバネティック・フィンガー", desc: "タップ時のエネルギー生産量が +1 増加", cost: 50, count: 0, mult: 2.0, type: "tap", value: 1 },
@@ -659,15 +660,16 @@
             el.style.fontSize = '1.2rem';
             el.style.pointerEvents = 'none';
             el.style.textShadow = '0 0 10px rgba(0,211,255,0.8)';
-            el.style.transition = 'all 0.6s ease-out';
+            el.style.transition = 'all 0.5s ease-out';
             el.style.zIndex = '9999';
+            el.style.whiteSpace = 'nowrap';
             document.body.appendChild(el);
 
             setTimeout(() => {
                 el.style.transform = 'translateY(-50px)';
                 el.style.opacity = '0';
             }, 20);
-            setTimeout(() => el.remove(), 600);
+            setTimeout(() => el.remove(), 500);
         }
 
         function buyGenerator(index) {
@@ -702,6 +704,7 @@
                 if (gen.id === 3) baseCpsPerUnit = 32;
                 if (gen.id === 4) baseCpsPerUnit = 260;
                 if (gen.id === 5) baseCpsPerUnit = 1400;
+                if (gen.id === 6) baseCpsPerUnit = 7800;
                 cps += baseCpsPerUnit * gen.count;
             });
             let multBonus = 1;
@@ -775,7 +778,8 @@
 
             let genHtml = "";
             game.generators.forEach((gen, index) => {
-                let currentCps = (gen.id === 1 ? 0.5 : gen.id === 2 ? 4 : gen.id === 3 ? 32 : gen.id === 4 ? 260 : 1400) * gen.count;
+                let basePerUnit = (gen.id === 1 ? 0.5 : gen.id === 2 ? 4 : gen.id === 3 ? 32 : gen.id === 4 ? 260 : gen.id === 5 ? 1400 : 7800);
+                let currentCps = basePerUnit * gen.count;
                 genHtml += `
                     <div class="item-card">
                         <div class="item-info">
