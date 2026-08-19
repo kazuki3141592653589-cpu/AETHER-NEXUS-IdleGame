@@ -208,6 +208,7 @@
             flex: 1;
             overflow-y: auto;
             padding: 15px;
+            padding-bottom: 90px; /* ナビゲーションバーに隠れないよう多めに余白を設定 */
         }
 
         .item-card {
@@ -817,12 +818,12 @@
             let genHtml = "";
             game.generators.forEach((gen, index) => {
                 const baseCps = generatorData[index].cps;
-                let currentCps = baseCps * gen.count;
+                let itemCps = baseCps * gen.count;
                 genHtml += `
                     <div class="item-card">
                         <div class="item-info">
                             <h4>${index + 1}. ${gen.name} (所持: ${gen.count})</h4>
-                            <p>生産: +${formatNumber(currentCps)} Λ/s</p>
+                            <p>生産: +${formatNumber(itemCps)} Λ/s</p>
                             <p>費用: ${formatNumber(gen.cost)} Λ</p>
                         </div>
                         <button class="buy-btn" ${game.energy < gen.cost ? 'disabled' : ''} onclick="buyGenerator(${index})">購入</button>
