@@ -743,8 +743,9 @@
 
         function calculateCPS() {
             let cps = 0;
-            game.generators.forEach((gen) => {
-                cps += gen.cps * gen.count;
+            game.generators.forEach((gen, index) => {
+                const baseCps = generatorData[index].cps;
+                cps += baseCps * gen.count;
             });
             let multBonus = 1;
             game.upgrades.forEach(up => {
@@ -815,7 +816,8 @@
 
             let genHtml = "";
             game.generators.forEach((gen, index) => {
-                let currentCps = gen.cps * gen.count;
+                const baseCps = generatorData[index].cps;
+                let currentCps = baseCps * gen.count;
                 genHtml += `
                     <div class="item-card">
                         <div class="item-info">
@@ -856,18 +858,40 @@
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
-                    game = Object.assign({}, game, parsed);
-                    // 読み込み時にコストや基本データが崩れている場合の修復
-                    if (game.generators) {
-                        game.generators.forEach((gen, idx) => {
-                            if (!gen.baseCost) gen.baseCost = generatorData[idx].baseCost;
-                            if (!gen.mult) gen.mult = 1.15;
-                            if (!gen.cost || isNaN(gen.cost) || gen.cost <= 0) {
-                                gen.cost = Math.floor(gen.baseCost * Math.pow(gen.mult, gen.count || 0));
+                    game.energy = parsed.energy || 0;
+                    game.totalEarned = parsed.totalEarned || 0;
+                    game.totalTaps = parsed.totalTaps || 0;
+                    game.tapPower = parsed.tapPower || 1;
+                    game.prestigeMultiplier = parsed.prestigeMultiplier || 1;
+                    if (parsed.playerName) game.playerName = parsed.playerName;
+
+                    if (parsed.generators) {
+                        parsed.generators.forEach((savedGen, idx) => {
+                            if (game.generators[idx]) {
+                                game.generators[idx].count = savedGen.count || 0;
                             }
                         });
                     }
-                } catch (e) {}
+
+                    if (parsed.upgrades) {
+                        parsed.upgrades.forEach((savedUp, idx) => {
+                            if (game.upgrades[idx]) {
+                                game.upgrades[idx].count = savedUp.count || 0;
+                                game.upgrades[idx].cost = savedUp.cost || game.upgrades[idx].cost;
+                            }
+                        });
+                    }
+
+                    game.generators.forEach((gen, idx) => {
+                        gen.baseCost = generatorData[idx].baseCost;
+                        gen.cps = generatorData[idx].cps;
+                        gen.mult = 1.15;
+                        gen.cost = Math.floor(gen.baseCost * Math.pow(gen.mult, gen.count));
+                    });
+
+                } catch (e) {
+                    console.error("セーブデータの読み込みエラー", e);
+                }
             } else {
                 document.getElementById('name-modal').classList.add('active');
             }
