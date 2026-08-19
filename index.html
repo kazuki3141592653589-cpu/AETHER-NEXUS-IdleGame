@@ -370,12 +370,12 @@
             <button class="menu-btn" onclick="openPanel('panel-generators')">発電機</button>
             <button class="menu-btn" onclick="openPanel('panel-upgrades')">強化</button>
             <button class="menu-btn" onclick="openPanel('panel-prestige')">転生</button>
-            <button class="menu-btn" onclick="openPanel('panel-ranking')">🏆 称号・実績</button>
+            <button class="menu-btn" onclick="openPanel('panel-ranking')">🏆 ランキング</button>
         </div>
 
         <div id="panel-generators" class="sub-panel">
             <div class="panel-header">
-                <span>次元発電機</span>
+                <span>次元発電機 (全50種)</span>
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
             </div>
             <div class="panel-content" id="generator-list"></div>
@@ -412,18 +412,16 @@
 
         <div id="panel-ranking" class="sub-panel">
             <div class="panel-header">
-                <span>🏆 称号・実績・ランキング</span>
+                <span>🏆 オンラインランキング</span>
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
             </div>
             <div class="panel-content" style="padding: 15px; text-align: center;">
-                <p style="color: var(--sub-text); font-size: 0.85rem; margin-top: 0;">プレイヤー名と、オンラインサーバー上の文明ランキング</p>
+                <p style="color: var(--sub-text); font-size: 0.85rem; margin-top: 0;">現在所持しているエネルギー量によるグローバルランキング</p>
                 
                 <div style="text-align: left; background: rgba(0,243,255,0.05); border: 1px solid rgba(0,243,255,0.3); border-radius: 6px; padding: 10px; margin-bottom: 15px;">
-                    <div style="font-size: 0.8rem; color: var(--sub-text); margin-bottom: 4px;">プレイヤー名変更</div>
-                    <div class="name-input-group">
-                        <input type="text" id="player-name-input" class="name-input" maxlength="15" placeholder="名前を入力">
-                        <button class="buy-btn" onclick="updatePlayerName()" style="padding: 6px 12px; font-size: 0.85rem; width: 100%;">名前を決定・更新</button>
-                    </div>
+                    <div style="font-size: 0.8rem; color: var(--sub-text); margin-bottom: 4px;">パイロット名変更</div>
+                    <input type="text" id="player-name-input" class="name-input" maxlength="15" placeholder="名前を入力">
+                    <button class="buy-btn" onclick="updatePlayerName()" style="padding: 6px 12px; font-size: 0.85rem; width: 100%;">名前を更新して同期</button>
                 </div>
 
                 <div id="player-rank-display" style="background: rgba(0,243,255,0.1); border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; margin-bottom: 15px; text-align: left;">
@@ -432,18 +430,13 @@
                     <div id="rank-desc" style="font-size: 0.8rem; color: var(--sub-text);">一歩を踏み出したばかりの文明です。さらなるエネルギーを求めて進みましょう。</div>
                 </div>
 
-                <div style="text-align: left; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; margin-bottom: 15px;">
-                    <div>累計獲得エネルギー: <span id="stat-total" style="color: #fff; font-weight: bold;">0 Λ</span></div>
-                    <div>総タップ回数: <span id="stat-taps" style="color: #fff; font-weight: bold;">0 回</span></div>
-                </div>
-
-                <div style="text-align: left; font-size: 0.82rem; margin-bottom: 6px;">🔥 オンラインランキング (上位10名)</div>
+                <div style="text-align: left; font-size: 0.82rem; margin-bottom: 6px;">🔥 リアルタイム・グローバルランキング (上位10名)</div>
                 <table class="ranking-table">
                     <thead>
                         <tr>
                             <th>順位</th>
-                            <th>名前</th>
-                            <th>現在のエネルギー</th>
+                            <th>パイロット名</th>
+                            <th>エネルギー量</th>
                         </tr>
                     </thead>
                     <tbody id="ranking-tbody">
@@ -460,8 +453,8 @@
                     <button class="close-btn" onclick="closeModal('privacy-modal')">×</button>
                 </div>
                 <div class="modal-body">
-                    <p><strong>1. 個人情報の収集について</strong>当ゲーム「AETHER NEXUS」では、ユーザーの皆様からお預かりする情報として、オンラインランキング用のプレイヤー名およびスコアデータを取得します。</p>
-                    <p><strong>2. ローカルストレージの使用</strong>ゲームの進行状況やセーブデータは、お使いのブラウザのローカルストレージに保存されます。</p>
+                    <p><strong>1. 個人情報の収集について</strong>当ゲーム「AETHER NEXUS」では、オンラインランキング用のプレイヤー名およびスコアデータを取得します。</p>
+                    <p><strong>2. ローカルストレージの使用</strong>ゲームの進行状況やセーブデータはブラウザに保存されます。</p>
                 </div>
             </div>
         </div>
@@ -474,7 +467,7 @@
                 </div>
                 <div class="modal-body">
                     <p>「AETHER NEXUS」をお楽しみいただきありがとうございます。</p>
-                    <p><strong>連絡先メールアドレス：</strong><br><span style="color: var(--accent-color);">support@example.com</span></p>
+                    <p><strong>連絡先：</strong><br><span style="color: var(--accent-color);">support@example.com</span></p>
                 </div>
             </div>
         </div>
@@ -497,7 +490,7 @@
         <button class="nav-tab active" onclick="switchTab('generators')">発電機</button>
         <button class="nav-tab" onclick="switchTab('upgrades')">強化</button>
         <button class="nav-tab" onclick="switchTab('prestige')">転生</button>
-        <button class="nav-tab" onclick="switchTab('ranking')">称号・実績</button>
+        <button class="nav-tab" onclick="switchTab('ranking')">ランキング</button>
     </nav>
 
     <script type="module">
@@ -532,7 +525,7 @@
                 });
                 loadOnlineRanking();
             } catch (e) {
-                console.error("同期失敗エラー:", e);
+                console.error("同期失敗:", e);
             }
         };
 
@@ -574,6 +567,59 @@
     </script>
 
     <script>
+        const generatorData = [
+            { name: "小型発電セル", baseCost: 15, baseCps: 0.5 },
+            { name: "ミニタービン", baseCost: 100, baseCps: 4 },
+            { name: "ソーラーユニット", baseCost: 1100, baseCps: 32 },
+            { name: "熱交換器", baseCost: 12000, baseCps: 260 },
+            { name: "電磁コイル", baseCost: 130000, baseCps: 1400 },
+            { name: "水流ジェネレーター", baseCost: 1400000, baseCps: 7800 },
+            { name: "風力ユニット", baseCost: 20000000, baseCps: 44000 },
+            { name: "蓄電コンバーター", baseCost: 330000000, baseCps: 260000 },
+            { name: "高効率発電機", baseCost: 5100000000, baseCps: 1600000 },
+            { name: "エネルギー炉", baseCost: 75000000000, baseCps: 10000000 },
+            { name: "プラズマ炉", baseCost: 1000000000000, baseCps: 65000000 },
+            { name: "核融合セル", baseCost: 14000000000000, baseCps: 430000000 },
+            { name: "重力発電機", baseCost: 170000000000000, baseCps: 2900000000 },
+            { name: "量子コンバーター", baseCost: 2100000000000000, baseCps: 20000000000 },
+            { name: "ダークエネルギー炉", baseCost: 26000000000000000, baseCps: 140000000000 },
+            { name: "時空タービン", baseCost: 310000000000000000, baseCps: 1000000000000 },
+            { name: "空間圧縮機", baseCost: 4100000000000000000, baseCps: 7500000000000 },
+            { name: "真空発電機", baseCost: 55000000000000000000, baseCps: 55000000000000 },
+            { name: "フォトン炉", baseCost: 750000000000000000000, baseCps: 410000000000000 },
+            { name: "超伝導ジェネレーター", baseCost: 10000000000000000000000, baseCps: 3100000000000000 },
+            { name: "量子炉", baseCost: 140000000000000000000000, baseCps: 23000000000000000 },
+            { name: "重力井戸", baseCost: 2000000000000000000000000, baseCps: 170000000000000000 },
+            { name: "ワームホール発電機", baseCost: 30000000000000000000000000, baseCps: 1300000000000000000 },
+            { name: "次元変換器", baseCost: 450000000000000000000000000, baseCps: 10000000000000000000 },
+            { name: "星核リアクター", baseCost: 7000000000000000000000000000, baseCps: 78000000000000000000 },
+            { name: "恒星収集装置", baseCost: 100000000000000000000000000000, baseCps: 600000000000000000000 },
+            { name: "ブラックホール炉", baseCost: 1500000000000000000000000000000, baseCps: 4700000000000000000000 },
+            { name: "ダークマター炉", baseCost: 25000000000000000000000000000000, baseCps: 38000000000000000000000 },
+            { name: "時間抽出器", baseCost: 400000000000000000000000000000000, baseCps: 300000000000000000000000 },
+            { name: "宇宙エネルギー変換器", baseCost: 6500000000000000000000000000000000, baseCps: 2400000000000000000000000 },
+            { name: "人工恒星", baseCost: 100000000000000000000000000000000000, baseCps: 19000000000000000000000000 },
+            { name: "次元炉", baseCost: 1600000000000000000000000000000000000, baseCps: 150000000000000000000000000 },
+            { name: "宇宙核融合炉", baseCost: 25000000000000000000000000000000000000, baseCps: 1200000000000000000000000000 },
+            { name: "超空間発電機", baseCost: 400000000000000000000000000000000000000, baseCps: 9500000000000000000000000000 },
+            { name: "銀河エネルギー収集器", baseCost: 6500000000000000000000000000000000000000, baseCps: 76000000000000000000000000000 },
+            { name: "時間軸リアクター", baseCost: 100000000000000000000000000000000000000000, baseCps: 600000000000000000000000000000 },
+            { name: "多次元コア", baseCost: 1600000000000000000000000000000000000000000, baseCps: 4800000000000000000000000000000 },
+            { name: "虚数エネルギー炉", baseCost: 25000000000000000000000000000000000000000000, baseCps: 38000000000000000000000000000000 },
+            { name: "宇宙網コンバーター", baseCost: 400000000000000000000000000000000000000000000, baseCps: 300000000000000000000000000000000 },
+            { name: "超新星エンジン", baseCost: 6500000000000000000000000000000000000000000000, baseCps: 2400000000000000000000000000000000 },
+            { name: "星系制御炉", baseCost: 100000000000000000000000000000000000000000000000, baseCps: 19000000000000000000000000000000000 },
+            { name: "銀河炉心", baseCost: 1600000000000000000000000000000000000000000000000, baseCps: 150000000000000000000000000000000000 },
+            { name: "次元統合機", baseCost: 25000000000000000000000000000000000000000000000000, baseCps: 1200000000000000000000000000000000000 },
+            { name: "時間永久機関", baseCost: 400000000000000000000000000000000000000000000000000, baseCps: 9500000000000000000000000000000000000 },
+            { name: "宇宙構造体", baseCost: 7000000000000000000000000000000000000000000000000000, baseCps: 76000000000000000000000000000000000000 },
+            { name: "無限エネルギー機関", baseCost: 12000000000000000000000000000000000000000000000000000, baseCps: 600000000000000000000000000000000000000 },
+            { name: "多宇宙ジェネレーター", baseCost: 200000000000000000000000000000000000000000000000000000, baseCps: 4800000000000000000000000000000000000000 },
+            { name: "宇宙創生装置", baseCost: 3500000000000000000000000000000000000000000000000000000, baseCps: 38000000000000000000000000000000000000000 },
+            { name: "Ωリアクター", baseCost: 60000000000000000000000000000000000000000000000000000000, baseCps: 300000000000000000000000000000000000000000 },
+            { name: "CORE ASCENSION", baseCost: 1000000000000000000000000000000000000000000000000000000000, baseCps: 2500000000000000000000000000000000000000000 }
+        ];
+
         let game = {
             energy: 0,
             totalEarned: 0,
@@ -581,14 +627,14 @@
             tapPower: 1,
             prestigeMultiplier: 1,
             playerName: "名無しのパイロット",
-            generators: [
-                { id: 1, name: "小型発電セル", cost: 15, baseCost: 15, cps: 0.5, count: 0, mult: 1.15 },
-                { id: 2, name: "ミニタービン", cost: 100, baseCost: 100, cps: 4, count: 0, mult: 1.15 },
-                { id: 3, name: "ソーラーユニット", cost: 1100, baseCost: 1100, cps: 32, count: 0, mult: 1.15 },
-                { id: 4, name: "熱交換器", cost: 12000, baseCost: 12000, cps: 260, count: 0, mult: 1.15 },
-                { id: 5, name: "電磁コイル", cost: 130000, baseCost: 130000, cps: 1400, count: 0, mult: 1.15 },
-                { id: 6, name: "水流ジェネレーター", cost: 1400000, baseCost: 1400000, cps: 7800, count: 0, mult: 1.15 }
-            ],
+            generators: generatorData.map(g => ({
+                name: g.name,
+                cost: g.baseCost,
+                baseCost: g.baseCost,
+                cps: g.baseCps,
+                count: 0,
+                mult: 1.15
+            })),
             upgrades: [
                 { id: 1, name: "サイバネティック・フィンガー", desc: "タップ時のエネルギー生産量が +1 増加", cost: 50, count: 0, mult: 2.0, type: "tap", value: 1 },
                 { id: 2, name: "ナノマシン・ブースト", desc: "タップ時のエネルギー生産量が +5 増加", cost: 500, count: 0, mult: 2.2, type: "tap", value: 5 },
@@ -600,7 +646,7 @@
             if (num === null || num === undefined || isNaN(num)) return "0";
             if (num < 1000) return num.toFixed(0);
 
-            const units = ["K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
+            const units = ["K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc", "UDc", "DDc"];
             const i = Math.floor(Math.log10(num) / 3) - 1;
             
             if (i >= 0 && i < units.length) {
@@ -697,15 +743,8 @@
 
         function calculateCPS() {
             let cps = 0;
-            game.generators.forEach(gen => {
-                let baseCpsPerUnit = 0;
-                if (gen.id === 1) baseCpsPerUnit = 0.5;
-                if (gen.id === 2) baseCpsPerUnit = 4;
-                if (gen.id === 3) baseCpsPerUnit = 32;
-                if (gen.id === 4) baseCpsPerUnit = 260;
-                if (gen.id === 5) baseCpsPerUnit = 1400;
-                if (gen.id === 6) baseCpsPerUnit = 7800;
-                cps += baseCpsPerUnit * gen.count;
+            game.generators.forEach((gen) => {
+                cps += gen.cps * gen.count;
             });
             let multBonus = 1;
             game.upgrades.forEach(up => {
@@ -734,8 +773,6 @@
         }
 
         function updateRankAndStats() {
-            document.getElementById('stat-total').textContent = formatNumber(game.totalEarned) + " Λ";
-            document.getElementById('stat-taps').textContent = game.totalTaps + " 回";
             document.getElementById('display-name').textContent = game.playerName;
 
             let title = "次元を開拓し始めたばかりの文明";
@@ -778,12 +815,11 @@
 
             let genHtml = "";
             game.generators.forEach((gen, index) => {
-                let basePerUnit = (gen.id === 1 ? 0.5 : gen.id === 2 ? 4 : gen.id === 3 ? 32 : gen.id === 4 ? 260 : gen.id === 5 ? 1400 : 7800);
-                let currentCps = basePerUnit * gen.count;
+                let currentCps = gen.cps * gen.count;
                 genHtml += `
                     <div class="item-card">
                         <div class="item-info">
-                            <h4>${gen.name} (所持: ${gen.count})</h4>
+                            <h4>${index + 1}. ${gen.name} (所持: ${gen.count})</h4>
                             <p>生産: +${formatNumber(currentCps)} Λ/s</p>
                             <p>費用: ${formatNumber(gen.cost)} Λ</p>
                         </div>
@@ -825,6 +861,7 @@
             } else {
                 document.getElementById('name-modal').classList.add('active');
             }
+            document.getElementById('player-name-input').value = game.playerName;
         }
 
         function saveInitialName() {
@@ -843,7 +880,7 @@
                 game.playerName = input;
                 saveGame();
                 if (window.syncScoreToFirebase) window.syncScoreToFirebase();
-                alert("プレイヤー名を変更しました！");
+                alert("パイロット名を更新し、ランキングに同期しました！");
             }
         }
 
@@ -871,6 +908,7 @@
             } else if (tabName === 'ranking') {
                 document.querySelectorAll('.nav-tab')[3].classList.add('active');
                 openPanel('panel-ranking');
+                if (window.loadOnlineRanking) window.loadOnlineRanking();
             }
         }
 
