@@ -479,6 +479,23 @@
             </div>
         </div>
 
+        <!-- カスタムリセット確認モーダル -->
+        <div id="resetConfirmModal" class="modal-overlay">
+            <div class="modal-box" style="max-width: 350px;">
+                <div class="panel-header">
+                    <span>リセット確認</span>
+                    <button class="close-btn" onclick="closeModal('resetConfirmModal')">×</button>
+                </div>
+                <div class="modal-body" style="text-align: center;">
+                    <p>本当にセーブデータを完全リセットしますか？<br>この操作は取り消せません。</p>
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button class="buy-btn" style="flex: 1; background: #2a3b50;" onclick="closeModal('resetConfirmModal')">キャンセル</button>
+                        <button class="buy-btn" style="flex: 1; background: #ff4d4d;" onclick="executeHardReset()">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="name-modal" class="modal-overlay">
             <div class="modal-box">
                 <div class="panel-header">
@@ -750,10 +767,12 @@
 
         function calculateCPS() {
             let cps = 0;
-            game.generators.forEach((gen, index) => {
-                const baseCps = generatorData[index] ? generatorData[index].cps : (gen.cps || 0);
-                cps += baseCps * gen.count;
-            });
+            for (let i = 0; i < game.generators.length; i++) {
+                const gen = game.generators[i];
+                const baseCps = generatorData[i] ? generatorData[i].baseCps : 0;
+                const count = gen.count || 0;
+                cps += baseCps * count;
+            }
 
             let multBonus = 1;
             game.upgrades.forEach(up => {
@@ -783,15 +802,19 @@
 
         let isResetting = false;
 
+        // カスタムリセット確認画面を表示する関数
         function resetGameData() {
-            if (confirm("本当にセーブデータを完全リセットしますか？この操作は取り消せません。")) {
-                isResetting = true;
-                localStorage.removeItem('aether_nexus_save');
-                alert("セーブデータをリセットしました。画面を再読み込みします。");
-                setTimeout(() => {
-                    location.reload();
-                }, 100);
-            }
+            document.getElementById('resetConfirmModal').classList.add('active');
+        }
+
+        // OKが押されたときに実際にデータを消去してリロードする関数
+        function executeHardReset() {
+            isResetting = true;
+            localStorage.removeItem('aether_nexus_save');
+            alert("セーブデータをリセットしました。画面を再読み込みします。");
+            setTimeout(() => {
+                location.reload();
+            }, 100);
         }
 
         function updateRankAndStats() {
@@ -837,7 +860,7 @@
 
             let genHtml = "";
             game.generators.forEach((gen, index) => {
-                const baseCps = generatorData[index] ? generatorData[index].cps : (gen.cps || 0);
+                const baseCps = generatorData[index] ? generatorData[index].baseCps : 0;
                 let itemCps = baseCps * gen.count;
                 genHtml += `
                     <div class="item-card">
@@ -906,7 +929,7 @@
 
                     game.generators.forEach((gen, idx) => {
                         gen.baseCost = generatorData[idx].baseCost;
-                        gen.cps = generatorData[idx].cps;
+                        gen.cps = generatorData[idx].baseCps;
                         gen.mult = 1.15;
                         gen.cost = Math.floor(gen.baseCost * Math.pow(gen.mult, gen.count));
                     });
