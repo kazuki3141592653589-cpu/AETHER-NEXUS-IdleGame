@@ -219,7 +219,7 @@
             flex: 1;
             overflow-y: auto;
             padding: 15px;
-            padding-bottom: 140px; /* リスト下部が隠れないように調整済み */
+            padding-bottom: 140px;
             -webkit-overflow-scrolling: touch;
         }
 
@@ -358,12 +358,6 @@
             pointer-events: auto !important;
         }
 
-        .name-input:focus {
-            border-color: var(--accent-color);
-            outline: none;
-            box-shadow: none !important;
-        }
-
         .ranking-table {
             width: 100%;
             border-collapse: collapse;
@@ -382,18 +376,9 @@
         }
 
         @keyframes floatUpNumber {
-            0% {
-                opacity: 1;
-                transform: scale(1.4) translateY(0) rotate(0deg);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.1) translateY(-35px) rotate(calc(var(--rand-rot) * 1deg));
-            }
-            100% {
-                opacity: 0;
-                transform: scale(0.8) translateY(-75px) rotate(calc(var(--rand-rot) * 1.5deg));
-            }
+            0% { opacity: 1; transform: scale(1.4) translateY(0) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1.1) translateY(-35px) rotate(calc(var(--rand-rot) * 1deg)); }
+            100% { opacity: 0; transform: scale(0.8) translateY(-75px) rotate(calc(var(--rand-rot) * 1.5deg)); }
         }
 
         .floating-number {
@@ -523,8 +508,7 @@
                     <button class="close-btn" onclick="closeModal('privacy-modal')">×</button>
                 </div>
                 <div class="modal-body">
-                    <p><strong>1. 個人情報の収集について</strong>当ゲーム「AETHER NEXUS」では、オンラインランキング用のパイレット名およびスコアデータを取得します。</p>
-                    <p><strong>2. ローカルストレージの使用</strong>ゲームの進行状況やセーブデータはブラウザに保存されます。</p>
+                    <p>当ゲームではオンラインランキング用のパイレット名およびスコアデータを取得します。</p>
                 </div>
             </div>
         </div>
@@ -536,8 +520,7 @@
                     <button class="close-btn" onclick="closeModal('contact-modal')">×</button>
                 </div>
                 <div class="modal-body">
-                    <p>「AETHER NEXUS」をお楽しみいただきありがとうございます。</p>
-                    <p><strong>連絡先：</strong><br><span style="color: var(--accent-color);">support@example.com</span></p>
+                    <p>連絡先：<span style="color: var(--accent-color);">support@example.com</span></p>
                 </div>
             </div>
         </div>
@@ -562,7 +545,7 @@
                     <button class="close-btn" onclick="closeModal('resetConfirmModal')">×</button>
                 </div>
                 <div class="modal-body" style="text-align: center;">
-                    <p>本当にセーブデータを完全リセットしますか？<br>この操作は取り消せません。</p>
+                    <p>本当にセーブデータを完全リセットしますか？</p>
                     <div style="display: flex; gap: 10px; margin-top: 20px;">
                         <button class="buy-btn" style="flex: 1; background: #2a3b50;" onclick="closeModal('resetConfirmModal')">キャンセル</button>
                         <button class="danger-btn" style="flex: 1;" onclick="executeHardReset()">OK</button>
@@ -592,18 +575,19 @@
         <button class="nav-tab" onclick="switchTab('ranking')">ランキング</button>
     </nav>
 
+    <!-- 新しいFirebase設定 (huba-de977) を反映 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
         import { getFirestore, collection, doc, setDoc, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "AiZaSyAEXvNo8Xa_Jc8Dsk-AdPOX1uhtbQmTNW",
-            authDomain: "only-27b78.firebaseapp.com",
-            projectId: "only-27b78",
-            storageBucket: "only-27b78.appspot.com",
-            messagingSenderId: "931912886094",
-            appId: "1:931912886094:web:df29525a6ac2684765601f",
-            measurementId: "G-JWRGC9ZERS"
+            apiKey: "AIzaSyBRG6MLB_7RE8rc6MNONjwoE6gHf3i4DO8",
+            authDomain: "huba-de977.firebaseapp.com",
+            projectId: "huba-de977",
+            storageBucket: "huba-de977.firebasestorage.app",
+            messagingSenderId: "864145675207",
+            appId: "1:864145675207:web:bf71dbe2b15fedd825bfe2",
+            measurementId: "G-MG9NYHM9X6"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -747,13 +731,11 @@
             window.customAlertCallback = callback;
         }
 
-        // 通常の数値（完全な数値・カンマ区切り）
         function formatNumber(num) {
             if (num === null || num === undefined || isNaN(num)) return "0";
             return Math.floor(num).toLocaleString('en-US');
         }
 
-        // 999,999,999 までビタ止めし、1,000,000,000 (10億) から単位を付けるフォーマット関数
         function formatRankingNumber(num) {
             if (num === null || num === undefined || isNaN(num)) return "0";
             if (num <= 999999999) return Math.floor(num).toLocaleString('en-US');
@@ -1155,7 +1137,6 @@
             requestAnimationFrame(gameLoop);
         }
 
-        // 5秒おきに自動セーブ＆スコアをクラウドへリアルタイム同期
         let lastSync = 0;
         setInterval(() => {
             if (isResetting) return;
