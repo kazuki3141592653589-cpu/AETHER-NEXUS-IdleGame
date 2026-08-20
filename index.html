@@ -420,13 +420,13 @@
                 <p style="color: var(--sub-text); font-size: 0.85rem; margin-top: 0;">現在所持しているエネルギー量によるグローバルランキング</p>
                 
                 <div style="text-align: left; background: rgba(0,243,255,0.05); border: 1px solid rgba(0,243,255,0.3); border-radius: 6px; padding: 10px; margin-bottom: 15px;">
-                    <div style="font-size: 0.8rem; color: var(--sub-text); margin-bottom: 4px;">パイロット名変更</div>
+                    <div style="font-size: 0.8rem; color: var(--sub-text); margin-bottom: 4px;">パイレット名変更</div>
                     <input type="text" id="player-name-input" class="name-input" maxlength="15" placeholder="名前を入力">
                     <button class="buy-btn" onclick="updatePlayerName()" style="padding: 6px 12px; font-size: 0.85rem; width: 100%;">名前を更新して同期</button>
                 </div>
 
                 <div id="player-rank-display" style="background: rgba(0,243,255,0.1); border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; margin-bottom: 15px; text-align: left;">
-                    <div style="font-size: 0.75rem; color: var(--sub-text);">現在の称号 (<span id="display-name" style="color: #fff; font-weight: bold;">名無しのパイロット</span>)</div>
+                    <div style="font-size: 0.75rem; color: var(--sub-text);">現在の称号 (<span id="display-name" style="color: #fff; font-weight: bold;">名無しのパイレット</span>)</div>
                     <div id="rank-title" style="font-size: 1.1rem; font-weight: bold; color: #fff; margin: 4px 0;">次元を開拓し始めたばかりの文明</div>
                     <div id="rank-desc" style="font-size: 0.8rem; color: var(--sub-text);">一歩を踏み出したばかりの文明です。さらなるエネルギーを求めて進みましょう。</div>
                 </div>
@@ -436,7 +436,7 @@
                     <thead>
                         <tr>
                             <th>順位</th>
-                            <th>パイロット名</th>
+                            <th>パイレット名</th>
                             <th>エネルギー量</th>
                         </tr>
                     </thead>
@@ -460,7 +460,7 @@
                     <button class="close-btn" onclick="closeModal('privacy-modal')">×</button>
                 </div>
                 <div class="modal-body">
-                    <p><strong>1. 個人情報の収集について</strong>当ゲーム「AETHER NEXUS」では、オンラインランキング用のプレイヤー名およびスコアデータを取得します。</p>
+                    <p><strong>1. 個人情報の収集について</strong>当ゲーム「AETHER NEXUS」では、オンラインランキング用のパイレット名およびスコアデータを取得します。</p>
                     <p><strong>2. ローカルストレージの使用</strong>ゲームの進行状況やセーブデータはブラウザに保存されます。</p>
                 </div>
             </div>
@@ -479,6 +479,7 @@
             </div>
         </div>
 
+        <!-- 汎用お知らせモーダル（通知用） -->
         <div id="custom-alert-modal" class="modal-overlay">
             <div class="modal-box" style="max-width: 350px;">
                 <div class="panel-header">
@@ -492,6 +493,7 @@
             </div>
         </div>
 
+        <!-- カスタムリセット確認モーダル -->
         <div id="resetConfirmModal" class="modal-overlay">
             <div class="modal-box" style="max-width: 350px;">
                 <div class="panel-header">
@@ -511,7 +513,7 @@
         <div id="name-modal" class="modal-overlay">
             <div class="modal-box">
                 <div class="panel-header">
-                    <span>パイロット登録</span>
+                    <span>パイレット登録</span>
                 </div>
                 <div class="modal-body" style="text-align: center;">
                     <p style="font-size: 0.85rem; color: var(--sub-text); margin-top: 0;"><br>ランキングに登録するあなたの名前を入力してください（15文字以内）</p>
@@ -662,7 +664,7 @@
             totalTaps: 0,
             tapPower: 1,
             prestigeMultiplier: 1,
-            playerName: "カワウソ",
+            playerName: "名無しのパイレット",
             generators: generatorData.map(g => ({
                 name: g.name,
                 cost: g.baseCost,
@@ -835,7 +837,6 @@
         function updateRankAndStats() {
             document.getElementById('display-name').textContent = game.playerName;
             
-            // 入力欄にも現在の名前が確実に入っているように同期
             const inputEl = document.getElementById('player-name-input');
             if (inputEl && document.activeElement !== inputEl) {
                 inputEl.value = game.playerName;
@@ -962,6 +963,8 @@
                     console.error("セーブデータの読み込みエラー", e);
                 }
             } else {
+                // 初回はモーダルを表示するが、入力欄の初期値にも「カワウソ」を入れておく
+                document.getElementById('initial-name-input').value = "カワウソ";
                 document.getElementById('name-modal').classList.add('active');
             }
             document.getElementById('player-name-input').value = game.playerName;
@@ -973,7 +976,10 @@
                 game.playerName = input;
             }
             document.getElementById('name-modal').classList.remove('active');
+            
+            // ランキング用の変更入力欄にも即座に反映させる
             document.getElementById('player-name-input').value = game.playerName;
+            
             saveGame();
             updateRankAndStats();
             if (window.syncScoreToFirebase) window.syncScoreToFirebase();
@@ -986,7 +992,7 @@
                 saveGame();
                 updateRankAndStats();
                 if (window.syncScoreToFirebase) window.syncScoreToFirebase();
-                showCustomAlert("パイロット名を更新し、<br>ランキングに同期しました！");
+                showCustomAlert("パイレット名を更新し、<br>ランキングに同期しました！");
             }
         }
 
@@ -994,7 +1000,6 @@
             document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
             document.getElementById(panelId).classList.add('active');
             
-            // ランキングパネルを開いた時に入力欄の値を最新の状態に同期
             if (panelId === 'panel-ranking') {
                 document.getElementById('player-name-input').value = game.playerName;
             }
