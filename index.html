@@ -219,7 +219,7 @@
             flex: 1;
             overflow-y: auto;
             padding: 15px;
-            padding-bottom: 140px;
+            padding-bottom: 140px; /* リスト下部が隠れないように調整済み */
             -webkit-overflow-scrolling: touch;
         }
 
@@ -753,7 +753,7 @@
             return Math.floor(num).toLocaleString('en-US');
         }
 
-        // 999,999,999 までビタ止めし、1,000,000,000 (10億) から単位（Bなど）を付けるフォーマット関数
+        // 999,999,999 までビタ止めし、1,000,000,000 (10億) から単位を付けるフォーマット関数
         function formatRankingNumber(num) {
             if (num === null || num === undefined || isNaN(num)) return "0";
             if (num <= 999999999) return Math.floor(num).toLocaleString('en-US');
@@ -767,8 +767,8 @@
                 'Qig', 'Uqig', 'Dqig', 'Tqig', 'Qaqig', 'Qiqig'
             ];
 
-            let i = 3; // 'K'(1), 'M'(2) を飛ばし、単位配列の 'B'(3) からスタートさせる
-            let n = num / 1000000000; // 10億 (1,000,000,000) を基準値にする
+            let i = 3; 
+            let n = num / 1000000000; 
 
             while (n >= 1000 && i < units.length - 1) {
                 n /= 1000;
@@ -1010,7 +1010,7 @@
                     const parsed = JSON.parse(saved);
                     game.energy = parsed.energy || 0;
                     game.totalEarned = parsed.totalEarned || 0;
-                    game.totalTaps = parsed.totalTaps || 0;
+                    game.totalTaps = parsed.totalTaps || 1;
                     game.tapPower = parsed.tapPower || 1;
                     game.prestigeMultiplier = parsed.prestigeMultiplier || 1;
                     
@@ -1105,7 +1105,11 @@
             } else if (tabName === 'ranking') {
                 document.querySelectorAll('.nav-tab')[3].classList.add('active');
                 openPanel('panel-ranking');
-                if (window.loadOnlineRanking) window.loadOnlineRanking();
+                if (window.loadOnlineRanking) {
+                    window.syncScoreToFirebase().then(() => {
+                        window.loadOnlineRanking();
+                    });
+                }
             }
         }
 
@@ -1151,17 +1155,18 @@
             requestAnimationFrame(gameLoop);
         }
 
+        // 5秒おきに自動セーブ＆スコアをクラウドへリアルタイム同期
         let lastSync = 0;
         setInterval(() => {
             if (isResetting) return;
             saveGame();
 
             const now = Date.now();
-            if (now - lastSync > 30000 && window.syncScoreToFirebase) {
+            if (now - lastSync > 5000 && window.syncScoreToFirebase) {
                 window.syncScoreToFirebase();
                 lastSync = now;
             }
-        }, 10000);
+        }, 3000);
 
         window.onload = function() {
             lastTime = performance.now();
