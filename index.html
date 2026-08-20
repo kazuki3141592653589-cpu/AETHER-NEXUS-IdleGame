@@ -464,7 +464,7 @@
                 
                 <div style="background: rgba(0, 243, 255, 0.05); border: 1px solid rgba(0, 243, 255, 0.3); border-radius: 6px; padding: 12px; margin: 15px 0; text-align: left;">
                     <div style="font-weight: bold; color: var(--text-color);">📌 転生条件：</div>
-                    <div style="margin-top: 5px;">• 現在のエネルギー: <span id="prestige-progress" style="color: #fff; font-weight:bold;">0</span> / 1M Λ</div>
+                    <div style="margin-top: 5px;">• 現在のエネルギー: <span id="prestige-progress" style="color: #fff; font-weight:bold;">0</span> / 1,000,000 Λ</div>
                 </div>
 
                 <div style="margin: 10px 0; font-size: 1rem;">
@@ -640,7 +640,8 @@
                 querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
                     const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${rank}位</td><td>${escapeHtml(data.name)}</td><td>${formatNumber(data.score)} Λ</td>`;
+                    // ランキング部分のみK, Mなどの単位付き表示にするフォーマット適用
+                    tr.innerHTML = `<td>${rank}位</td><td>${escapeHtml(data.name)}</td><td>${formatRankingNumber(data.score)} Λ</td>`;
                     tbody.appendChild(tr);
                     rank++;
                 });
@@ -666,7 +667,6 @@
     </script>
 
     <script>
-        // 発電機の値段をさらに高く（約50倍〜）設定し、序盤から強化の道を進む必要があるバランスに変更
         const generatorData = [
             { name: "小型発電セル", baseCost: 500, baseCps: 0.5 },
             { name: "ミニタービン", baseCost: 5000, baseCps: 4 },
@@ -748,18 +748,20 @@
             window.customAlertCallback = callback;
         }
 
+        // 通常の数値（完全な数値・カンマ区切り、KMBTなし）
         function formatNumber(num) {
             if (num === null || num === undefined || isNaN(num)) return "0";
-            if (num < 1000) return num.toFixed(0);
+            return Math.floor(num).toLocaleString('en-US');
+        }
 
-            const units = ["K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc", "UDc", "DDc"];
-            const i = Math.floor(Math.log10(num) / 3) - 1;
-            
-            if (i >= 0 && i < units.length) {
-                const formatted = (num / Math.pow(10, (i + 1) * 3)).toFixed(2);
-                return formatted + " " + units[i];
-            }
-            return num.toExponential(2);
+        // ランキング用のみK, M, B, Tなどの単位を使用するフォーマット
+        function formatRankingNumber(num) {
+            if (num === null || num === undefined || isNaN(num)) return "0";
+            if (num >= 1e12) return (num / 1e12).toFixed(2) + "T";
+            if (num >= 1e9) return (num / 1e9).toFixed(2) + "B";
+            if (num >= 1e6) return (num / 1e6).toFixed(2) + "M";
+            if (num >= 1e3) return (num / 1e3).toFixed(2) + "K";
+            return Math.floor(num).toLocaleString('en-US');
         }
 
         let audioCtx = null;
@@ -928,6 +930,7 @@
 
             const prestigeBtn = document.getElementById('prestige-btn');
             const prestigeProgress = document.getElementById('prestige-progress');
+            // 転生進捗はKMBTなし（formatNumber）
             prestigeProgress.textContent = formatNumber(game.energy);
 
             if (game.energy >= 1000000) {
