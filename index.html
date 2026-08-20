@@ -714,6 +714,13 @@
             { name: "CORE ASCENSION", baseCost: 3500000000000000000000000000000000000000000000000000000000, baseCps: 2500000000000000000000000000000000000000000 }
         ];
 
+        // 初期化用データのマスター（再利用）
+        const upgradeBaseData = [
+            { id: 1, name: "サイバネティック・フィンガー", desc: "タップ時のエネルギー生産量が +1 増加", cost: 100, mult: 2.2, type: "tap", value: 1 },
+            { id: 2, name: "ナノマシン・ブースト", desc: "タップ時のエネルギー生産量が +10 増加", cost: 1000, mult: 2.4, type: "tap", value: 10 },
+            { id: 3, name: "量子共鳴アンプ", desc: "すべての発電効率が 2.5倍 に上昇", cost: 5000, mult: 3.5, type: "cps", value: 2.5 }
+        ];
+
         let game = {
             energy: 0,
             totalEarned: 0,
@@ -729,11 +736,10 @@
                 count: 0,
                 mult: 1.18
             })),
-            upgrades: [
-                { id: 1, name: "サイバネティック・フィンガー", desc: "タップ時のエネルギー生産量が +1 増加", cost: 100, count: 0, mult: 2.2, type: "tap", value: 1 },
-                { id: 2, name: "ナノマシン・ブースト", desc: "タップ時のエネルギー生産量が +10 増加", cost: 1000, count: 0, mult: 2.4, type: "tap", value: 10 },
-                { id: 3, name: "量子共鳴アンプ", desc: "すべての発電効率が 2.5倍 に上昇", cost: 5000, count: 0, mult: 3.5, type: "cps", value: 2.5 }
-            ]
+            upgrades: upgradeBaseData.map(u => ({
+                ...u,
+                count: 0
+            }))
         };
 
         function showCustomAlert(message, callback) {
@@ -884,9 +890,18 @@
 
             game.prestigeMultiplier *= 1.1;
             game.energy = 0;
+            
+            // 発電機の初期化
             game.generators.forEach((gen, index) => {
                 gen.count = 0;
                 gen.cost = generatorData[index].baseCost;
+            });
+
+            // 強化およびタップ力の初期化
+            game.tapPower = 1;
+            game.upgrades.forEach((up, index) => {
+                up.count = 0;
+                up.cost = upgradeBaseData[index].cost;
             });
 
             saveGame();
@@ -961,7 +976,6 @@
                 const baseCps = generatorData[index] ? generatorData[index].baseCps : 0;
                 let itemCps = baseCps * gen.count;
                 
-                // 未購入（所持数0）の場合は「？？？＆🔒」にする
                 const isUnlocked = gen.count > 0;
                 const displayName = isUnlocked ? `${index + 1}. ${gen.name}` : `${index + 1}. ？？？ (未解放)`;
                 const displayCps = isUnlocked ? `生産: +${formatRankingNumber(itemCps)} Λ/s` : `生産: ？？？`;
