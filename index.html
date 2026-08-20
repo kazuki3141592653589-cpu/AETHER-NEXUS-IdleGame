@@ -380,6 +380,56 @@
         .ranking-table th {
             color: var(--accent-color);
         }
+
+        @keyframes floatUpNumber {
+            0% {
+                opacity: 1;
+                transform: scale(1.4) translateY(0) rotate(0deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1) translateY(-35px) rotate(calc(var(--rand-rot) * 1deg));
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.8) translateY(-75px) rotate(calc(var(--rand-rot) * 1.5deg));
+            }
+        }
+
+        .floating-number {
+            position: fixed;
+            color: #ffffff;
+            font-weight: 900;
+            font-size: 1.6rem;
+            pointer-events: none;
+            text-shadow: 0 0 10px #00d3ff, 0 0 20px #0055ff, 2px 2px 2px rgba(0,0,0,0.8);
+            z-index: 9999;
+            white-space: nowrap;
+            animation: floatUpNumber 0.45s cubic-bezier(0, 0.9, 0.2, 1) forwards;
+        }
+
+        @keyframes floatUpAuto {
+            0% {
+                opacity: 0.9;
+                transform: scale(1.1) translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.9) translateY(-35px);
+            }
+        }
+
+        .floating-auto-number {
+            position: fixed;
+            color: #8ab8f8;
+            font-weight: 700;
+            font-size: 0.95rem;
+            pointer-events: none;
+            text-shadow: 0 0 8px rgba(0, 211, 255, 0.6), 1px 1px 2px rgba(0,0,0,0.8);
+            z-index: 9998;
+            white-space: nowrap;
+            animation: floatUpAuto 0.5s ease-out forwards;
+        }
     </style>
 </head>
 <body>
@@ -400,7 +450,7 @@
 
         <div class="core-button-wrapper" onclick="tapCore(event)">
             <div class="core-ring"></div>
-            <div class="core-button"></div>
+            <div id="core-btn-el" class="core-button"></div>
         </div>
 
         <div class="menu-bar">
@@ -769,38 +819,58 @@
             game.totalEarned += gain;
             game.totalTaps++;
 
-            showFloatingText(event.clientX, event.clientY, "+" + formatNumber(gain));
+            let clientX = event.clientX;
+            let clientY = event.clientY;
+            if (!clientX || !clientY) {
+                clientX = window.innerWidth / 2;
+                clientY = window.innerHeight / 2;
+            }
+
+            showFloatingText(clientX, clientY, "+" + formatNumber(gain));
             updateUI();
         }
 
         function showFloatingText(x, y, text) {
             const el = document.createElement('div');
+            el.className = 'floating-number';
             el.textContent = text;
-            el.style.position = 'fixed';
-            el.style.left = (x ? x - 20 : window.innerWidth / 2) + 'px';
-            el.style.top = (y ? y - 20 : window.innerHeight / 2) + 'px';
-            el.style.color = '#00d3ff';
-            el.style.fontWeight = 'bold';
-            el.style.fontSize = '1.2rem';
-            el.style.pointerEvents = 'none';
-            el.style.textShadow = '0 0 10px rgba(0,211,255,0.8)';
-            el.style.transition = 'all 0.5s ease-out';
-            el.style.zIndex = '9999';
-            el.style.whiteSpace = 'nowrap';
             
-            el.style.background = 'transparent';
-            el.style.border = 'none';
-            el.style.boxShadow = 'none';
-            el.style.padding = '0';
-            el.style.margin = '0';
+            const offsetX = (Math.random() - 0.5) * 50;
+            const offsetY = (Math.random() - 0.5) * 20;
+            const randRot = (Math.random() - 0.5) * 30;
+
+            el.style.left = (x + offsetX - 20) + 'px';
+            el.style.top = (y + offsetY - 20) + 'px';
+            el.style.setProperty('--rand-rot', randRot);
 
             document.body.appendChild(el);
 
             setTimeout(() => {
-                el.style.transform = 'translateY(-50px)';
-                el.style.opacity = '0';
-            }, 20);
-            setTimeout(() => el.remove(), 500);
+                el.remove();
+            }, 450);
+        }
+
+        // クッキークリッカー風に細かい単位でポップアップさせる関数
+        function showAutoFloatingText(amount) {
+            const coreBtn = document.getElementById('core-btn-el');
+            if (!coreBtn) return;
+            const rect = coreBtn.getBoundingClientRect();
+            
+            const x = rect.left + rect.width / 2 + (Math.random() - 0.5) * 80;
+            const y = rect.top + rect.height / 2 + (Math.random() - 0.5) * 40;
+
+            const el = document.createElement('div');
+            el.className = 'floating-auto-number';
+            el.textContent = "+" + formatNumber(amount);
+            
+            el.style.left = x + 'px';
+            el.style.top = y + 'px';
+
+            document.body.appendChild(el);
+
+            setTimeout(() => {
+                el.remove();
+            }, 500);
         }
 
         function buyGenerator(index) {
@@ -1062,7 +1132,7 @@
                 document.querySelectorAll('.nav-tab')[2].classList.add('active');
                 openPanel('panel-prestige');
             } else if (tabName === 'ranking') {
-                document.querySelectorAll('.nav-tab')[3].classList.add('active');
+                document.querySelectorAll('.nav-tab'][3].classList.add('active');
                 openPanel('panel-ranking');
                 if (window.loadOnlineRanking) window.loadOnlineRanking();
             }
@@ -1087,17 +1157,41 @@
             }
         }
 
-        let lastSync = 0;
-        setInterval(() => {
+        // --- クッキークリッカー風の滑らかな高頻度ループ処理 (1秒を20分割 = 50msごと) ---
+        const TPS = 20; // 1秒あたりの更新回数
+        const intervalTime = 1000 / TPS;
+
+        let lastTime = performance.now();
+        let popupTimer = 0;
+
+        function gameLoop(currentTime) {
             if (isResetting) return;
+
+            const deltaTime = (currentTime - lastTime) / 1000;
+            lastTime = currentTime;
 
             const cps = calculateCPS();
             if (cps > 0) {
-                let add = cps;
-                game.energy += add;
-                game.totalEarned += add;
+                const addAmount = cps * deltaTime;
+                game.energy += addAmount;
+                game.totalEarned += addAmount;
+
+                // ちょこちょこ細かい数字をポップアップさせる（秒間数回〜適度な頻度で出現）
+                popupTimer += deltaTime;
+                if (popupTimer >= 0.25) { // 約0.25秒ごとに1回小分けでポップアップ
+                    showAutoFloatingText(cps * 0.25);
+                    popupTimer = 0;
+                }
             }
+
             updateUI();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // 定期セーブとFirebase同期（30秒ごと）
+        let lastSync = 0;
+        setInterval(() => {
+            if (isResetting) return;
             saveGame();
 
             const now = Date.now();
@@ -1105,11 +1199,12 @@
                 window.syncScoreToFirebase();
                 lastSync = now;
             }
-        }, 1000);
+        }, 10000);
 
         window.onload = function() {
             loadGame();
             updateUI();
+            requestAnimationFrame(gameLoop);
         };
 
         window.resetGameData = resetGameData;
