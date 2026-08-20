@@ -850,7 +850,6 @@
             }, 450);
         }
 
-        // クッキークリッカー風に細かい単位でポップアップさせる関数
         function showAutoFloatingText(amount) {
             const coreBtn = document.getElementById('core-btn-el');
             if (!coreBtn) return;
@@ -1132,7 +1131,7 @@
                 document.querySelectorAll('.nav-tab')[2].classList.add('active');
                 openPanel('panel-prestige');
             } else if (tabName === 'ranking') {
-                document.querySelectorAll('.nav-tab'][3].classList.add('active');
+                document.querySelectorAll('.nav-tab')[3].classList.add('active');
                 openPanel('panel-ranking');
                 if (window.loadOnlineRanking) window.loadOnlineRanking();
             }
@@ -1157,18 +1156,20 @@
             }
         }
 
-        // --- クッキークリッカー風の滑らかな高頻度ループ処理 (1秒を20分割 = 50msごと) ---
-        const TPS = 20; // 1秒あたりの更新回数
-        const intervalTime = 1000 / TPS;
-
+        // --- 数値の飛びを完全に防止する安全なゲームループ ---
         let lastTime = performance.now();
         let popupTimer = 0;
 
         function gameLoop(currentTime) {
             if (isResetting) return;
 
-            const deltaTime = (currentTime - lastTime) / 1000;
+            let deltaTime = (currentTime - lastTime) / 1000;
             lastTime = currentTime;
+
+            // タブを切り替えて戻ってきた時に deltaTime が大きくなりすぎて数値が跳ねるのを防ぐ（最大0.5秒に制限）
+            if (deltaTime > 0.5) {
+                deltaTime = 0.5;
+            }
 
             const cps = calculateCPS();
             if (cps > 0) {
@@ -1176,9 +1177,8 @@
                 game.energy += addAmount;
                 game.totalEarned += addAmount;
 
-                // ちょこちょこ細かい数字をポップアップさせる（秒間数回〜適度な頻度で出現）
                 popupTimer += deltaTime;
-                if (popupTimer >= 0.25) { // 約0.25秒ごとに1回小分けでポップアップ
+                if (popupTimer >= 0.25) {
                     showAutoFloatingText(cps * 0.25);
                     popupTimer = 0;
                 }
@@ -1188,7 +1188,6 @@
             requestAnimationFrame(gameLoop);
         }
 
-        // 定期セーブとFirebase同期（30秒ごと）
         let lastSync = 0;
         setInterval(() => {
             if (isResetting) return;
@@ -1202,6 +1201,7 @@
         }, 10000);
 
         window.onload = function() {
+            lastTime = performance.now(); // 起動時の時間を正確にセット
             loadGame();
             updateUI();
             requestAnimationFrame(gameLoop);
