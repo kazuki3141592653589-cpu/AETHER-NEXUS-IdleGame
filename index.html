@@ -458,7 +458,7 @@
                 </div>
 
                 <div style="margin: 10px 0; font-size: 1rem;">
-                    獲得予定倍率: <span style="color: var(--accent-color); font-weight: bold;" id="prestige-gain-preview">+1.1x</span>
+                    獲得予定倍率増加量: <span style="color: var(--accent-color); font-weight: bold;" id="prestige-gain-preview">+1.0x</span>
                 </div>
                 <button id="prestige-btn" class="buy-btn" onclick="doPrestige()" style="padding: 12px 24px; font-size: 0.95rem; width: 100%; margin-top: 15px;" disabled>条件未達成</button>
             </div>
@@ -726,7 +726,7 @@
             totalTaps: 0,
             tapPower: 1,
             prestigeMultiplier: 1,
-            prestigeCount: 0, // 転生回数
+            prestigeCount: 0,
             playerName: "名無しのパイレット",
             generators: generatorData.map(g => ({
                 name: g.name,
@@ -742,14 +742,15 @@
             }))
         };
 
-        // ▼ 指定された段階で増えていく転生条件の計算関数
-        // 0回目(初回): 1,000,000
-        // 1回目: 5,000,000
-        // 2回目以降: 10,000,000 からさらに倍々など
         function getPrestigeRequirement() {
             if (game.prestigeCount === 0) return 1000000;
             if (game.prestigeCount === 1) return 5000000;
             return 10000000 * Math.pow(2, game.prestigeCount - 2);
+        }
+
+        // ▼ 転生するごとに増加量が「1.0」ずつ増える設定（1回目:+1.0x, 2回目:+2.0x, 3回目:+3.0x...）
+        function getPrestigeGainAmount() {
+            return (game.prestigeCount + 1) * 1.0;
         }
 
         function showCustomAlert(message, callback) {
@@ -898,8 +899,8 @@
             let req = getPrestigeRequirement();
             if (game.energy < req) return;
 
-            game.prestigeMultiplier *= 1.1;
-            game.prestigeCount++; // 転生回数をプラス
+            game.prestigeMultiplier += getPrestigeGainAmount();
+            game.prestigeCount++; 
             game.energy = 0;
             
             game.generators.forEach((gen, index) => {
@@ -916,7 +917,7 @@
             saveGame();
             updateUI();
             closePanel();
-            showCustomAlert("次元転生が完了しました！<br>獲得エネルギー倍率が上昇します。");
+            showCustomAlert("次元転生が完了しました！<br>獲得エネルギー倍率が大きく上昇します。");
         }
 
         let isResetting = false;
@@ -966,6 +967,9 @@
             let currentReq = getPrestigeRequirement();
             document.getElementById('prestige-req-display').textContent = formatNumber(currentReq);
             document.getElementById('prestige-count-display').textContent = game.prestigeCount + 1;
+
+            let nextGain = getPrestigeGainAmount();
+            document.getElementById('prestige-gain-preview').textContent = `+${nextGain.toFixed(1)}x`;
 
             if (game.energy >= currentReq) {
                 prestigeBtn.disabled = false;
