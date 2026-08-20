@@ -155,11 +155,8 @@
 
         .menu-bar {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             z-index: 10;
-            flex-wrap: wrap;
-            justify-content: center;
-            max-width: 90%;
         }
 
         .menu-btn, .buy-btn, .nav-tab, .danger-btn {
@@ -172,10 +169,10 @@
             background: rgba(0, 211, 255, 0.05);
             border: 1px solid rgba(0, 211, 255, 0.3);
             color: var(--text-color);
-            padding: 8px 12px;
+            padding: 10px 16px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             transition: all 0.2s;
         }
 
@@ -237,6 +234,11 @@
             align-items: center;
         }
 
+        .item-card.locked {
+            opacity: 0.75;
+            border-color: rgba(138, 184, 248, 0.2);
+        }
+
         .item-info h4 {
             margin: 0 0 5px 0;
             font-size: 1rem;
@@ -296,7 +298,7 @@
             background: none;
             border: none;
             color: var(--sub-text);
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             cursor: pointer;
             display: flex;
             flex-direction: column;
@@ -378,70 +380,6 @@
             color: var(--accent-color);
         }
 
-        /* プラント・ビジュアルビュー用のスタイル */
-        .plant-view-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
-            gap: 10px;
-            padding: 5px;
-        }
-
-        .plant-item-slot {
-            background: rgba(0, 243, 255, 0.03);
-            border: 1px solid rgba(0, 243, 255, 0.15);
-            border-radius: 8px;
-            padding: 8px 4px;
-            text-align: center;
-            position: relative;
-            min-height: 75px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .plant-item-slot.active {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.25);
-            background: rgba(0, 243, 255, 0.08);
-        }
-
-        .plant-icon {
-            font-size: 1.6rem;
-            margin-bottom: 2px;
-        }
-
-        @keyframes pulseMachine {
-            0% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(0,211,255,0.4)); }
-            50% { transform: scale(1.08); filter: drop-shadow(0 0 8px rgba(0,211,255,0.8)); }
-            100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(0,211,255,0.4)); }
-        }
-
-        .plant-item-slot.active .plant-icon {
-            animation: pulseMachine 2s infinite ease-in-out;
-        }
-
-        .plant-count-badge {
-            position: absolute;
-            top: 4px;
-            right: 6px;
-            font-size: 0.65rem;
-            background: var(--accent-color);
-            color: #050b14;
-            font-weight: bold;
-            padding: 1px 4px;
-            border-radius: 4px;
-        }
-
-        .plant-name {
-            font-size: 0.55rem;
-            color: var(--sub-text);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            width: 100%;
-        }
-
         @keyframes floatUpNumber {
             0% { opacity: 1; transform: scale(1.4) translateY(0) rotate(0deg); }
             50% { opacity: 1; transform: scale(1.1) translateY(-35px) rotate(calc(var(--rand-rot) * 1deg)); }
@@ -459,45 +397,9 @@
             white-space: nowrap;
             animation: floatUpNumber 0.45s cubic-bezier(0, 0.9, 0.2, 1) forwards;
         }
-
-        @keyframes flyDrone {
-            0% { transform: translateX(-100px) translateY(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateX(calc(100vw + 100px)) translateY(-30px); opacity: 0; }
-        }
-
-        .ad-drone {
-            position: fixed;
-            top: 25vh;
-            left: 0;
-            background: linear-gradient(135deg, #ff007f, #7f00ff);
-            color: #fff;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 0 15px rgba(255, 0, 127, 0.6);
-            border: 1px solid #fff;
-            z-index: 500;
-            display: none;
-            align-items: center;
-            gap: 6px;
-            pointer-events: auto !important;
-            animation: flyDrone 12s linear forwards;
-        }
-
-        .ad-drone span {
-            font-size: 1rem;
-        }
     </style>
 </head>
 <body>
-
-    <div id="ad-drone-btn" class="ad-drone" onclick="tapDrone()">
-        <span>🛸</span> 補給ドローン (広告)
-    </div>
 
     <header>
         <span>AETHER NEXUS</span>
@@ -521,7 +423,6 @@
         <div class="menu-bar">
             <button class="menu-btn" onclick="openPanel('panel-generators')">発電機</button>
             <button class="menu-btn" onclick="openPanel('panel-upgrades')">強化</button>
-            <button class="menu-btn" onclick="openPanel('panel-plant')">🏭 プラント</button>
             <button class="menu-btn" onclick="openPanel('panel-prestige')">転生</button>
             <button class="menu-btn" onclick="openPanel('panel-ranking')">🏆 ランキング</button>
         </div>
@@ -536,22 +437,10 @@
 
         <div id="panel-upgrades" class="sub-panel">
             <div class="panel-header">
-                <span>タップ性能＆広告ブースト</span>
+                <span>タップ性能強化</span>
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
             </div>
             <div class="panel-content" id="upgrade-list"></div>
-        </div>
-
-        <!-- 稼働プラント確認用パネル -->
-        <div id="panel-plant" class="sub-panel">
-            <div class="panel-header">
-                <span>🏭 稼働プラント・ビュー</span>
-                <button class="close-btn" onclick="closePanel()">閉じる</button>
-            </div>
-            <div class="panel-content">
-                <p style="color: var(--sub-text); font-size: 0.8rem; margin-top: 0; text-align: center;">購入した発電施設が稼働している様子を確認できます</p>
-                <div id="plant-view-grid" class="plant-view-container"></div>
-            </div>
         </div>
 
         <div id="panel-prestige" class="sub-panel">
@@ -687,12 +576,10 @@
     <nav id="nav-tabs-bar">
         <button class="nav-tab active" onclick="switchTab('generators')">発電機</button>
         <button class="nav-tab" onclick="switchTab('upgrades')">強化</button>
-        <button class="nav-tab" onclick="switchTab('plant')">プラント</button>
         <button class="nav-tab" onclick="switchTab('prestige')">転生</button>
         <button class="nav-tab" onclick="switchTab('ranking')">ランキング</button>
     </nav>
 
-    <!-- Firebase設定・同期処理 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
         import { getFirestore, collection, doc, setDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
@@ -834,8 +721,6 @@
             tapPower: 1,
             prestigeMultiplier: 1,
             playerName: "名無しのパイレット",
-            overclockReadyTime: 0,
-            overclockEnd: 0,
             generators: generatorData.map(g => ({
                 name: g.name,
                 cost: g.baseCost,
@@ -975,62 +860,6 @@
             }
         }
 
-        function getOverclockMultiplier() {
-            if (game.overclockEnd && Date.now() < game.overclockEnd) {
-                return 3.0; 
-            }
-            return 1.0;
-        }
-
-        function triggerOverclock() {
-            const now = Date.now();
-            const cooldown = game.overclockReadyTime || 0;
-
-            if (now < cooldown) {
-                const remainingSec = Math.ceil((cooldown - now) / 1000);
-                showCustomAlert(`冷却期間中です。<br>あと ${remainingSec} 秒後に再稼働できます！`);
-                return;
-            }
-
-            showCustomAlert("オーバークロック起動！<br>90秒間、自動発電量が 3倍 に跳ね上がります！", () => {
-                game.overclockEnd = Date.now() + 90 * 1000;         
-                game.overclockReadyTime = Date.now() + 180 * 1000;  
-                updateUI();
-            });
-        }
-
-        function spawnDrone() {
-            const drone = document.getElementById('ad-drone-btn');
-            if (!drone || drone.style.display === 'flex') return;
-
-            const randomTop = Math.floor(Math.random() * 40) + 20;
-            drone.style.top = randomTop + 'vh';
-            drone.style.display = 'flex';
-
-            setTimeout(() => {
-                drone.style.display = 'none';
-            }, 12000);
-        }
-
-        function tapDrone() {
-            const drone = document.getElementById('ad-drone-btn');
-            drone.style.display = 'none';
-
-            const rewardEnergy = calculateCPS() * 60 * 30 + 100;
-
-            showCustomAlert(`広告視聴報酬！<br>エネルギー +${formatRankingNumber(rewardEnergy)} Λ を獲得しました！`, () => {
-                game.energy += rewardEnergy;
-                game.totalEarned += rewardEnergy;
-                updateUI();
-            });
-        }
-
-        setInterval(() => {
-            if (Math.random() < 0.4) {
-                spawnDrone();
-            }
-        }, 45000);
-
         function calculateCPS() {
             let cps = 0;
             for (let i = 0; i < game.generators.length; i++) {
@@ -1046,8 +875,7 @@
                     multBonus *= Math.pow(up.value, up.count);
                 }
             });
-
-            return cps * multBonus * game.prestigeMultiplier * getOverclockMultiplier();
+            return cps * multBonus * game.prestigeMultiplier;
         }
 
         function doPrestige() {
@@ -1122,30 +950,6 @@
             }
         }
 
-        // プラントビュー更新用アイコンリスト
-        const plantIcons = ["🔋", "⚡", "☀️", "⚙️", "🔌", "💧", "🌬️", "📦", "🚀", "⚛️", "🌟", "🌀", "🔮", "🌌", "⚖️"];
-
-        function updatePlantView() {
-            const grid = document.getElementById('plant-view-grid');
-            if (!grid) return;
-
-            let html = "";
-            game.generators.forEach((gen, index) => {
-                const count = gen.count || 0;
-                const icon = plantIcons[index % plantIcons.length];
-                const isActive = count > 0;
-
-                html += `
-                    <div class="plant-item-slot ${isActive ? 'active' : ''}">
-                        <div class="plant-icon">${icon}</div>
-                        <div class="plant-name">${gen.name}</div>
-                        ${isActive ? `<div class="plant-count-badge">${formatNumber(count)}</div>` : ''}
-                    </div>
-                `;
-            });
-            grid.innerHTML = html;
-        }
-
         function updateUI() {
             document.getElementById('energy-count').textContent = formatRankingNumber(game.energy) + " Λ";
             const currentCps = calculateCPS();
@@ -1156,12 +960,19 @@
             game.generators.forEach((gen, index) => {
                 const baseCps = generatorData[index] ? generatorData[index].baseCps : 0;
                 let itemCps = baseCps * gen.count;
+                
+                // 未購入（所持数0）の場合は「？？？＆🔒」にする
+                const isUnlocked = gen.count > 0;
+                const displayName = isUnlocked ? `${index + 1}. ${gen.name}` : `${index + 1}. ？？？ (未解放)`;
+                const displayCps = isUnlocked ? `生産: +${formatRankingNumber(itemCps)} Λ/s` : `生産: ？？？`;
+                const displayCost = `費用: ${formatRankingNumber(gen.cost)} Λ`;
+
                 genHtml += `
-                    <div class="item-card">
+                    <div class="item-card ${!isUnlocked ? 'locked' : ''}">
                         <div class="item-info">
-                            <h4>${index + 1}. ${gen.name} (所持: ${gen.count})</h4>
-                            <p>生産: +${formatRankingNumber(itemCps)} Λ/s</p>
-                            <p>費用: ${formatRankingNumber(gen.cost)} Λ</p>
+                            <h4>${isUnlocked ? '' : '🔒 '}${displayName} (所持: ${gen.count})</h4>
+                            <p>${displayCps}</p>
+                            <p>${displayCost}</p>
                         </div>
                         <button class="buy-btn" ${game.energy < gen.cost ? 'disabled' : ''} onclick="buyGenerator(${index})">購入</button>
                     </div>
@@ -1169,32 +980,7 @@
             });
             document.getElementById('generator-list').innerHTML = genHtml;
 
-            const now = Date.now();
-            const cooldown = game.overclockReadyTime || 0;
-            let ocBtnText = "⚡ オーバークロック起動 (広告)";
-            let ocBtnDisabled = false;
-            let ocSubDesc = "3分おきに広告を見て、90秒間発電量を3倍にする";
-
-            if (game.overclockEnd && now < game.overclockEnd) {
-                const activeSec = Math.ceil((game.overclockEnd - now) / 1000);
-                ocBtnText = `🔥 暴走中 (残り ${activeSec}秒)`;
-                ocBtnDisabled = true;
-            } else if (now < cooldown) {
-                const remainingSec = Math.ceil((cooldown - now) / 1000);
-                ocBtnText = `⏳ 冷却中 (${remainingSec}秒)`;
-                ocBtnDisabled = true;
-            }
-
-            let upHtml = `
-                <div class="item-card" style="border-color: rgba(255,0,127,0.4); background: rgba(255,0,127,0.03);">
-                    <div class="item-info">
-                        <h4 style="color: #ff007f;">🔥 オーバークロック・ジェネレーター</h4>
-                        <p>${ocSubDesc}</p>
-                    </div>
-                    <button class="buy-btn" style="background: linear-gradient(135deg, #ff007f, #7f00ff);" ${ocBtnDisabled ? 'disabled' : ''} onclick="triggerOverclock()">${ocBtnText}</button>
-                </div>
-            `;
-
+            let upHtml = "";
             game.upgrades.forEach((up, index) => {
                 upHtml += `
                     <div class="item-card">
@@ -1209,7 +995,6 @@
             });
             document.getElementById('upgrade-list').innerHTML = upHtml;
 
-            updatePlantView();
             updateRankAndStats();
         }
 
@@ -1228,8 +1013,6 @@
                     game.totalTaps = parsed.totalTaps || 1;
                     game.tapPower = parsed.tapPower || 1;
                     game.prestigeMultiplier = parsed.prestigeMultiplier || 1;
-                    game.overclockReadyTime = parsed.overclockReadyTime || 0;
-                    game.overclockEnd = parsed.overclockEnd || 0;
                     
                     if (parsed.playerName && parsed.playerName.trim() !== "") {
                         game.playerName = parsed.playerName;
@@ -1316,14 +1099,11 @@
             } else if (tabName === 'upgrades') {
                 document.querySelectorAll('.nav-tab')[1].classList.add('active');
                 openPanel('panel-upgrades');
-            } else if (tabName === 'plant') {
-                document.querySelectorAll('.nav-tab')[2].classList.add('active');
-                openPanel('panel-plant');
             } else if (tabName === 'prestige') {
-                document.querySelectorAll('.nav-tab')[3].classList.add('active');
+                document.querySelectorAll('.nav-tab')[2].classList.add('active');
                 openPanel('panel-prestige');
             } else if (tabName === 'ranking') {
-                document.querySelectorAll('.nav-tab')[4].classList.add('active');
+                document.querySelectorAll('.nav-tab')[3].classList.add('active');
                 openPanel('panel-ranking');
                 if (window.loadOnlineRanking) {
                     window.syncScoreToFirebase().then(() => {
@@ -1406,8 +1186,6 @@
         window.saveInitialName = saveInitialName;
         window.switchTab = switchTab;
         window.tapCore = tapCore;
-        window.triggerOverclock = triggerOverclock;
-        window.tapDrone = tapDrone;
     </script>
 </body>
 </html>
