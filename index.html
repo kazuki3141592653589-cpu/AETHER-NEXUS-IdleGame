@@ -479,7 +479,6 @@
             </div>
         </div>
 
-        <!-- 汎用お知らせモーダル（通知用） -->
         <div id="custom-alert-modal" class="modal-overlay">
             <div class="modal-box" style="max-width: 350px;">
                 <div class="panel-header">
@@ -493,7 +492,6 @@
             </div>
         </div>
 
-        <!-- カスタムリセット確認モーダル -->
         <div id="resetConfirmModal" class="modal-overlay">
             <div class="modal-box" style="max-width: 350px;">
                 <div class="panel-header">
@@ -517,7 +515,7 @@
                 </div>
                 <div class="modal-body" style="text-align: center;">
                     <p style="font-size: 0.85rem; color: var(--sub-text); margin-top: 0;"><br>ランキングに登録するあなたの名前を入力してください（15文字以内）</p>
-                    <input type="text" id="initial-name-input" class="name-input" maxlength="15" value="カワウソ">
+                    <input type="text" id="initial-name-input" class="name-input" maxlength="15" placeholder="名前を入力">
                     <button class="buy-btn" style="width: 100%; padding: 10px;" onclick="saveInitialName()">宇宙へ旅立つ</button>
                 </div>
             </div>
@@ -963,8 +961,8 @@
                     console.error("セーブデータの読み込みエラー", e);
                 }
             } else {
-                // 初回はモーダルを表示するが、入力欄の初期値にも「カワウソ」を入れておく
-                document.getElementById('initial-name-input').value = "カワウソ";
+                // 初回は初期入力欄を空にしてモーダルを表示
+                document.getElementById('initial-name-input').value = "";
                 document.getElementById('name-modal').classList.add('active');
             }
             document.getElementById('player-name-input').value = game.playerName;
@@ -977,7 +975,7 @@
             }
             document.getElementById('name-modal').classList.remove('active');
             
-            // ランキング用の変更入力欄にも即座に反映させる
+            // ランキング側の変更入力欄にも即座に反映させる
             document.getElementById('player-name-input').value = game.playerName;
             
             saveGame();
