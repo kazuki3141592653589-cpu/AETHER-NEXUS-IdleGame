@@ -453,8 +453,8 @@
                 <p style="color: var(--sub-text); font-size: 0.85rem;">すべてのエネルギーと設備を初期化する代わりに、次回の獲得倍率を上昇させます。</p>
                 
                 <div style="background: rgba(0, 243, 255, 0.05); border: 1px solid rgba(0, 243, 255, 0.3); border-radius: 6px; padding: 12px; margin: 15px 0; text-align: left;">
-                    <div style="font-weight: bold; color: var(--text-color);">📌 転生条件：</div>
-                    <div style="margin-top: 5px;">• 現在のエネルギー: <span id="prestige-progress" style="color: #fff; font-weight:bold;">0</span> / 1,000,000 Λ</div>
+                    <div style="font-weight: bold; color: var(--text-color);">📌 転生条件 (回数: <span id="prestige-count-display">0</span>回目)：</div>
+                    <div style="margin-top: 5px;">• 現在のエネルギー: <span id="prestige-progress" style="color: #fff; font-weight:bold;">0</span> / <span id="prestige-req-display">1,000,000</span> Λ</div>
                 </div>
 
                 <div style="margin: 10px 0; font-size: 1rem;">
@@ -714,7 +714,6 @@
             { name: "CORE ASCENSION", baseCost: 3500000000000000000000000000000000000000000000000000000000, baseCps: 2500000000000000000000000000000000000000000 }
         ];
 
-        // 初期化用データのマスター（再利用）
         const upgradeBaseData = [
             { id: 1, name: "サイバネティック・フィンガー", desc: "タップ時のエネルギー生産量が +1 増加", cost: 100, mult: 2.2, type: "tap", value: 1 },
             { id: 2, name: "ナノマシン・ブースト", desc: "タップ時のエネルギー生産量が +10 増加", cost: 1000, mult: 2.4, type: "tap", value: 10 },
@@ -727,6 +726,7 @@
             totalTaps: 0,
             tapPower: 1,
             prestigeMultiplier: 1,
+            prestigeCount: 0, // 転生回数
             playerName: "名無しのパイレット",
             generators: generatorData.map(g => ({
                 name: g.name,
@@ -741,6 +741,16 @@
                 count: 0
             }))
         };
+
+        // ▼ 指定された段階で増えていく転生条件の計算関数
+        // 0回目(初回): 1,000,000
+        // 1回目: 5,000,000
+        // 2回目以降: 10,000,000 からさらに倍々など
+        function getPrestigeRequirement() {
+            if (game.prestigeCount === 0) return 1000000;
+            if (game.prestigeCount === 1) return 5000000;
+            return 10000000 * Math.pow(2, game.prestigeCount - 2);
+        }
 
         function showCustomAlert(message, callback) {
             document.getElementById('custom-alert-message').innerHTML = message;
@@ -885,19 +895,18 @@
         }
 
         function doPrestige() {
-            const requiredEnergy = 1000000;
-            if (game.energy < requiredEnergy) return;
+            let req = getPrestigeRequirement();
+            if (game.energy < req) return;
 
             game.prestigeMultiplier *= 1.1;
+            game.prestigeCount++; // 転生回数をプラス
             game.energy = 0;
             
-            // 発電機の初期化
             game.generators.forEach((gen, index) => {
                 gen.count = 0;
                 gen.cost = generatorData[index].baseCost;
             });
 
-            // 強化およびタップ力の初期化
             game.tapPower = 1;
             game.upgrades.forEach((up, index) => {
                 up.count = 0;
@@ -954,7 +963,11 @@
             const prestigeProgress = document.getElementById('prestige-progress');
             prestigeProgress.textContent = formatNumber(game.energy);
 
-            if (game.energy >= 1000000) {
+            let currentReq = getPrestigeRequirement();
+            document.getElementById('prestige-req-display').textContent = formatNumber(currentReq);
+            document.getElementById('prestige-count-display').textContent = game.prestigeCount + 1;
+
+            if (game.energy >= currentReq) {
                 prestigeBtn.disabled = false;
                 prestigeBtn.textContent = "次元転生を実行";
                 prestigeBtn.style.background = "linear-gradient(135deg, #00ff88, #00d3ff)";
@@ -1027,6 +1040,7 @@
                     game.totalTaps = parsed.totalTaps || 1;
                     game.tapPower = parsed.tapPower || 1;
                     game.prestigeMultiplier = parsed.prestigeMultiplier || 1;
+                    game.prestigeCount = parsed.prestigeCount || 0;
                     
                     if (parsed.playerName && parsed.playerName.trim() !== "") {
                         game.playerName = parsed.playerName;
