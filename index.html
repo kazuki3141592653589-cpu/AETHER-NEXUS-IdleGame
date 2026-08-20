@@ -479,6 +479,20 @@
             </div>
         </div>
 
+        <!-- 汎用お知らせモーダル（通知用） -->
+        <div id="custom-alert-modal" class="modal-overlay">
+            <div class="modal-box" style="max-width: 350px;">
+                <div class="panel-header">
+                    <span>通知</span>
+                    <button class="close-btn" onclick="closeModal('custom-alert-modal')">×</button>
+                </div>
+                <div class="modal-body" style="text-align: center;">
+                    <p id="custom-alert-message" style="margin-bottom: 20px;"></p>
+                    <button class="buy-btn" style="width: 100%;" onclick="closeModal('custom-alert-modal')">OK</button>
+                </div>
+            </div>
+        </div>
+
         <!-- カスタムリセット確認モーダル -->
         <div id="resetConfirmModal" class="modal-overlay">
             <div class="modal-box" style="max-width: 350px;">
@@ -666,6 +680,12 @@
             ]
         };
 
+        function showCustomAlert(message, callback) {
+            document.getElementById('custom-alert-message').innerHTML = message;
+            document.getElementById('custom-alert-modal').classList.add('active');
+            window.customAlertCallback = callback;
+        }
+
         function formatNumber(num) {
             if (num === null || num === undefined || isNaN(num)) return "0";
             if (num < 1000) return num.toFixed(0);
@@ -796,25 +816,22 @@
 
             saveGame();
             updateUI();
-            alert("次元転生が完了しました！獲得エネルギー倍率が上昇します。");
             closePanel();
+            showCustomAlert("次元転生が完了しました！<br>獲得エネルギー倍率が上昇します。");
         }
 
         let isResetting = false;
 
-        // カスタムリセット確認画面を表示する関数
         function resetGameData() {
             document.getElementById('resetConfirmModal').classList.add('active');
         }
 
-        // OKが押されたときに実際にデータを消去してリロードする関数
         function executeHardReset() {
             isResetting = true;
             localStorage.removeItem('aether_nexus_save');
-            alert("セーブデータをリセットしました。画面を再読み込みします。");
-            setTimeout(() => {
+            showCustomAlert("セーブデータをリセットしました。<br>画面を再読み込みします。", () => {
                 location.reload();
-            }, 100);
+            });
         }
 
         function updateRankAndStats() {
@@ -959,7 +976,7 @@
                 game.playerName = input;
                 saveGame();
                 if (window.syncScoreToFirebase) window.syncScoreToFirebase();
-                alert("パイロット名を更新し、ランキングに同期しました！");
+                showCustomAlert("パイロット名を更新し、<br>ランキングに同期しました！");
             }
         }
 
@@ -997,6 +1014,11 @@
 
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
+            if (modalId === 'custom-alert-modal' && window.customAlertCallback) {
+                let cb = window.customAlertCallback;
+                window.customAlertCallback = null;
+                cb();
+            }
         }
 
         function outsideClose(event, modalId) {
