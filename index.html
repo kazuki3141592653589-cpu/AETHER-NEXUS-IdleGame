@@ -12,7 +12,6 @@
             --accent-color: #00d3ff;
             --text-color: #e0f7ff;
             --sub-text: #8ab8f8;
-            /* 不要な強い光のグローを抑える場合、ここを調整できます */
             --glow: 0 0 10px rgba(0, 243, 255, 0.2);
         }
 
@@ -20,7 +19,6 @@
             box-sizing: border-box;
             user-select: none;
             -webkit-user-select: none;
-            /* スマホのタップ時のハイライト枠も消す場合 */
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -117,6 +115,8 @@
             margin-bottom: 25px;
             cursor: pointer;
             z-index: 10;
+            background: transparent !important;
+            border: none !important;
         }
 
         .core-button {
@@ -153,6 +153,11 @@
             display: flex;
             gap: 10px;
             z-index: 10;
+        }
+
+        .menu-btn, .buy-btn, .nav-tab {
+            outline: none !important;
+            box-shadow: none !important;
         }
 
         .menu-btn {
@@ -304,7 +309,6 @@
             width: 90%;
             max-width: 450px;
             overflow: hidden;
-            /* 画像に出ていたポップアップ自体の強すぎる青枠や影をすっきりさせる */
             box-shadow: 0 0 25px rgba(0, 0, 0, 0.8);
         }
 
@@ -315,7 +319,6 @@
             color: var(--text-color);
         }
 
-        /* 🟦 ここ重要：入力欄のフォーカス時の青い枠（アウトライン・シャドウ）を完全に削除 */
         .name-input {
             width: 100%;
             padding: 10px;
@@ -326,8 +329,8 @@
             font-size: 1rem;
             margin-top: 10px;
             margin-bottom: 15px;
-            outline: none; /* フォーカス時のデフォルト枠を消す */
-            box-shadow: none !important; /* 余計な光の枠を強制削除 */
+            outline: none;
+            box-shadow: none !important;
         }
 
         .name-input:focus {
@@ -759,6 +762,14 @@
             el.style.transition = 'all 0.5s ease-out';
             el.style.zIndex = '9999';
             el.style.whiteSpace = 'nowrap';
+            
+            // 四角い背景や枠を完全に排除
+            el.style.background = 'transparent';
+            el.style.border = 'none';
+            el.style.boxShadow = 'none';
+            el.style.padding = '0';
+            el.style.margin = '0';
+
             document.body.appendChild(el);
 
             setTimeout(() => {
@@ -1064,7 +1075,7 @@
             updateUI();
             saveGame();
 
-            const now = Date.0 ? Date.now() : Date.now();
+            const now = Date.now();
             if (now - lastSync > 30000 && window.syncScoreToFirebase) {
                 window.syncScoreToFirebase();
                 lastSync = now;
