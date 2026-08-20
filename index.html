@@ -12,13 +12,16 @@
             --accent-color: #00d3ff;
             --text-color: #e0f7ff;
             --sub-text: #8ab8f8;
-            --glow: 0 0 15px rgba(0, 243, 255, 0.4);
+            /* 不要な強い光のグローを抑える場合、ここを調整できます */
+            --glow: 0 0 10px rgba(0, 243, 255, 0.2);
         }
 
         * {
             box-sizing: border-box;
             user-select: none;
             -webkit-user-select: none;
+            /* スマホのタップ時のハイライト枠も消す場合 */
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -50,11 +53,10 @@
             align-items: center;
             padding: 10px 20px;
             background: rgba(5, 11, 20, 0.95);
-            border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
             font-size: 1rem;
             letter-spacing: 2px;
             color: var(--accent-color);
-            text-shadow: var(--glow);
             z-index: 60;
         }
 
@@ -96,7 +98,7 @@
             font-size: 3rem;
             font-weight: bold;
             color: var(--text-color);
-            text-shadow: 0 0 20px var(--accent-color);
+            text-shadow: 0 0 15px rgba(0, 211, 255, 0.4);
             margin-bottom: 5px;
         }
 
@@ -122,7 +124,7 @@
             height: 180px;
             border-radius: 50%;
             background: radial-gradient(circle, #00d3ff 0%, #0055ff 70%, #021b3a 100%);
-            box-shadow: 0 0 30px rgba(0, 211, 255, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 20px rgba(0, 211, 255, 0.4), inset 0 0 15px rgba(255, 255, 255, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -138,7 +140,7 @@
             position: absolute;
             width: 210px;
             height: 210px;
-            border: 2px dashed rgba(0, 211, 255, 0.4);
+            border: 2px dashed rgba(0, 211, 255, 0.3);
             border-radius: 50%;
             animation: rotateRing 15s linear infinite;
         }
@@ -154,20 +156,18 @@
         }
 
         .menu-btn {
-            background: rgba(0, 211, 255, 0.1);
-            border: 1px solid var(--border-color);
+            background: rgba(0, 211, 255, 0.05);
+            border: 1px solid rgba(0, 211, 255, 0.3);
             color: var(--text-color);
             padding: 10px 16px;
             border-radius: 6px;
             cursor: pointer;
             font-size: 0.9rem;
             transition: all 0.2s;
-            box-shadow: 0 0 10px rgba(0, 211, 255, 0.1);
         }
 
         .menu-btn:hover {
-            background: rgba(0, 211, 255, 0.25);
-            box-shadow: var(--glow);
+            background: rgba(0, 211, 255, 0.15);
         }
 
         .sub-panel {
@@ -186,7 +186,7 @@
 
         .panel-header {
             padding: 15px 20px;
-            border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -197,7 +197,7 @@
 
         .close-btn {
             background: none;
-            border: 1px solid var(--sub-text);
+            border: 1px solid rgba(138, 184, 248, 0.3);
             color: var(--text-color);
             padding: 4px 10px;
             border-radius: 4px;
@@ -212,8 +212,8 @@
         }
 
         .item-card {
-            background: rgba(0, 243, 255, 0.05);
-            border: 1px solid rgba(0, 243, 255, 0.2);
+            background: rgba(0, 243, 255, 0.03);
+            border: 1px solid rgba(0, 243, 255, 0.15);
             border-radius: 8px;
             padding: 12px 15px;
             margin-bottom: 10px;
@@ -243,7 +243,6 @@
             cursor: pointer;
             font-weight: bold;
             font-size: 0.85rem;
-            box-shadow: 0 0 10px rgba(0, 211, 255, 0.3);
             transition: opacity 0.2s;
         }
 
@@ -251,7 +250,6 @@
             background: #2a3b50;
             color: #5a7390;
             cursor: not-allowed;
-            box-shadow: none;
         }
 
         nav {
@@ -259,7 +257,7 @@
             bottom: 0; left: 0; width: 100%;
             height: 60px;
             background: rgba(5, 11, 20, 0.95);
-            border-top: 1px solid rgba(0, 243, 255, 0.3);
+            border-top: 1px solid rgba(0, 243, 255, 0.2);
             display: flex;
             z-index: 60;
         }
@@ -280,7 +278,7 @@
 
         .nav-tab.active {
             color: var(--accent-color);
-            background: rgba(0, 211, 255, 0.08);
+            background: rgba(0, 211, 255, 0.05);
             border-top: 2px solid var(--accent-color);
         }
 
@@ -301,12 +299,13 @@
 
         .modal-box {
             background: var(--panel-bg);
-            border: 1px solid var(--border-color);
+            border: 1px solid rgba(0, 211, 255, 0.4);
             border-radius: 10px;
             width: 90%;
             max-width: 450px;
-            box-shadow: var(--glow);
             overflow: hidden;
+            /* 画像に出ていたポップアップ自体の強すぎる青枠や影をすっきりさせる */
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.8);
         }
 
         .modal-body {
@@ -316,16 +315,25 @@
             color: var(--text-color);
         }
 
+        /* 🟦 ここ重要：入力欄のフォーカス時の青い枠（アウトライン・シャドウ）を完全に削除 */
         .name-input {
             width: 100%;
             padding: 10px;
-            background: rgba(0,0,0,0.5);
-            border: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 211, 255, 0.4);
             color: #fff;
             border-radius: 5px;
             font-size: 1rem;
             margin-top: 10px;
             margin-bottom: 15px;
+            outline: none; /* フォーカス時のデフォルト枠を消す */
+            box-shadow: none !important; /* 余計な光の枠を強制削除 */
+        }
+
+        .name-input:focus {
+            border-color: var(--accent-color);
+            outline: none;
+            box-shadow: none !important;
         }
 
         .ranking-table {
@@ -338,7 +346,7 @@
         .ranking-table th, .ranking-table td {
             padding: 8px;
             text-align: left;
-            border-bottom: 1px solid rgba(0, 243, 255, 0.15);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.1);
         }
 
         .ranking-table th {
@@ -399,7 +407,7 @@
                 <h3 style="margin-top: 5px; color: var(--accent-color);">次元歪曲システム</h3>
                 <p style="color: var(--sub-text); font-size: 0.85rem;">すべてのエネルギーと設備を初期化する代わりに、次回の獲得倍率を上昇させます。</p>
                 
-                <div style="background: rgba(0, 243, 255, 0.1); border: 1px solid var(--accent-color); border-radius: 6px; padding: 12px; margin: 15px 0; text-align: left;">
+                <div style="background: rgba(0, 243, 255, 0.05); border: 1px solid rgba(0, 243, 255, 0.3); border-radius: 6px; padding: 12px; margin: 15px 0; text-align: left;">
                     <div style="font-weight: bold; color: var(--text-color);">📌 転生条件：</div>
                     <div style="margin-top: 5px;">• 現在のエネルギー: <span id="prestige-progress" style="color: #fff; font-weight:bold;">0</span> / 1M Λ</div>
                 </div>
@@ -419,13 +427,13 @@
             <div class="panel-content" style="padding: 15px; text-align: center;">
                 <p style="color: var(--sub-text); font-size: 0.85rem; margin-top: 0;">現在所持しているエネルギー量によるグローバルランキング</p>
                 
-                <div style="text-align: left; background: rgba(0,243,255,0.05); border: 1px solid rgba(0,243,255,0.3); border-radius: 6px; padding: 10px; margin-bottom: 15px;">
+                <div style="text-align: left; background: rgba(0,243,255,0.03); border: 1px solid rgba(0,243,255,0.2); border-radius: 6px; padding: 10px; margin-bottom: 15px;">
                     <div style="font-size: 0.8rem; color: var(--sub-text); margin-bottom: 4px;">パイレット名変更</div>
                     <input type="text" id="player-name-input" class="name-input" maxlength="15" placeholder="名前を入力">
                     <button class="buy-btn" onclick="updatePlayerName()" style="padding: 6px 12px; font-size: 0.85rem; width: 100%;">名前を更新して同期</button>
                 </div>
 
-                <div id="player-rank-display" style="background: rgba(0,243,255,0.1); border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; margin-bottom: 15px; text-align: left;">
+                <div id="player-rank-display" style="background: rgba(0,243,255,0.05); border: 1px solid rgba(0,243,255,0.3); border-radius: 6px; padding: 12px; margin-bottom: 15px; text-align: left;">
                     <div style="font-size: 0.75rem; color: var(--sub-text);">現在の称号 (<span id="display-name" style="color: #fff; font-weight: bold;">名無しのパイレット</span>)</div>
                     <div id="rank-title" style="font-size: 1.1rem; font-weight: bold; color: #fff; margin: 4px 0;">次元を開拓し始めたばかりの文明</div>
                     <div id="rank-desc" style="font-size: 0.8rem; color: var(--sub-text);">一歩を踏み出したばかりの文明です。さらなるエネルギーを求めて進みましょう。</div>
@@ -448,7 +456,7 @@
                 <div style="margin-top: 30px; border-top: 1px dashed rgba(255, 107, 107, 0.3); padding-top: 20px; text-align: left;">
                     <div style="font-size: 0.8rem; color: #ff6b6b; margin-bottom: 8px; font-weight: bold;">⚠️ 危険なエリア</div>
                     <p style="font-size: 0.75rem; color: var(--sub-text); margin-top: 0; margin-bottom: 10px;">セーブデータを完全に消去して初期状態に戻します（元に戻せません）。</p>
-                    <button onclick="resetGameData()" style="background: linear-gradient(135deg, #cc0000, #ff4d4d); border: none; color: #fff; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.85rem; width: 100%; box-shadow: 0 0 10px rgba(255, 77, 77, 0.3);">セーブデータを完全リセット</button>
+                    <button onclick="resetGameData()" style="background: linear-gradient(135deg, #cc0000, #ff4d4d); border: none; color: #fff; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.85rem; width: 100%;">セーブデータを完全リセット</button>
                 </div>
             </div>
         </div>
@@ -961,7 +969,6 @@
                     console.error("セーブデータの読み込みエラー", e);
                 }
             } else {
-                // 初回は初期入力欄を空にしてモーダルを表示
                 document.getElementById('initial-name-input').value = "";
                 document.getElementById('name-modal').classList.add('active');
             }
@@ -974,8 +981,6 @@
                 game.playerName = input;
             }
             document.getElementById('name-modal').classList.remove('active');
-            
-            // ランキング側の変更入力欄にも即座に反映させる
             document.getElementById('player-name-input').value = game.playerName;
             
             saveGame();
@@ -1059,7 +1064,7 @@
             updateUI();
             saveGame();
 
-            const now = Date.now();
+            const now = Date.0 ? Date.now() : Date.now();
             if (now - lastSync > 30000 && window.syncScoreToFirebase) {
                 window.syncScoreToFirebase();
                 lastSync = now;
