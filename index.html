@@ -407,29 +407,6 @@
             white-space: nowrap;
             animation: floatUpNumber 0.45s cubic-bezier(0, 0.9, 0.2, 1) forwards;
         }
-
-        @keyframes floatUpAuto {
-            0% {
-                opacity: 0.9;
-                transform: scale(1.1) translateY(0);
-            }
-            100% {
-                opacity: 0;
-                transform: scale(0.9) translateY(-35px);
-            }
-        }
-
-        .floating-auto-number {
-            position: fixed;
-            color: #8ab8f8;
-            font-weight: 700;
-            font-size: 0.95rem;
-            pointer-events: none;
-            text-shadow: 0 0 8px rgba(0, 211, 255, 0.6), 1px 1px 2px rgba(0,0,0,0.8);
-            z-index: 9998;
-            white-space: nowrap;
-            animation: floatUpAuto 0.5s ease-out forwards;
-        }
     </style>
 </head>
 <body>
@@ -850,28 +827,6 @@
             }, 450);
         }
 
-        function showAutoFloatingText(amount) {
-            const coreBtn = document.getElementById('core-btn-el');
-            if (!coreBtn) return;
-            const rect = coreBtn.getBoundingClientRect();
-            
-            const x = rect.left + rect.width / 2 + (Math.random() - 0.5) * 80;
-            const y = rect.top + rect.height / 2 + (Math.random() - 0.5) * 40;
-
-            const el = document.createElement('div');
-            el.className = 'floating-auto-number';
-            el.textContent = "+" + formatNumber(amount);
-            
-            el.style.left = x + 'px';
-            el.style.top = y + 'px';
-
-            document.body.appendChild(el);
-
-            setTimeout(() => {
-                el.remove();
-            }, 500);
-        }
-
         function buyGenerator(index) {
             const gen = game.generators[index];
             if (game.energy >= gen.cost) {
@@ -1156,9 +1111,8 @@
             }
         }
 
-        // --- 数値の飛びを完全に防止する安全なゲームループ ---
+        // --- 自動発電時はポップアップを出さず、数値の加算のみ行う処理 ---
         let lastTime = performance.now();
-        let popupTimer = 0;
 
         function gameLoop(currentTime) {
             if (isResetting) return;
@@ -1166,7 +1120,6 @@
             let deltaTime = (currentTime - lastTime) / 1000;
             lastTime = currentTime;
 
-            // タブを切り替えて戻ってきた時に deltaTime が大きくなりすぎて数値が跳ねるのを防ぐ（最大0.5秒に制限）
             if (deltaTime > 0.5) {
                 deltaTime = 0.5;
             }
@@ -1176,12 +1129,6 @@
                 const addAmount = cps * deltaTime;
                 game.energy += addAmount;
                 game.totalEarned += addAmount;
-
-                popupTimer += deltaTime;
-                if (popupTimer >= 0.25) {
-                    showAutoFloatingText(cps * 0.25);
-                    popupTimer = 0;
-                }
             }
 
             updateUI();
@@ -1201,7 +1148,7 @@
         }, 10000);
 
         window.onload = function() {
-            lastTime = performance.now(); // 起動時の時間を正確にセット
+            lastTime = performance.now();
             loadGame();
             updateUI();
             requestAnimationFrame(gameLoop);
