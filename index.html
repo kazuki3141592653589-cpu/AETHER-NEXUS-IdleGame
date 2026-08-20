@@ -479,7 +479,6 @@
             </div>
         </div>
 
-        <!-- 汎用お知らせモーダル（通知用） -->
         <div id="custom-alert-modal" class="modal-overlay">
             <div class="modal-box" style="max-width: 350px;">
                 <div class="panel-header">
@@ -493,7 +492,6 @@
             </div>
         </div>
 
-        <!-- カスタムリセット確認モーダル -->
         <div id="resetConfirmModal" class="modal-overlay">
             <div class="modal-box" style="max-width: 350px;">
                 <div class="panel-header">
@@ -517,7 +515,7 @@
                 </div>
                 <div class="modal-body" style="text-align: center;">
                     <p style="font-size: 0.85rem; color: var(--sub-text); margin-top: 0;"><br>ランキングに登録するあなたの名前を入力してください（15文字以内）</p>
-                    <input type="text" id="initial-name-input" class="name-input" maxlength="15" value="パイロット">
+                    <input type="text" id="initial-name-input" class="name-input" maxlength="15" value="カワウソ">
                     <button class="buy-btn" style="width: 100%; padding: 10px;" onclick="saveInitialName()">宇宙へ旅立つ</button>
                 </div>
             </div>
@@ -664,7 +662,7 @@
             totalTaps: 0,
             tapPower: 1,
             prestigeMultiplier: 1,
-            playerName: "名無しのパイロット",
+            playerName: "カワウソ",
             generators: generatorData.map(g => ({
                 name: g.name,
                 cost: g.baseCost,
@@ -836,6 +834,12 @@
 
         function updateRankAndStats() {
             document.getElementById('display-name').textContent = game.playerName;
+            
+            // 入力欄にも現在の名前が確実に入っているように同期
+            const inputEl = document.getElementById('player-name-input');
+            if (inputEl && document.activeElement !== inputEl) {
+                inputEl.value = game.playerName;
+            }
 
             let title = "次元を開拓し始めたばかりの文明";
             let desc = "一歩を踏み出したばかりの文明です。さらなるエネルギーを求めて進みましょう。";
@@ -925,7 +929,10 @@
                     game.totalTaps = parsed.totalTaps || 0;
                     game.tapPower = parsed.tapPower || 1;
                     game.prestigeMultiplier = parsed.prestigeMultiplier || 1;
-                    if (parsed.playerName) game.playerName = parsed.playerName;
+                    
+                    if (parsed.playerName && parsed.playerName.trim() !== "") {
+                        game.playerName = parsed.playerName;
+                    }
 
                     if (parsed.generators) {
                         parsed.generators.forEach((savedGen, idx) => {
@@ -966,7 +973,9 @@
                 game.playerName = input;
             }
             document.getElementById('name-modal').classList.remove('active');
+            document.getElementById('player-name-input').value = game.playerName;
             saveGame();
+            updateRankAndStats();
             if (window.syncScoreToFirebase) window.syncScoreToFirebase();
         }
 
@@ -975,6 +984,7 @@
             if (input) {
                 game.playerName = input;
                 saveGame();
+                updateRankAndStats();
                 if (window.syncScoreToFirebase) window.syncScoreToFirebase();
                 showCustomAlert("パイロット名を更新し、<br>ランキングに同期しました！");
             }
@@ -983,6 +993,12 @@
         function openPanel(panelId) {
             document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
             document.getElementById(panelId).classList.add('active');
+            
+            // ランキングパネルを開いた時に入力欄の値を最新の状態に同期
+            if (panelId === 'panel-ranking') {
+                document.getElementById('player-name-input').value = game.playerName;
+            }
+            
             updateUI();
         }
 
