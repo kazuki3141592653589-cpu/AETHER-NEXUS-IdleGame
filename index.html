@@ -1128,7 +1128,6 @@
 
         achievementData.push(...hiddenAchievements);
 
-        // 実績No.95から150まで（配列インデックス94〜149）を タップ数 × 50 に設定
         while (achievementData.length < 150) {
             let idxNum = achievementData.length + 1;
             let targetTaps = idxNum * 50;
@@ -1150,7 +1149,7 @@
             prestigeMultiplier: 1,
             prestigeCount: 0,
             playerName: "名無しのパイレット",
-            buyMode: 1, // 1, 10, 50, 'MAX'
+            buyMode: 1,
             unlockedAchievements: {},
             generators: generatorData.map(g => ({
                 name: g.name,
@@ -1199,16 +1198,6 @@
             const ach = achievementData[index];
             const isUnlocked = !!game.unlockedAchievements[ach.id];
 
-            let reqInfo = "";
-            if (ach.id.startsWith('extra_ach_')) {
-                let parts = ach.id.split('_');
-                let idxNum = parseInt(parts[2]);
-                let reqTaps = idxNum * 50;
-                let currentTaps = game.totalTaps;
-                let progressPercent = Math.min(100, Math.floor((currentTaps / reqTaps) * 100));
-                reqInfo = `\n\n【必要タップ数】\n${formatRankingNumber(reqTaps)} 回 (現在: ${formatRankingNumber(currentTaps)} 回 / 達成率: ${progressPercent}%)`;
-            }
-
             if (ach.hidden && !isUnlocked) {
                 document.getElementById('hint-icon').textContent = "❓";
                 document.getElementById('hint-title').textContent = "No." + formatRankingNumber(index + 1) + " ？？？？？";
@@ -1216,11 +1205,11 @@
             } else if (isUnlocked) {
                 document.getElementById('hint-icon').textContent = ach.icon;
                 document.getElementById('hint-title').textContent = "No." + formatRankingNumber(index + 1) + " " + ach.name + " (達成済み)";
-                document.getElementById('hint-desc').textContent = ach.desc + reqInfo;
+                document.getElementById('hint-desc').textContent = ach.desc;
             } else {
                 document.getElementById('hint-icon').textContent = ach.icon;
                 document.getElementById('hint-title').textContent = "No." + formatRankingNumber(index + 1) + " " + ach.name;
-                document.getElementById('hint-desc').textContent = "【ヒント】\n" + (ach.hint || ach.desc) + reqInfo;
+                document.getElementById('hint-desc').textContent = "【ヒント】\n" + (ach.hint || ach.desc);
             }
             openModal('achievement-hint-modal');
         }
