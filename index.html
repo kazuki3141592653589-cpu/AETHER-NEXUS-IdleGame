@@ -804,10 +804,8 @@
             { id: "3", name: "量子共鳴アンプ", desc: "すべての発電効率が +1.0 増加", cost: 50000, mult: 2.5, type: "cps", value: 1.0 }
         ];
 
-        // 150種類の実績データ
         const achievementData = [];
 
-        // ⚡ エネルギー初動〜終盤（ヒント付与）
         const energyMilestones = [
             { val: 1, name: "Λの目覚め", desc: "初めてエネルギーが1Λを超えた", hint: "コアをタップしてエネルギーを1Λ以上獲得しよう" },
             { val: 10, name: "微弱な脈動", desc: "10 Λ のエネルギーを獲得する", hint: "エネルギーを10 Λ まで溜めてみよう" },
@@ -844,7 +842,6 @@
             });
         });
 
-        // ⚙️ 発電機（個数順）
         const genCountMilestones = [
             { count: 1, name: "初めての発電機", desc: "1台購入" },
             { count: 25, name: "小型発電網", desc: "25台" },
@@ -868,7 +865,6 @@
             });
         });
 
-        // 🏭 発電機文明（種類×台数）
         const civMilestones = [
             { reqTypes: 1, reqCount: 10, name: "小型文明", desc: "1種類を10台" },
             { reqTypes: 5, reqCount: 10, name: "中型文明", desc: "5種類を10台" },
@@ -896,7 +892,6 @@
             });
         });
 
-        // 🔧 発電機世代（第一世代〜最終世代、全制覇、CORE ASCENSION）
         for (let genIdx = 0; genIdx < 50; genIdx++) {
             let genName = generatorData[genIdx].name;
             achievementData.push({
@@ -941,14 +936,13 @@
             condition: () => game.generators[49].count >= 1
         });
 
-        // 150種類を満たすための追加実績
         while (achievementData.length < 150) {
             let idxNum = achievementData.length + 1;
             let targetTaps = idxNum * 10;
             achievementData.push({
                 id: `extra_ach_${idxNum}`,
-                name: `次元の探求者 #${idxNum}`,
-                desc: `さらなる宇宙の真理へ近づく実績 #${idxNum}`,
+                name: `次元の探求者 No.${idxNum}`,
+                desc: `さらなる宇宙の真理へ近づく実績 No.${idxNum}`,
                 hint: `中央のコアを合計 ${targetTaps} 回以上タップしよう`,
                 icon: "🏆",
                 condition: () => game.totalTaps >= targetTaps
@@ -1001,10 +995,12 @@
         }
 
         window.showAchievementHint = function(id) {
-            const ach = achievementData.find(a => a.id === id);
-            if (!ach) return;
+            const index = achievementData.findIndex(a => a.id === id);
+            if (index === -1) return;
+            const ach = achievementData[index];
             const hintText = ach.hint || "ゲームを進めて条件を達成しよう！";
-            showCustomAlert(`<b>【実績ヒント】</b><br><br>${hintText}`);
+            // ヒント内の番号表示もkなどの単位に合わせるため formatRankingNumber を適用
+            showCustomAlert(`<b>【実績 No.${formatRankingNumber(index + 1)} のヒント】</b><br><br>${hintText}`);
         };
 
         function formatNumber(num) {
@@ -1269,16 +1265,19 @@
             let unlockedCount = 0;
             let achHtml = "";
 
-            achievementData.forEach(ach => {
+            achievementData.forEach((ach, index) => {
                 const isUnlocked = !!game.unlockedAchievements[ach.id];
                 if (isUnlocked) unlockedCount++;
+
+                // 実績の番号をkなどの単位（formatRankingNumber）でフォーマット
+                const achNum = formatRankingNumber(index + 1);
 
                 if (isUnlocked) {
                     achHtml += `
                         <div class="achievement-card unlocked">
                             <div class="achievement-icon">${ach.icon}</div>
                             <div class="item-info" style="flex: 1;">
-                                <h4>${ach.name} ✓</h4>
+                                <h4>No.${achNum} ${ach.name} ✓</h4>
                                 <p>${ach.desc}</p>
                             </div>
                         </div>
@@ -1288,7 +1287,7 @@
                         <div class="achievement-card locked" onclick="showAchievementHint('${ach.id}')">
                             <div class="achievement-icon">❓</div>
                             <div class="item-info" style="flex: 1;">
-                                <h4>？？？？？</h4>
+                                <h4>No.${achNum} ？？？？？</h4>
                                 <p style="color: var(--accent-color);">💡 タップでヒントを表示</p>
                             </div>
                         </div>
@@ -1297,8 +1296,9 @@
             });
 
             document.getElementById('achievement-list').innerHTML = achHtml;
-            document.getElementById('ach-count-display').textContent = unlockedCount;
-            document.getElementById('ach-total-display').textContent = achievementData.length;
+            // 解除数や総数にも単位適用
+            document.getElementById('ach-count-display').textContent = formatRankingNumber(unlockedCount);
+            document.getElementById('ach-total-display').textContent = formatRankingNumber(achievementData.length);
         }
 
         function updateUI() {
