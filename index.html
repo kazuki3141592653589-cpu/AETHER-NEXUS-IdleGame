@@ -725,7 +725,7 @@
                 let rank = 1;
                 rankings.forEach((data) => {
                     const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${formatRankingNumber(rank)}位</td><td>${escapeHtml(data.name)}</td><td>${formatRankingNumber(data.score)} Λ</td>`;
+                    tr.innerHTML = `<td>${formatRankingNumber(rank)}位</td><td>${escapeHtml(data.name)}</td><td>${formatShortNumber(data.score)} Λ</td>`;
                     tbody.appendChild(tr);
                     rank++;
                 });
@@ -905,7 +905,7 @@
                 id: `gen_own_${genIdx}`,
                 name: `${genName}の開拓者`,
                 desc: `${genName}を1基以上所有する`,
-                hint: `ショップで第 ${formatRankingNumber(genIdx + 1)} の発電機を新しく解放・購入しよう`,
+                hint: `ショップで第 ${formatShortNumber(genIdx + 1)} の発電機を新しく解放・購入しよう`,
                 icon: "🔧",
                 condition: () => game.generators[genIdx].count >= 1
             });
@@ -950,7 +950,7 @@
                 id: `extra_ach_${idxNum}`,
                 name: `次元の探求者 No.${idxNum}`,
                 desc: `さらなる宇宙の真理へ近づく実績 No.${idxNum}`,
-                hint: `中央のコアを合計 ${formatRankingNumber(targetTaps)} 回以上タップしよう`,
+                hint: `中央のコアを合計 ${formatShortNumber(targetTaps)} 回以上タップしよう`,
                 icon: "🏆",
                 condition: () => game.totalTaps >= targetTaps
             });
@@ -1006,7 +1006,7 @@
             if (index === -1) return;
             const ach = achievementData[index];
             const hintText = ach.hint || "ゲームを進めて条件を達成しよう！";
-            showCustomAlert(`<b>【実績 No.${formatRankingNumber(index + 1)} のヒント】</b><br><br>${hintText}`);
+            showCustomAlert(`<b>【実績 No.${formatShortNumber(index + 1)} のヒント】</b><br><br>${hintText}`);
         };
 
         function formatNumber(num) {
@@ -1017,6 +1017,22 @@
         function formatRankingNumber(num) {
             if (num === null || num === undefined || isNaN(num)) return "0";
             return Math.floor(num).toLocaleString('en-US');
+        }
+
+        // 9,999,999以上や大きな数値を短縮表示するフォーマット関数
+        function formatShortNumber(num) {
+            if (num === null || num === undefined || isNaN(num)) return "0";
+            let n = Number(num);
+            if (n < 10000000) {
+                return Math.floor(n).toLocaleString('en-US');
+            }
+            const units = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
+            let i = 0;
+            while (n >= 1000 && i < units.length - 1) {
+                n /= 1000;
+                i++;
+            }
+            return n.toFixed(2) + units[i];
         }
 
         let audioCtx = null;
@@ -1092,7 +1108,7 @@
                 clientY = window.innerHeight / 2;
             }
 
-            showFloatingText(clientX, clientY, "+" + formatNumber(gain));
+            showFloatingText(clientX, clientY, "+" + formatShortNumber(gain));
             checkAchievements();
             updateUI();
         }
@@ -1228,10 +1244,10 @@
 
             const prestigeBtn = document.getElementById('prestige-btn');
             const prestigeProgress = document.getElementById('prestige-progress');
-            prestigeProgress.textContent = formatNumber(game.energy);
+            prestigeProgress.textContent = formatShortNumber(game.energy);
 
             let currentReq = getPrestigeRequirement();
-            document.getElementById('prestige-req-display').textContent = formatNumber(currentReq);
+            document.getElementById('prestige-req-display').textContent = formatShortNumber(currentReq);
             document.getElementById('prestige-count-display').textContent = formatRankingNumber(game.prestigeCount + 1);
 
             let nextGain = getPrestigeGainAmount();
@@ -1310,14 +1326,14 @@
             });
 
             document.getElementById('achievement-list').innerHTML = achHtml || '<div style="text-align:center; color:var(--sub-text); padding:20px;">該当する実績はありません</div>';
-            document.getElementById('ach-count-display').textContent = formatRankingNumber(unlockedCount);
-            document.getElementById('ach-total-display').textContent = formatRankingNumber(achievementData.length);
+            document.getElementById('ach-count-display').textContent = formatShortNumber(unlockedCount);
+            document.getElementById('ach-total-display').textContent = formatShortNumber(achievementData.length);
         }
 
         function updateUI() {
-            document.getElementById('energy-count').textContent = formatRankingNumber(game.energy) + " Λ";
+            document.getElementById('energy-count').textContent = formatShortNumber(game.energy) + " Λ";
             const currentCps = calculateCPS();
-            document.getElementById('cps-count').textContent = formatRankingNumber(currentCps);
+            document.getElementById('cps-count').textContent = formatShortNumber(currentCps);
             document.getElementById('mult-count').textContent = game.prestigeMultiplier.toFixed(1);
 
             let genHtml = "";
@@ -1327,13 +1343,13 @@
                 
                 const isUnlocked = gen.count > 0;
                 const displayName = isUnlocked ? `${formatRankingNumber(index + 1)}. ${gen.name}` : `${formatRankingNumber(index + 1)}. ？？？ (未解放)`;
-                const displayCps = isUnlocked ? `生産: +${formatRankingNumber(itemCps)} Λ/s` : `生産: ？？？`;
-                const displayCost = `費用: ${formatRankingNumber(gen.cost)} Λ`;
+                const displayCps = isUnlocked ? `生産: +${formatShortNumber(itemCps)} Λ/s` : `生産: ？？？`;
+                const displayCost = `費用: ${formatShortNumber(gen.cost)} Λ`;
 
                 genHtml += `
                     <div class="item-card ${!isUnlocked ? 'locked' : ''}">
                         <div class="item-info">
-                            <h4>${isUnlocked ? '' : '🔒 '}${displayName} (所持: ${formatRankingNumber(gen.count)})</h4>
+                            <h4>${isUnlocked ? '' : '🔒 '}${displayName} (所持: ${formatShortNumber(gen.count)})</h4>
                             <p>${displayCps}</p>
                             <p>${displayCost}</p>
                         </div>
@@ -1348,9 +1364,9 @@
                 upHtml += `
                     <div class="item-card">
                         <div class="item-info">
-                            <h4>${up.name} (Lv.${formatRankingNumber(up.count)})</h4>
+                            <h4>${up.name} (Lv.${formatShortNumber(up.count)})</h4>
                             <p>${up.desc}</p>
-                            <p>費用: ${formatRankingNumber(up.cost)} Λ</p>
+                            <p>費用: ${formatShortNumber(up.cost)} Λ</p>
                         </div>
                         <button class="buy-btn" ${game.energy < up.cost ? 'disabled' : ''} onclick="buyUpgrade(${index})">強化</button>
                     </div>
