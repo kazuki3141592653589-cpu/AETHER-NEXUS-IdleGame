@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AETHER NEXUS - 完全版</title>
+    <title>AETHER NEXUS - 未来エネルギー設置ゲーム</title>
     <style>
         :root {
             --bg-color: #050b14;
@@ -13,8 +13,6 @@
             --text-color: #e0f7ff;
             --sub-text: #8ab8f8;
             --glow: 0 0 10px rgba(0, 243, 255, 0.2);
-            --danger-color: #ff4d4d;
-            --gold-color: #ffd700;
         }
 
         * {
@@ -157,24 +155,25 @@
 
         .menu-bar {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             z-index: 10;
-            flex-wrap: wrap;
-            justify-content: center;
-            max-width: 400px;
+        }
+
+        .menu-btn, .buy-btn, .nav-tab, .danger-btn {
+            outline: none !important;
+            box-shadow: none !important;
+            pointer-events: auto !important;
         }
 
         .menu-btn {
             background: rgba(0, 211, 255, 0.05);
             border: 1px solid rgba(0, 211, 255, 0.3);
             color: var(--text-color);
-            padding: 8px 12px;
+            padding: 10px 16px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             transition: all 0.2s;
-            outline: none !important;
-            pointer-events: auto !important;
         }
 
         .menu-btn:hover {
@@ -240,11 +239,6 @@
             border-color: rgba(138, 184, 248, 0.2);
         }
 
-        .item-card.hard-mission {
-            border-color: rgba(255, 215, 0, 0.4);
-            background: rgba(255, 215, 0, 0.02);
-        }
-
         .item-info h4 {
             margin: 0 0 5px 0;
             font-size: 1rem;
@@ -267,7 +261,6 @@
             font-weight: bold;
             font-size: 0.85rem;
             transition: opacity 0.2s;
-            outline: none !important;
             pointer-events: auto !important;
         }
 
@@ -287,7 +280,6 @@
             font-weight: bold;
             font-size: 0.85rem;
             width: 100%;
-            outline: none !important;
             pointer-events: auto !important;
         }
 
@@ -306,14 +298,13 @@
             background: none;
             border: none;
             color: var(--sub-text);
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             cursor: pointer;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             transition: color 0.2s, background 0.2s;
-            outline: none !important;
             pointer-events: auto !important;
         }
 
@@ -368,6 +359,7 @@
             margin-top: 10px;
             margin-bottom: 15px;
             outline: none;
+            box-shadow: none !important;
             pointer-events: auto !important;
         }
 
@@ -431,13 +423,10 @@
         <div class="menu-bar">
             <button class="menu-btn" onclick="openPanel('panel-generators')">発電機</button>
             <button class="menu-btn" onclick="openPanel('panel-upgrades')">強化</button>
-            <button class="menu-btn" onclick="openPanel('panel-missions')">🎯 ミッション</button>
-            <button class="menu-btn" onclick="openPanel('panel-achievements')">🏆 実績</button>
             <button class="menu-btn" onclick="openPanel('panel-prestige')">転生</button>
-            <button class="menu-btn" onclick="openPanel('panel-ranking')">🌐 ランキング</button>
+            <button class="menu-btn" onclick="openPanel('panel-ranking')">🏆 ランキング</button>
         </div>
 
-        <!-- 発電機パネル -->
         <div id="panel-generators" class="sub-panel">
             <div class="panel-header">
                 <span>次元発電機 (全50種)</span>
@@ -446,7 +435,6 @@
             <div class="panel-content" id="generator-list"></div>
         </div>
 
-        <!-- 強化パネル -->
         <div id="panel-upgrades" class="sub-panel">
             <div class="panel-header">
                 <span>タップ性能強化</span>
@@ -455,25 +443,6 @@
             <div class="panel-content" id="upgrade-list"></div>
         </div>
 
-        <!-- ミッションパネル -->
-        <div id="panel-missions" class="sub-panel">
-            <div class="panel-header">
-                <span>🎯 デイリー＆高難度ミッション</span>
-                <button class="close-btn" onclick="closePanel()">閉じる</button>
-            </div>
-            <div class="panel-content" id="mission-list"></div>
-        </div>
-
-        <!-- アチーブメントパネル -->
-        <div id="panel-achievements" class="sub-panel">
-            <div class="panel-header">
-                <span>🏆 アチーブメント (実績)</span>
-                <button class="close-btn" onclick="closePanel()">閉じる</button>
-            </div>
-            <div class="panel-content" id="achievement-list"></div>
-        </div>
-
-        <!-- 転生パネル -->
         <div id="panel-prestige" class="sub-panel">
             <div class="panel-header">
                 <span>次元転生（プレステージ）</span>
@@ -495,10 +464,9 @@
             </div>
         </div>
 
-        <!-- ランキングパネル -->
         <div id="panel-ranking" class="sub-panel">
             <div class="panel-header">
-                <span>🌐 オンラインランキング</span>
+                <span>🏆 オンラインランキング</span>
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
             </div>
             <div class="panel-content" style="padding: 15px; text-align: center;">
@@ -538,7 +506,6 @@
             </div>
         </div>
 
-        <!-- モーダル各種 -->
         <div id="privacy-modal" class="modal-overlay" onclick="outsideClose(event, 'privacy-modal')">
             <div class="modal-box">
                 <div class="panel-header">
@@ -609,11 +576,10 @@
     <nav id="nav-tabs-bar">
         <button class="nav-tab active" onclick="switchTab('generators')">発電機</button>
         <button class="nav-tab" onclick="switchTab('upgrades')">強化</button>
-        <button class="nav-tab" onclick="switchTab('missions')">ミッション</button>
+        <button class="nav-tab" onclick="switchTab('prestige')">転生</button>
         <button class="nav-tab" onclick="switchTab('ranking')">ランキング</button>
     </nav>
 
-    <!-- Firebase連携 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
         import { getFirestore, collection, doc, setDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
@@ -640,8 +606,8 @@
                 }
 
                 await setDoc(doc(db, "rankings", uid), {
-                    name: window.game.playerName,
-                    score: Math.floor(window.game.energy),
+                    name: game.playerName,
+                    score: Math.floor(game.energy),
                     updatedAt: Date.now()
                 });
                 loadOnlineRanking();
@@ -688,23 +654,12 @@
             });
         }
 
-        function formatRankingNumber(num) {
-            if (num === null || num === undefined || isNaN(num)) return "0";
-            if (num <= 999999999) return Math.floor(num).toLocaleString('en-US');
-            const units = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc'];
-            let i = 3; 
-            let n = num / 1000000000; 
-            while (n >= 1000 && i < units.length - 1) { n /= 1000; i++; }
-            return n.toFixed(2) + ' ' + units[i];
-        }
-
         window.loadOnlineRanking = loadOnlineRanking;
         window.addEventListener('DOMContentLoaded', () => {
             loadOnlineRanking();
         });
     </script>
 
-    <!-- メインゲームロジック -->
     <script>
         const generatorData = [
             { name: "小型発電セル", baseCost: 500, baseCps: 0.5 },
@@ -760,24 +715,9 @@
         ];
 
         const upgradeBaseData = [
-            { id: 1, name: "サイバネティック・フィンガー", desc: "タップ時の生産量が +1 増加", cost: 100, mult: 2.2, type: "tap", value: 1 },
-            { id: 2, name: "ナノマシン・ブースト", desc: "タップ時の生産量が +10 増加", cost: 1000, mult: 2.4, type: "tap", value: 10 },
-            { id: 3, name: "量子共鳴アンプ", desc: "すべての発電効率が 2.5倍 に上昇", cost: 5000, mult: 3.5, type: "cps", value: 2.5 }
-        ];
-
-        // ミッション定義（通常＋高難度）
-        const missionBaseData = [
-            { id: "m1", title: "初期エネルギー調達", desc: "エネルギーを 5,000 Λ 稼ぐ", target: 5000, type: "earned", reward: 1000, cleared: false, isHard: false },
-            { id: "m2", title: "マニュアルオーバーロード", desc: "コアを合計 100 回タップする", target: 100, type: "taps", reward: 2500, cleared: false, isHard: false },
-            { id: "m3", title: "自動化の第一歩", desc: "発電機を合計 5 個所持する", target: 5, type: "gens", reward: 5000, cleared: false, isHard: false },
-            { id: "h1", title: "🔥 次元共鳴の極限", desc: "エネルギーを 100M Λ 貯める (高難度)", target: 100000000, type: "currentEnergy", reward: 50000, cleared: false, isHard: true }
-        ];
-
-        // アチーブメント定義
-        const achievementBaseData = [
-            { id: "a1", name: "エネルギーの芽生え", desc: "総獲得エネルギー 1,000 Λ 突破", target: 1000, type: "totalEarned", rewardMult: 1.1, unlocked: false },
-            { id: "a2", name: "連打の達人", desc: "合計 500 回タップする", target: 500, type: "totalTaps", rewardMult: 1.2, unlocked: false },
-            { id: "a3", name: "次元開拓者", desc: "発電機を合計 20 個所持する", target: 20, type: "totalGens", rewardMult: 1.3, unlocked: false }
+            { id: 1, name: "サイバネティック・フィンガー", desc: "タップ時のエネルギー生産量が +1 増加", cost: 100, mult: 2.2, type: "tap", value: 1 },
+            { id: 2, name: "ナノマシン・ブースト", desc: "タップ時のエネルギー生産量が +10 増加", cost: 1000, mult: 2.4, type: "tap", value: 10 },
+            { id: 3, name: "量子共鳴アンプ", desc: "すべての発電効率が +1.0 増加", cost: 50000, mult: 2.5, type: "cps", value: 1.0 }
         ];
 
         let game = {
@@ -788,13 +728,19 @@
             prestigeMultiplier: 1,
             prestigeCount: 0,
             playerName: "名無しのパイレット",
-            generators: generatorData.map(g => ({ name: g.name, cost: g.baseCost, baseCost: g.baseCost, cps: g.baseCps, count: 0, mult: 1.18 })),
-            upgrades: upgradeBaseData.map(u => ({ ...u, count: 0 })),
-            missions: missionBaseData.map(m => ({ ...m })),
-            achievements: achievementBaseData.map(a => ({ ...a }))
+            generators: generatorData.map(g => ({
+                name: g.name,
+                cost: g.baseCost,
+                baseCost: g.baseCost,
+                cps: g.baseCps,
+                count: 0,
+                mult: 1.18
+            })),
+            upgrades: upgradeBaseData.map(u => ({
+                ...u,
+                count: 0
+            }))
         };
-
-        window.game = game;
 
         function getPrestigeRequirement() {
             if (game.prestigeCount === 0) return 1000000;
@@ -820,27 +766,50 @@
         function formatRankingNumber(num) {
             if (num === null || num === undefined || isNaN(num)) return "0";
             if (num <= 999999999) return Math.floor(num).toLocaleString('en-US');
-            const units = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc'];
+
+            const units = [
+                '', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc', 
+                'Udc', 'Ddc', 'Tdc', 'qdc', 'Qdc', 'Hdc', 'Sdc', 'Odc', 'Ndc', 
+                'Vg', 'Uvg', 'Dvg', 'Tvg', 'qvg', 'Qvg', 'Hvg', 'Svg', 'Ovg', 'Nvg', 
+                'Tg', 'Utg', 'Dtg', 'Googol', 'Ttg', 'Qatg', 'Qitg', 'Sxtg', 'Stg', 'Otg', 'Ntg', 
+                'Qag', 'Uqag', 'Dqag', 'Tqag', 'Qaqag', 'Qiqag', 'Sxqag', 'Spqag', 'Ocqag', 'Noqag', 
+                'Qig', 'Uqig', 'Dqig', 'Tqig', 'Qaqig', 'Qiqig'
+            ];
+
             let i = 3; 
             let n = num / 1000000000; 
-            while (n >= 1000 && i < units.length - 1) { n /= 1000; i++; }
+
+            while (n >= 1000 && i < units.length - 1) {
+                n /= 1000;
+                i++;
+            }
+
             return n.toFixed(2) + ' ' + units[i];
         }
 
         let audioCtx = null;
         function playTapSound() {
             try {
-                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                if (audioCtx.state === 'suspended') audioCtx.resume();
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
                 const osc = audioCtx.createOscillator();
                 const gainNode = audioCtx.createGain();
+
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(800, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.08);
+
                 gainNode.gain.setValueAtTime(0.45, audioCtx.currentTime);
                 gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+
                 osc.connect(gainNode);
                 gainNode.connect(audioCtx.destination);
+
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.08);
             } catch (e) {}
@@ -853,12 +822,14 @@
             game.totalEarned += gain;
             game.totalTaps++;
 
-            let clientX = event.clientX || window.innerWidth / 2;
-            let clientY = event.clientY || window.innerHeight / 2;
+            let clientX = event.clientX;
+            let clientY = event.clientY;
+            if (!clientX || !clientY) {
+                clientX = window.innerWidth / 2;
+                clientY = window.innerHeight / 2;
+            }
+
             showFloatingText(clientX, clientY, "+" + formatNumber(gain));
-            
-            checkMissions();
-            checkAchievements();
             updateUI();
         }
 
@@ -866,14 +837,20 @@
             const el = document.createElement('div');
             el.className = 'floating-number';
             el.textContent = text;
+            
             const offsetX = (Math.random() - 0.5) * 50;
             const offsetY = (Math.random() - 0.5) * 20;
             const randRot = (Math.random() - 0.5) * 30;
+
             el.style.left = (x + offsetX - 20) + 'px';
             el.style.top = (y + offsetY - 20) + 'px';
             el.style.setProperty('--rand-rot', randRot);
+
             document.body.appendChild(el);
-            setTimeout(() => el.remove(), 450);
+
+            setTimeout(() => {
+                el.remove();
+            }, 450);
         }
 
         function buyGenerator(index) {
@@ -882,8 +859,6 @@
                 game.energy -= gen.cost;
                 gen.count++;
                 gen.cost = Math.floor(gen.baseCost * Math.pow(gen.mult, gen.count));
-                checkMissions();
-                checkAchievements();
                 updateUI();
             }
         }
@@ -893,7 +868,9 @@
             if (game.energy >= up.cost) {
                 game.energy -= up.cost;
                 up.count++;
-                if (up.type === "tap") game.tapPower += up.value;
+                if (up.type === "tap") {
+                    game.tapPower += up.value;
+                }
                 up.cost = Math.floor(up.cost * up.mult);
                 updateUI();
             }
@@ -904,48 +881,18 @@
             for (let i = 0; i < game.generators.length; i++) {
                 const gen = game.generators[i];
                 const baseCps = generatorData[i] ? generatorData[i].baseCps : 0;
-                cps += baseCps * (gen.count || 0);
+                const count = gen.count || 0;
+                cps += baseCps * count;
             }
-            let multBonus = 1;
+
+            let additiveBonus = 1.0;
             game.upgrades.forEach(up => {
-                if (up.type === "cps" && up.count > 0) multBonus *= Math.pow(up.value, up.count);
-            });
-            return cps * multBonus * game.prestigeMultiplier;
-        }
-
-        function checkMissions() {
-            let totalGens = game.generators.reduce((sum, g) => sum + g.count, 0);
-            game.missions.forEach(m => {
-                if (m.cleared) return;
-                let current = 0;
-                if (m.type === "earned") current = game.totalEarned;
-                if (m.type === "taps") current = game.totalTaps;
-                if (m.type === "gens") current = totalGens;
-                if (m.type === "currentEnergy") current = game.energy;
-
-                if (current >= m.target) {
-                    m.cleared = true;
-                    game.energy += m.reward;
-                    showCustomAlert(`🎯 ミッション達成！<br>"${m.title}"<br>報酬として ${formatNumber(m.reward)} Λ を獲得！`);
+                if (up.type === "cps" && up.count > 0) {
+                    additiveBonus += up.value * up.count;
                 }
             });
-        }
 
-        function checkAchievements() {
-            let totalGens = game.generators.reduce((sum, g) => sum + g.count, 0);
-            game.achievements.forEach(a => {
-                if (a.unlocked) return;
-                let current = 0;
-                if (a.type === "totalEarned") current = game.totalEarned;
-                if (a.type === "totalTaps") current = game.totalTaps;
-                if (a.type === "totalGens") current = totalGens;
-
-                if (current >= a.target) {
-                    a.unlocked = true;
-                    game.prestigeMultiplier *= a.rewardMult;
-                    showCustomAlert(`🏆 実績解除！<br>"${a.name}"<br>生産効率が ${a.rewardMult}倍 に上昇！`);
-                }
-            });
+            return cps * additiveBonus * game.prestigeMultiplier;
         }
 
         function doPrestige() {
@@ -955,9 +902,17 @@
             game.prestigeMultiplier += getPrestigeGainAmount();
             game.prestigeCount++; 
             game.energy = 0;
-            game.generators.forEach((gen, index) => { gen.count = 0; gen.cost = generatorData[index].baseCost; });
+            
+            game.generators.forEach((gen, index) => {
+                gen.count = 0;
+                gen.cost = generatorData[index].baseCost;
+            });
+
             game.tapPower = 1;
-            game.upgrades.forEach((up, index) => { up.count = 0; up.cost = upgradeBaseData[index].cost; });
+            game.upgrades.forEach((up, index) => {
+                up.count = 0;
+                up.cost = upgradeBaseData[index].cost;
+            });
 
             saveGame();
             updateUI();
@@ -966,34 +921,55 @@
         }
 
         let isResetting = false;
-        function resetGameData() { document.getElementById('resetConfirmModal').classList.add('active'); }
+
+        function resetGameData() {
+            document.getElementById('resetConfirmModal').classList.add('active');
+        }
+
         function executeHardReset() {
             isResetting = true;
             localStorage.removeItem('aether_nexus_save');
             closeModal('resetConfirmModal');
-            showCustomAlert("セーブデータをリセットしました。<br>画面を再読み込みします。", () => location.reload());
+            showCustomAlert("セーブデータをリセットしました。<br>画面を再読み込みします。", () => {
+                location.reload();
+            });
         }
 
         function updateRankAndStats() {
             document.getElementById('display-name').textContent = game.playerName;
+            
             const inputEl = document.getElementById('player-name-input');
-            if (inputEl && document.activeElement !== inputEl) inputEl.value = game.playerName;
+            if (inputEl && document.activeElement !== inputEl) {
+                inputEl.value = game.playerName;
+            }
 
             let title = "次元を開拓し始めたばかりの文明";
             let desc = "一歩を踏み出したばかりの文明です。さらなるエネルギーを求めて進みましょう。";
-            if (game.totalEarned >= 10000000) { title = "星系交際マスター"; desc = "銀河系全域にその名を轟かせる一大エネルギー文明です。"; }
-            else if (game.totalEarned >= 1000000) { title = "次元歪曲ストラテジスト"; desc = "時空を自在に操り、プレステージを重ねた先進文明です。"; }
-            else if (game.totalEarned >= 50000) { title = "プラズマ・エコノミスト"; desc = "高度な自動発電ネットワークを築いた文明です。"; }
+
+            if (game.totalEarned >= 10000000) {
+                title = "星系交際マスター";
+                desc = "銀河系全域にその名を轟かせる一大エネルギー文明です。";
+            } else if (game.totalEarned >= 1000000) {
+                title = "次元歪曲ストラテジスト";
+                desc = "時空を自在に操り、プレステージを重ねた先進文明です。";
+            } else if (game.totalEarned >= 50000) {
+                title = "プラズマ・エコノミスト";
+                desc = "高度な自動発電ネットワークを築いた文明です。";
+            }
 
             document.getElementById('rank-title').textContent = title;
             document.getElementById('rank-desc').textContent = desc;
 
             const prestigeBtn = document.getElementById('prestige-btn');
-            document.getElementById('prestige-progress').textContent = formatNumber(game.energy);
+            const prestigeProgress = document.getElementById('prestige-progress');
+            prestigeProgress.textContent = formatNumber(game.energy);
+
             let currentReq = getPrestigeRequirement();
             document.getElementById('prestige-req-display').textContent = formatNumber(currentReq);
             document.getElementById('prestige-count-display').textContent = game.prestigeCount + 1;
-            document.getElementById('prestige-gain-preview').textContent = `+${getPrestigeGainAmount().toFixed(1)}x`;
+
+            let nextGain = getPrestigeGainAmount();
+            document.getElementById('prestige-gain-preview').textContent = `+${nextGain.toFixed(1)}x`;
 
             if (game.energy >= currentReq) {
                 prestigeBtn.disabled = false;
@@ -1008,20 +984,26 @@
 
         function updateUI() {
             document.getElementById('energy-count').textContent = formatRankingNumber(game.energy) + " Λ";
-            document.getElementById('cps-count').textContent = formatRankingNumber(calculateCPS());
+            const currentCps = calculateCPS();
+            document.getElementById('cps-count').textContent = formatRankingNumber(currentCps);
             document.getElementById('mult-count').textContent = game.prestigeMultiplier.toFixed(1);
 
-            // 発電機リスト描画
             let genHtml = "";
             game.generators.forEach((gen, index) => {
                 const baseCps = generatorData[index] ? generatorData[index].baseCps : 0;
+                let itemCps = baseCps * gen.count;
+                
                 const isUnlocked = gen.count > 0;
+                const displayName = isUnlocked ? `${index + 1}. ${gen.name}` : `${index + 1}. ？？？ (未解放)`;
+                const displayCps = isUnlocked ? `生産: +${formatRankingNumber(itemCps)} Λ/s` : `生産: ？？？`;
+                const displayCost = `費用: ${formatRankingNumber(gen.cost)} Λ`;
+
                 genHtml += `
                     <div class="item-card ${!isUnlocked ? 'locked' : ''}">
                         <div class="item-info">
-                            <h4>${isUnlocked ? '' : '🔒 '}${index + 1}. ${gen.name} (所持: ${gen.count})</h4>
-                            <p>生産: +${formatRankingNumber(baseCps * gen.count)} Λ/s</p>
-                            <p>費用: ${formatRankingNumber(gen.cost)} Λ</p>
+                            <h4>${isUnlocked ? '' : '🔒 '}${displayName} (所持: ${gen.count})</h4>
+                            <p>${displayCps}</p>
+                            <p>${displayCost}</p>
                         </div>
                         <button class="buy-btn" ${game.energy < gen.cost ? 'disabled' : ''} onclick="buyGenerator(${index})">購入</button>
                     </div>
@@ -1029,7 +1011,6 @@
             });
             document.getElementById('generator-list').innerHTML = genHtml;
 
-            // アップグレード描画
             let upHtml = "";
             game.upgrades.forEach((up, index) => {
                 upHtml += `
@@ -1044,42 +1025,6 @@
                 `;
             });
             document.getElementById('upgrade-list').innerHTML = upHtml;
-
-            // ミッション描画
-            let totalGens = game.generators.reduce((sum, g) => sum + g.count, 0);
-            let missionHtml = "";
-            game.missions.forEach(m => {
-                let current = (m.type === "earned") ? game.totalEarned : (m.type === "taps") ? game.totalTaps : (m.type === "gens") ? totalGens : game.energy;
-                let progress = Math.min(100, Math.floor((current / m.target) * 100));
-                missionHtml += `
-                    <div class="item-card ${m.isHard ? 'hard-mission' : ''} ${m.cleared ? 'locked' : ''}">
-                        <div class="item-info" style="width: 100%;">
-                            <h4>${m.title} ${m.cleared ? '✅ (達成済)' : ''}</h4>
-                            <p>${m.desc}</p>
-                            <p>報酬: ${formatNumber(m.reward)} Λ</p>
-                            <div style="background: rgba(0,243,255,0.1); border-radius: 4px; height: 6px; margin-top: 6px; overflow: hidden;">
-                                <div style="background: ${m.isHard ? 'var(--gold-color)' : 'var(--accent-color)'}; width: ${progress}%; height: 100%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            document.getElementById('mission-list').innerHTML = missionHtml;
-
-            // アチーブメント描画
-            let achHtml = "";
-            game.achievements.forEach(a => {
-                achHtml += `
-                    <div class="item-card ${a.unlocked ? '' : 'locked'}">
-                        <div class="item-info">
-                            <h4>${a.name} ${a.unlocked ? '✅' : '🔒'}</h4>
-                            <p>${a.desc}</p>
-                            <p>効果: 生産効率 x${a.rewardMult}</p>
-                        </div>
-                    </div>
-                `;
-            });
-            document.getElementById('achievement-list').innerHTML = achHtml;
 
             updateRankAndStats();
         }
@@ -1100,17 +1045,38 @@
                     game.tapPower = parsed.tapPower || 1;
                     game.prestigeMultiplier = parsed.prestigeMultiplier || 1;
                     game.prestigeCount = parsed.prestigeCount || 0;
-                    if (parsed.playerName) game.playerName = parsed.playerName;
-                    if (parsed.generators) parsed.generators.forEach((g, idx) => { if (game.generators[idx]) game.generators[idx].count = g.count || 0; });
-                    if (parsed.upgrades) parsed.upgrades.forEach((u, idx) => { if (game.upgrades[idx]) { game.upgrades[idx].count = u.count || 0; game.upgrades[idx].cost = u.cost || game.upgrades[idx].cost; } });
-                    if (parsed.missions) parsed.missions.forEach((m, idx) => { if (game.missions[idx]) game.missions[idx].cleared = m.cleared || false; });
-                    if (parsed.achievements) parsed.achievements.forEach((a, idx) => { if (game.achievements[idx]) game.achievements[idx].unlocked = a.unlocked || false; });
+                    
+                    if (parsed.playerName && parsed.playerName.trim() !== "") {
+                        game.playerName = parsed.playerName;
+                    }
+
+                    if (parsed.generators) {
+                        parsed.generators.forEach((savedGen, idx) => {
+                            if (game.generators[idx]) {
+                                game.generators[idx].count = savedGen.count || 0;
+                            }
+                        });
+                    }
+
+                    if (parsed.upgrades) {
+                        parsed.upgrades.forEach((savedUp, idx) => {
+                            if (game.upgrades[idx]) {
+                                game.upgrades[idx].count = savedUp.count || 0;
+                                game.upgrades[idx].cost = savedUp.cost || game.upgrades[idx].cost;
+                            }
+                        });
+                    }
 
                     game.generators.forEach((gen, idx) => {
                         gen.baseCost = generatorData[idx].baseCost;
+                        gen.cps = generatorData[idx].baseCps;
+                        gen.mult = 1.18;
                         gen.cost = Math.floor(gen.baseCost * Math.pow(gen.mult, gen.count));
                     });
-                } catch (e) {}
+
+                } catch (e) {
+                    console.error("セーブデータの読み込みエラー", e);
+                }
             } else {
                 document.getElementById('initial-name-input').value = "";
                 document.getElementById('name-modal').classList.add('active');
@@ -1120,9 +1086,12 @@
 
         function saveInitialName() {
             const input = document.getElementById('initial-name-input').value.trim();
-            if (input) game.playerName = input;
+            if (input) {
+                game.playerName = input;
+            }
             document.getElementById('name-modal').classList.remove('active');
             document.getElementById('player-name-input').value = game.playerName;
+            
             saveGame();
             updateRankAndStats();
             if (window.syncScoreToFirebase) window.syncScoreToFirebase();
@@ -1142,25 +1111,44 @@
         function openPanel(panelId) {
             document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
             document.getElementById(panelId).classList.add('active');
-            if (panelId === 'panel-ranking') document.getElementById('player-name-input').value = game.playerName;
+            
+            if (panelId === 'panel-ranking') {
+                document.getElementById('player-name-input').value = game.playerName;
+            }
+            
             updateUI();
         }
 
-        function closePanel() { document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active')); }
+        function closePanel() {
+            document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+        }
 
         function switchTab(tabName) {
             document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-            if (tabName === 'generators') { document.querySelectorAll('.nav-tab')[0].classList.add('active'); openPanel('panel-generators'); }
-            else if (tabName === 'upgrades') { document.querySelectorAll('.nav-tab')[1].classList.add('active'); openPanel('panel-upgrades'); }
-            else if (tabName === 'missions') { document.querySelectorAll('.nav-tab')[2].classList.add('active'); openPanel('panel-missions'); }
-            else if (tabName === 'ranking') {
+            if (tabName === 'generators') {
+                document.querySelectorAll('.nav-tab')[0].classList.add('active');
+                openPanel('panel-generators');
+            } else if (tabName === 'upgrades') {
+                document.querySelectorAll('.nav-tab')[1].classList.add('active');
+                openPanel('panel-upgrades');
+            } else if (tabName === 'prestige') {
+                document.querySelectorAll('.nav-tab')[2].classList.add('active');
+                openPanel('panel-prestige');
+            } else if (tabName === 'ranking') {
                 document.querySelectorAll('.nav-tab')[3].classList.add('active');
                 openPanel('panel-ranking');
-                if (window.loadOnlineRanking) window.syncScoreToFirebase().then(() => window.loadOnlineRanking());
+                if (window.loadOnlineRanking) {
+                    window.syncScoreToFirebase().then(() => {
+                        window.loadOnlineRanking();
+                    });
+                }
             }
         }
 
-        function openModal(modalId) { document.getElementById(modalId).classList.add('active'); }
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
             if (modalId === 'custom-alert-modal' && window.customAlertCallback) {
@@ -1169,22 +1157,30 @@
                 cb();
             }
         }
-        function outsideClose(event, modalId) { if (event.target.id === modalId) closeModal(modalId); }
+
+        function outsideClose(event, modalId) {
+            if (event.target.id === modalId) {
+                closeModal(modalId);
+            }
+        }
 
         let lastTime = performance.now();
+
         function gameLoop(currentTime) {
             if (isResetting) return;
+
             let deltaTime = (currentTime - lastTime) / 1000;
             lastTime = currentTime;
-            if (deltaTime > 0.5) deltaTime = 0.5;
+
+            if (deltaTime > 0.5) {
+                deltaTime = 0.5;
+            }
 
             const cps = calculateCPS();
             if (cps > 0) {
                 const addAmount = cps * deltaTime;
                 game.energy += addAmount;
                 game.totalEarned += addAmount;
-                checkMissions();
-                checkAchievements();
             }
 
             updateUI();
@@ -1195,6 +1191,7 @@
         setInterval(() => {
             if (isResetting) return;
             saveGame();
+
             const now = Date.now();
             if (now - lastSync > 5000 && window.syncScoreToFirebase) {
                 window.syncScoreToFirebase();
