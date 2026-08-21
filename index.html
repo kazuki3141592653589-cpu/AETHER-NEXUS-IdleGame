@@ -263,6 +263,7 @@
             align-items: center;
             gap: 15px;
             transition: background 0.2s, border-color 0.2s;
+            cursor: pointer;
         }
 
         .achievement-card.unlocked {
@@ -458,39 +459,41 @@
             right: 20px;
         }
 
-        /* 攻略サイト風隠し実績セクション用スタイル */
+        /* 攻略ガイド＆馴染んだ「実は」ボタンのスタイル */
         .guide-box {
-            background: rgba(0, 243, 255, 0.02);
-            border: 1px dashed rgba(0, 243, 255, 0.25);
+            background: rgba(0, 243, 255, 0.015);
+            border: 1px solid rgba(0, 243, 255, 0.15);
             border-radius: 8px;
             padding: 12px;
             margin-top: 15px;
             text-align: left;
         }
         .secret-toggle-btn {
-            background: rgba(0, 211, 255, 0.1);
-            border: 1px solid var(--accent-color);
-            color: var(--accent-color);
-            padding: 8px 12px;
-            border-radius: 5px;
+            background: transparent;
+            border: none;
+            color: var(--sub-text);
+            padding: 4px 0;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             width: 100%;
-            font-weight: bold;
-            transition: background 0.2s;
+            text-align: left;
+            transition: color 0.2s;
             pointer-events: auto !important;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         .secret-toggle-btn:hover {
-            background: rgba(0, 211, 255, 0.2);
+            color: var(--accent-color);
         }
         .secret-content {
             display: none;
-            margin-top: 12px;
-            font-size: 0.82rem;
+            margin-top: 10px;
+            font-size: 0.8rem;
             line-height: 1.6;
             color: var(--text-color);
-            border-top: 1px solid rgba(0, 243, 255, 0.15);
-            padding-top: 10px;
+            border-top: 1px solid rgba(0, 243, 255, 0.1);
+            padding-top: 8px;
         }
         .secret-content.active {
             display: block;
@@ -544,9 +547,11 @@
                     <li>進行が遅くなってきたら、エネルギーや設備を初期化して倍率を上げる「次元転生」を活用しましょう。</li>
                 </ul>
 
-                <!-- 隠し実績攻略サイト風セクション -->
+                <!-- 馴染んだデザインの「実は」ボタン＆裏情報セクション -->
                 <div class="guide-box">
-                    <button class="secret-toggle-btn" onclick="toggleSecretGuide()">▼ 「実は…」と書かれた怪しげなボタンを押す</button>
+                    <button class="secret-toggle-btn" onclick="toggleSecretGuide()">
+                        <span id="secret-arrow">▶</span> 実は…（開発裏・隠し実績のヒント）
+                    </button>
                     <div id="secret-guide-content" class="secret-content">
                         <p style="color: #00ff88; font-weight: bold; margin-top:0;">【裏・攻略情報】隠し実績の全貌</p>
                         <p style="color: var(--sub-text);">宇宙の彼方に眠る、通常プレイではなかなか気づきにくい4つの隠し実績と条件です。</p>
@@ -689,6 +694,22 @@
                 <div class="modal-body" style="text-align: center;">
                     <p id="custom-alert-message" style="margin-bottom: 20px;"></p>
                     <button class="buy-btn" style="width: 100%;" onclick="closeModal('custom-alert-modal')">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 未解放実績のヒント表示用モーダル -->
+        <div id="achievement-hint-modal" class="modal-overlay" onclick="outsideClose(event, 'achievement-hint-modal')">
+            <div class="modal-box" style="max-width: 350px;">
+                <div class="panel-header">
+                    <span>実績のヒント</span>
+                    <button class="close-btn" onclick="closeModal('achievement-hint-modal')">×</button>
+                </div>
+                <div class="modal-body" style="text-align: center;">
+                    <div id="hint-icon" style="font-size: 2.2rem; margin-bottom: 8px;">💡</div>
+                    <div id="hint-title" style="font-weight: bold; margin-bottom: 8px; color: var(--accent-color);"></div>
+                    <p id="hint-desc" style="font-size: 0.85rem; color: var(--sub-text); margin-bottom: 20px;"></p>
+                    <button class="buy-btn" style="width: 100%;" onclick="closeModal('achievement-hint-modal')">閉じる</button>
                 </div>
             </div>
         </div>
@@ -882,27 +903,27 @@
         const achievementData = [];
 
         const energyMilestones = [
-            { val: 1, name: "Λの目覚め", desc: "初めてエネルギーが1Λを超えた" },
-            { val: 10, name: "微弱な脈動", desc: "10 Λ のエネルギーを獲得する" },
-            { val: 100, name: "エネルギーの予感", desc: "100 Λ のエネルギーを獲得する" },
-            { val: 1000, name: "スパーク誕生", desc: "1,000 Λ のエネルギーを獲得する" },
-            { val: 5000, name: "電流の流れ", desc: "5,000 Λ のエネルギーを獲得する" },
-            { val: 25000, name: "エネルギー回路", desc: "25,000 Λ のエネルギーを獲得する" },
-            { val: 100000, name: "プラズマ初動", desc: "100,000 Λ のエネルギーを獲得する" },
-            { val: 500000, name: "都市の明かり", desc: "500,000 Λ のエネルギーを獲得する" },
-            { val: 1000000, name: "メガエネルギー", desc: "1,000,000 Λ のエネルギーを獲得する" },
-            { val: 5000000, name: "電力網の確立", desc: "5,000,000 Λ のエネルギーを獲得する" },
-            { val: 25000000, name: "国家級プラント", desc: "25,000,000 Λ のエネルギーを獲得する" },
-            { val: 100000000, name: "大陸の心臓部", desc: "100,000,000 Λ のエネルギーを獲得する" },
-            { val: 500000000, name: "ギガ・グリッド", desc: "500,000,000 Λ のエネルギーを獲得する" },
-            { val: 1000000000, name: "惑星の鼓動", desc: "1,000,000,000 Λ のエネルギーを獲得する" },
-            { val: 5000000000, name: "惑星経済の始まり", desc: "5,000,000,000 Λ のエネルギーを獲得する" },
-            { val: 25000000000, name: "ダイソン・スフィア前夜", desc: "25,000,000,000 Λ のエネルギーを獲得する" },
-            { val: 100000000000, name: "テラへの入口", desc: "1,000,000,000,000 Λ (1兆Λ) のエネルギーを獲得する" },
-            { val: 500000000000, name: "恒星系グリッド", desc: "500,000,000,000 Λ のエネルギーを獲得する" },
-            { val: 1000000000000, name: "ソーラー・マイスター", desc: "1,000,000,000,000,000 Λ 相当のエネルギー獲得" },
-            { val: 1000000000000000n, name: "宇宙経済の支配者", desc: "圧倒的なエネルギー流通を達成する" },
-            { val: 100000000000000000n, name: "次元の貯蔵庫", desc: "100澗Λ のエネルギーを蓄える" }
+            { val: 1, name: "Λの目覚め", desc: "初めてエネルギーが1Λを超えた", hint: "まずは画面中央のエネルギーコアをタップしてみましょう。" },
+            { val: 10, name: "微弱な脈動", desc: "10 Λ のエネルギーを獲得する", hint: "タップを続けるか発電機を置いてエネルギーを貯めましょう。" },
+            { val: 100, name: "エネルギーの予感", desc: "100 Λ のエネルギーを獲得する", hint: "コツコツとタップを重ねて100Λを目指しましょう。" },
+            { val: 1000, name: "スパーク誕生", desc: "1,000 Λ のエネルギーを獲得する", hint: "最初の発電機を購入すると効率が上がります。" },
+            { val: 5000, name: "電流の流れ", desc: "5,000 Λ のエネルギーを獲得する", hint: "複数の発電機を並行して稼働させましょう。" },
+            { val: 25000, name: "エネルギー回路", desc: "25,000 Λ のエネルギーを獲得する", hint: "発電機をさらに強化・増産しましょう。" },
+            { val: 100000, name: "プラズマ初動", desc: "100,000 Λ のエネルギーを獲得する", hint: "高コストの発電機への投資を考えましょう。" },
+            { val: 500000, name: "都市の明かり", desc: "500,000 Λ のエネルギーを獲得する", hint: "放置オート発電を活用して効率よく稼ぎましょう。" },
+            { val: 1000000, name: "メガエネルギー", desc: "1,000,000 Λ のエネルギーを獲得する", hint: "次元転生（プレステージ）の条件が見えてくる頃です。" },
+            { val: 5000000, name: "電力網の確立", desc: "5,000,000 Λ のエネルギーを獲得する", hint: "発電機の種類と数をどんどん増やしていきましょう。" },
+            { val: 25000000, name: "国家級プラント", desc: "25,000,000 Λ のエネルギーを獲得する", hint: "さらなる上位の発電機をアンロックしましょう。" },
+            { val: 100000000, name: "大陸の心臓部", desc: "100,000,000 Λ のエネルギーを獲得する", hint: "文明の規模を拡大し続けましょう。" },
+            { val: 500000000, name: "ギガ・グリッド", desc: "500,000,000 Λ のエネルギーを獲得する", hint: "圧倒的な自動発電量を手に入れましょう。" },
+            { val: 1000000000, name: "惑星の鼓動", desc: "1,000,000,000 Λ のエネルギーを獲得する", hint: "10億Λの大台に到達させましょう。" },
+            { val: 5000000000, name: "惑星経済の始まり", desc: "5,000,000,000 Λ のエネルギーを獲得する", hint: "宇宙規模の経済圏を築き上げます。" },
+            { val: 25000000000, name: "ダイソン・スフィア前夜", desc: "25,000,000,000 Λ のエネルギーを獲得する", hint: "さらなる高みへ向けた巨大プラントを稼働させましょう。" },
+            { val: 100000000000, name: "テラへの入口", desc: "1,000,000,000,000 Λ (1兆Λ) のエネルギーを獲得する", hint: "1兆Λという途方もないエネルギーを集めましょう。" },
+            { val: 500000000000, name: "恒星系グリッド", desc: "500,000,000,000 Λ のエネルギーを獲得する", hint: "恒星系を股にかけたエネルギー生産を行います。" },
+            { val: 1000000000000, name: "ソーラー・マイスター", desc: "1,000,000,000,000,000 Λ 相当のエネルギー獲得", hint: "太陽系をも凌駕するエネルギーを獲得します。" },
+            { val: 1000000000000000n, name: "宇宙経済の支配者", desc: "圧倒的なエネルギー流通を達成する", hint: "銀河系全体のエネルギー流通を牛耳りましょう。" },
+            { val: 100000000000000000n, name: "次元の貯蔵庫", desc: "100澗Λ のエネルギーを蓄える", hint: "宇宙の限界を超えるエネルギーを蓄えましょう。" }
         ];
 
         energyMilestones.forEach(m => {
@@ -911,21 +932,22 @@
                 id: `energy_${m.name}`,
                 name: m.name,
                 desc: m.desc,
+                hint: m.hint,
                 icon: "⚡",
                 condition: () => game.totalEarned >= limitVal
             });
         });
 
         const genCountMilestones = [
-            { count: 1, name: "初めての発電機", desc: "1台購入" },
-            { count: 25, name: "小型発電網", desc: "25台" },
-            { count: 50, name: "発電マニア", desc: "50台" },
-            { count: 100, name: "機械工場", desc: "100台" },
-            { count: 250, name: "発電帝国", desc: "250台" },
-            { count: 500, name: "機械文明", desc: "500台" },
-            { count: 1000, name: "千の機械", desc: "1,000台" },
-            { count: 2500, name: "発電機コレクター", desc: "2,500台" },
-            { count: 5000, name: "機械の軍団", desc: "5,000台" }
+            { count: 1, name: "初めての発電機", desc: "1台購入", hint: "最初の発電機を購入しましょう。" },
+            { count: 25, name: "小型発電網", desc: "25台", hint: "発電機を合計25台まで増やしましょう。" },
+            { count: 50, name: "発電マニア", desc: "50台", hint: "発電機を合計50台所有しましょう。" },
+            { count: 100, name: "機械工場", desc: "100台", hint: "機械の数を100台に到達させましょう。" },
+            { count: 250, name: "発電帝国", desc: "250台", hint: "圧倒的な数の発電機を稼働させましょう。" },
+            { count: 500, name: "機械文明", desc: "500台", hint: "発電機の所有数を500台にしましょう。" },
+            { count: 1000, name: "千の機械", desc: "1,000台", hint: "合計1,000台の機械を保有しましょう。" },
+            { count: 2500, name: "発電機コレクター", desc: "2,500台", hint: "あらゆる発電機を大量に集めましょう。" },
+            { count: 5000, name: "機械の軍団", desc: "5,000台", hint: "5,000台もの巨大な機械軍団を築きましょう。" }
         ];
 
         genCountMilestones.forEach(g => {
@@ -933,19 +955,20 @@
                 id: `gcount_${g.count}`,
                 name: g.name,
                 desc: `発電機を合計 ${g.count} 台所有する`,
+                hint: g.hint,
                 icon: "⚙️",
                 condition: () => getTotalGeneratorCount() >= g.count
             });
         });
 
         const civMilestones = [
-            { reqTypes: 1, reqCount: 10, name: "小型文明", desc: "1種類を10台" },
-            { reqTypes: 5, reqCount: 10, name: "中型文明", desc: "5種類を10台" },
-            { reqTypes: 10, reqCount: 10, name: "大型文明", desc: "10種類を10台" },
-            { reqTypes: 20, reqCount: 10, name: "超文明", desc: "20種類を10台" },
-            { reqTypes: 30, reqCount: 10, name: "次元文明", desc: "30種類を10台" },
-            { reqTypes: 40, reqCount: 10, name: "銀河文明", desc: "40種類を10台" },
-            { reqTypes: 50, reqCount: 10, name: "全機械稼働", desc: "50種類を10台" }
+            { reqTypes: 1, reqCount: 10, name: "小型文明", desc: "1種類を10台", hint: "いずれか1種類の発電機を10台揃えましょう。" },
+            { reqTypes: 5, reqCount: 10, name: "中型文明", desc: "5種類を10台", hint: "5種類の発電機それぞれを10台ずつ揃えましょう。" },
+            { reqTypes: 10, reqCount: 10, name: "大型文明", desc: "10種類を10台", hint: "10種類の発電機を各10台ずつ保有しましょう。" },
+            { reqTypes: 20, reqCount: 10, name: "超文明", desc: "20種類を10台", hint: "20種類の発電機を各10台ずつ稼働させましょう。" },
+            { reqTypes: 30, reqCount: 10, name: "次元文明", desc: "30種類を10台", hint: "30種類の発電機を各10台ずつ揃えましょう。" },
+            { reqTypes: 40, reqCount: 10, name: "銀河文明", desc: "40種類を10台", hint: "40種類の発電機を各10台ずつ保有しましょう。" },
+            { reqTypes: 50, reqCount: 10, name: "全機械稼働", desc: "50種類を10台", hint: "すべての発電機を各10台ずつ揃えましょう。" }
         ];
 
         civMilestones.forEach(c => {
@@ -953,6 +976,7 @@
                 id: `civ_${c.name}`,
                 name: c.name,
                 desc: c.desc,
+                hint: c.hint,
                 icon: "🏭",
                 condition: () => {
                     let matchingTypes = 0;
@@ -970,6 +994,7 @@
                 id: `gen_own_${genIdx}`,
                 name: `${genName}の開拓者`,
                 desc: `${genName}を1基以上所有する`,
+                hint: `${genName}を購入して所有しましょう。`,
                 icon: "🔧",
                 condition: () => game.generators[genIdx].count >= 1
             });
@@ -979,6 +1004,7 @@
             id: `gen_first_gen_complete`,
             name: "第一世代完成",
             desc: "最初の発電機系統を軌道に乗せる",
+            hint: "最初の発電機を10台以上購入しましょう。",
             icon: "🔧",
             condition: () => game.generators[0].count >= 10
         });
@@ -987,6 +1013,7 @@
             id: `gen_all_complete`,
             name: "全発電機制覇",
             desc: "50種類すべて所持",
+            hint: "全50種類の発電機をそれぞれ1基以上所持しましょう。",
             icon: "🔧",
             condition: () => {
                 for (let i = 0; i < 50; i++) {
@@ -1000,16 +1027,18 @@
             id: `core_ascension_ach`,
             name: "CORE ASCENSION",
             desc: "最終発電機を購入",
+            hint: "リストの最後にある最終発電機を購入しましょう。",
             icon: "✨",
             condition: () => game.generators[49].count >= 1
         });
 
-        // 隠し実績（4つ）の追加
+        // 隠し実績（4つ）
         const hiddenAchievements = [
             {
                 id: "hidden_midnight",
                 name: "深夜のエネルギー学者",
                 desc: "深夜（0時〜3時）にエネルギーを観測した",
+                hint: "深夜0:00〜3:00の間にゲームをプレイしましょう（攻略ガイドを参照）。",
                 icon: "🌙",
                 hidden: true,
                 condition: () => {
@@ -1021,6 +1050,7 @@
                 id: "hidden_manual_labor",
                 name: "石器時代の忘れ物",
                 desc: "発電機に頼らず、人力だけで1,000回タップした",
+                hint: "発電機を1台も買わずに、手動タップを1,000回行いましょう（攻略ガイドを参照）。",
                 icon: "🪵",
                 hidden: true,
                 condition: () => {
@@ -1032,6 +1062,7 @@
                 id: "hidden_four_same",
                 name: "ゾロ目の奇跡",
                 desc: "エネルギーの下4桁が美しい調和を見せた",
+                hint: "エネルギーの下4桁がすべて同じ数字になるタイミングを作りましょう（攻略ガイドを参照）。",
                 icon: "✨",
                 hidden: true,
                 condition: () => {
@@ -1047,6 +1078,7 @@
                 id: "hidden_idle_luxury",
                 name: "何もしない贅沢",
                 desc: "1分間、一度もコアをタップせずにじっと見守った",
+                hint: "画面をそのままにして1分間一切タップせずに待ちましょう（攻略ガイドを参照）。",
                 icon: "⏳",
                 hidden: true,
                 condition: () => {
@@ -1060,13 +1092,15 @@
 
         achievementData.push(...hiddenAchievements);
 
-        while (achievementData.length < 154) {
+        // 全体数がちょうど150になるように調整
+        while (achievementData.length < 150) {
             let idxNum = achievementData.length + 1;
             let targetTaps = idxNum * 10;
             achievementData.push({
                 id: `extra_ach_${idxNum}`,
                 name: `次元の探求者 No.${idxNum}`,
                 desc: `さらなる宇宙の真理へ近づく実績 No.${idxNum}`,
+                hint: `タップ数を重ねてさらなる実績を紐解きましょう。`,
                 icon: "🏆",
                 condition: () => game.totalTaps >= targetTaps
             });
@@ -1115,6 +1149,26 @@
             document.getElementById('custom-alert-message').innerHTML = message;
             document.getElementById('custom-alert-modal').classList.add('active');
             window.customAlertCallback = callback;
+        }
+
+        function showAchievementHint(index) {
+            const ach = achievementData[index];
+            const isUnlocked = !!game.unlockedAchievements[ach.id];
+
+            if (ach.hidden && !isUnlocked) {
+                document.getElementById('hint-icon').textContent = "❓";
+                document.getElementById('hint-title').textContent = "No." + formatRankingNumber(index + 1) + " ？？？？？";
+                document.getElementById('hint-desc').textContent = "この実績は隠し実績です。攻略ガイドの「実は…」を読んでヒントを探そう！";
+            } else if (isUnlocked) {
+                document.getElementById('hint-icon').textContent = ach.icon;
+                document.getElementById('hint-title').textContent = "No." + formatRankingNumber(index + 1) + " " + ach.name + " (達成済み)";
+                document.getElementById('hint-desc').textContent = ach.desc;
+            } else {
+                document.getElementById('hint-icon').textContent = ach.icon;
+                document.getElementById('hint-title').textContent = "No." + formatRankingNumber(index + 1) + " " + ach.name;
+                document.getElementById('hint-desc').textContent = "【ヒント】\n" + (ach.hint || ach.desc);
+            }
+            openModal('achievement-hint-modal');
         }
 
         function formatNumber(num) {
@@ -1416,7 +1470,7 @@
 
                 if (isUnlocked) {
                     achHtml += `
-                        <div class="achievement-card unlocked">
+                        <div class="achievement-card unlocked" onclick="showAchievementHint(${index})">
                             <div class="achievement-icon">${ach.icon}</div>
                             <div class="item-info" style="flex: 1;">
                                 <h4>No.${achNum} ${ach.name} ✓</h4>
@@ -1426,11 +1480,11 @@
                     `;
                 } else {
                     achHtml += `
-                        <div class="achievement-card locked">
+                        <div class="achievement-card locked" onclick="showAchievementHint(${index})">
                             <div class="achievement-icon">❓</div>
                             <div class="item-info" style="flex: 1;">
                                 <h4>No.${achNum} ？？？？？</h4>
-                                <p style="color: var(--sub-text);">条件を達成して解放しよう</p>
+                                <p style="color: var(--sub-text);">タップしてヒントを見る</p>
                             </div>
                         </div>
                     `;
@@ -1573,7 +1627,13 @@
 
         function toggleSecretGuide() {
             const content = document.getElementById('secret-guide-content');
+            const arrow = document.getElementById('secret-arrow');
             content.classList.toggle('active');
+            if (content.classList.contains('active')) {
+                arrow.textContent = "▼";
+            } else {
+                arrow.textContent = "▶";
+            }
         }
 
         function openPanel(panelId) {
@@ -1694,6 +1754,7 @@
         window.tapCore = tapCore;
         window.switchAchTab = switchAchTab;
         window.toggleSecretGuide = toggleSecretGuide;
+        window.showAchievementHint = showAchievementHint;
     </script>
 </body>
 </html>
