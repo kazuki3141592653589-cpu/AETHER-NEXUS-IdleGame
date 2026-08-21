@@ -254,35 +254,19 @@
             color: var(--sub-text);
         }
 
-        /* 図鑑形式の実績カード用スタイル */
         .ach-card {
             background: rgba(0, 243, 255, 0.03);
             border: 1px solid rgba(0, 243, 255, 0.15);
             border-radius: 8px;
-            padding: 10px 14px;
-            margin-bottom: 8px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            cursor: pointer;
-            transition: background 0.2s;
         }
-        .ach-card:hover {
+        .ach-card.unlocked {
             background: rgba(0, 243, 255, 0.08);
-        }
-        .ach-card.locked {
-            border-color: rgba(138, 184, 248, 0.2);
-            opacity: 0.7;
-        }
-        /* 特別な実績王カードのスタイル */
-        .ach-card.special-king {
-            background: rgba(255, 215, 0, 0.05);
-            border: 1px solid rgba(255, 215, 0, 0.4);
-        }
-        .ach-card.special-king.done {
-            background: rgba(255, 215, 0, 0.12);
-            border-color: #ffd700;
-            box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+            border-color: var(--accent-color);
         }
         .ach-icon {
             font-size: 1.4rem;
@@ -315,14 +299,9 @@
             color: var(--accent-color);
             background: rgba(0, 243, 255, 0.1);
         }
-        .ach-status.locked-hint {
+        .ach-status.yet {
             color: var(--sub-text);
             background: rgba(138, 184, 248, 0.1);
-            border: 1px dashed rgba(138, 184, 248, 0.3);
-        }
-        .ach-status.king-done {
-            color: #ffd700;
-            background: rgba(255, 215, 0, 0.15);
         }
 
         .buy-btn {
@@ -454,7 +433,6 @@
             color: var(--accent-color);
         }
 
-        /* 実績ポップアップ通知 */
         #achievement-popup {
             position: fixed;
             top: 20px;
@@ -516,7 +494,7 @@
             <button class="menu-btn" onclick="openPanel('panel-generators')">発電機</button>
             <button class="menu-btn" onclick="openPanel('panel-upgrades')">強化</button>
             <button class="menu-btn" onclick="openPanel('panel-prestige')">転生</button>
-            <button class="menu-btn" onclick="openPanel('panel-achievements')">🏅 実績図鑑</button>
+            <button class="menu-btn" onclick="openPanel('panel-achievements')">🏅 実績</button>
             <button class="menu-btn" onclick="openPanel('panel-ranking')">🏆 ランキング</button>
         </div>
 
@@ -559,12 +537,12 @@
 
         <div id="panel-achievements" class="sub-panel">
             <div class="panel-header">
-                <span>🏅 実績図鑑 (全150種 + 👑王)</span>
+                <span>🏅 実績一覧 (決定版)</span>
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
             </div>
             <div class="panel-content">
                 <div style="margin-bottom: 12px; font-size: 0.85rem; color: var(--sub-text);">
-                    図鑑コンプリート率: <span id="ach-unlocked-count" style="color: var(--accent-color); font-weight: bold;">0</span> / 150 <span style="font-size: 0.75rem;">(※ハテナをタップするとヒントが表示されます)</span>
+                    達成数: <span id="ach-unlocked-count" style="color: var(--accent-color); font-weight: bold;">0</span> / <span id="ach-total-count">0</span>
                 </div>
                 <div id="achievement-list"></div>
             </div>
@@ -689,7 +667,7 @@
         <button class="nav-tab active" onclick="switchTab('generators')">発電機</button>
         <button class="nav-tab" onclick="switchTab('upgrades')">強化</button>
         <button class="nav-tab" onclick="switchTab('prestige')">転生</button>
-        <button class="nav-tab" onclick="switchTab('achievements')">図鑑</button>
+        <button class="nav-tab" onclick="switchTab('achievements')">実績</button>
         <button class="nav-tab" onclick="switchTab('ranking')">ランキング</button>
     </nav>
 
@@ -833,49 +811,201 @@
             { id: 3, name: "量子共鳴アンプ", desc: "すべての発電効率が +1.0 増加", cost: 5000, mult: 2.5, type: "cps", value: 1.0 }
         ];
 
-        // 実績データを 150種類 + 特別な「実績王」(ID: 151) に拡張
-        const achievementsData = [];
-        for (let i = 1; i <= 150; i++) {
-            let type = 'tap';
-            let target = i * 15;
-            let title = `タップマニア #${i}`;
-            let desc = `累計 ${i * 15} 回タップする`;
-            let hint = `画面の中心にあるコアを合計 ${i * 15} 回タップしよう！`;
+        // 決定版・全153種の実績データ
+        const achievementsData = [
+            // 👆 タップ回数
+            { id: 1, category: "tap", title: "タップ研究者", desc: "累計 50,000回タップする", type: "totalTaps", target: 50000 },
+            { id: 2, category: "tap", title: "コアの友達", desc: "累計 100,000回タップする", type: "totalTaps", target: 100000 },
+            { id: 3, category: "tap", title: "指先銀河", desc: "累計 250,000回タップする", type: "totalTaps", target: 250000 },
+            { id: 4, category: "tap", title: "無限連打", desc: "累計 500,000回タップする", type: "totalTaps", target: 500000 },
+            { id: 5, category: "tap", title: "タップ神話", desc: "累計 1,000,000回タップする", type: "totalTaps", target: 1000000 },
+            { id: 6, category: "tap", title: "まだ押す", desc: "累計 2,000,000回タップする", type: "totalTaps", target: 2000000 },
+            { id: 7, category: "tap", title: "指が止まらない", desc: "累計 5,000,000回タップする", type: "totalTaps", target: 5000000 },
+            { id: 8, category: "tap", title: "コアとの一体化", desc: "累計 10,000,000回タップする", type: "totalTaps", target: 10000000 },
+            { id: 9, category: "tap", title: "タップ超越", desc: "累計 25,000,000回タップする", type: "totalTaps", target: 25000000 },
+            { id: 10, category: "tap", title: "指先が宇宙", desc: "累計 50,000,000回タップする", type: "totalTaps", target: 50000000 },
+            { id: 11, category: "tap", title: "タップの極み", desc: "累計 100,000,000回タップする", type: "totalTaps", target: 100000000 },
+            { id: 12, category: "tap", title: "人類の限界", desc: "累計 250,000,000回タップする", type: "totalTaps", target: 250000000 },
+            { id: 13, category: "tap", title: "機械を超えた指", desc: "累計 500,000,000回タップする", type: "totalTaps", target: 500000000 },
+            { id: 14, category: "tap", title: "宇宙最速の指", desc: "累計 1,000,000,000回タップする", type: "totalTaps", target: 1000000000 },
+            { id: 15, category: "tap", title: "タップという概念", desc: "累計 5,000,000,000回タップする", type: "totalTaps", target: 5000000000 },
+            { id: 16, category: "tap", title: "指先の神", desc: "累計 10,000,000,000回タップする", type: "totalTaps", target: 10000000000 },
+            { id: 17, category: "tap", title: "コアの守護者", desc: "累計 25,000,000,000回タップする", type: "totalTaps", target: 25000000000 },
+            { id: 18, category: "tap", title: "次元連打王", desc: "累計 50,000,000,000回タップする", type: "totalTaps", target: 50000000000 },
+            { id: 19, category: "tap", title: "Ωタッパー", desc: "累計 100,000,000,000回タップする", type: "totalTaps", target: 100000000000 },
 
-            if (i > 37 && i <= 75) {
-                type = 'energy';
-                let exp = Math.pow(1.8, i - 38);
-                target = i === 38 ? 5000 : Math.floor(5000 * exp);
-                title = `エネルギー収集 #${i - 37}`;
-                desc = `累計 ${target.toLocaleString()} Λ のエネルギーを獲得する`;
-                hint = `発電やタップで累計 ${target.toLocaleString()} Λ のエネルギーを稼ぐとひらめくぞ。`;
-            } else if (i > 75 && i <= 112) {
-                type = 'generator';
-                let genIdx = (i - 76) % generatorData.length;
-                target = Math.floor((i - 75) / 4) + 1;
-                title = `インフラ構築 #${i - 75}`;
-                desc = `${generatorData[genIdx].name}を計 ${target} 基所持する`;
-                hint = `「発電機」タブから【${generatorData[genIdx].name}】を合計 ${target} 基購入しよう。`;
-            } else if (i > 112) {
-                type = 'prestige';
-                target = i - 112;
-                title = `次元の旅人 #${i - 112}`;
-                desc = `次元転生を ${target} 回行う`;
-                hint = `「転生」タブの条件を満たし、次元転生を合計 ${target} 回行おう。`;
-            }
+            // ⚡ エネルギー
+            { id: 20, category: "energy", title: "最初のΛ", desc: "エネルギーが 1Λ を超える", type: "energy", target: 1 },
+            { id: 21, category: "energy", title: "テラへの入口", desc: "累計 1兆Λ のエネルギーを獲得する", type: "energy", target: 1e12 },
+            { id: 22, category: "energy", title: "惑星級エネルギー", desc: "累計 10兆Λ のエネルギーを獲得する", type: "energy", target: 1e13 },
+            { id: 23, category: "energy", title: "恒星級エネルギー", desc: "累計 100兆Λ のエネルギーを獲得する", type: "energy", target: 1e14 },
+            { id: 24, category: "energy", title: "銀河級エネルギー", desc: "累計 1,000兆Λ のエネルギーを獲得する", type: "energy", target: 1e15 },
+            { id: 25, category: "energy", title: "宇宙級エネルギー", desc: "累計 1京Λ のエネルギーを獲得する", type: "energy", target: 1e16 },
+            { id: 26, category: "energy", title: "次元級エネルギー", desc: "累計 1垓Λ のエネルギーを獲得する", type: "energy", target: 1e20 },
+            { id: 27, category: "energy", title: "無限への入口", desc: "累計 1,000垓Λ のエネルギーを獲得する", type: "energy", target: 1e23 },
+            { id: 28, category: "energy", title: "エネルギー富豪", desc: "累計 1𥝱Λ のエネルギーを獲得する", type: "energy", target: 1e24 },
+            { id: 29, category: "energy", title: "Λコレクター", desc: "累計 10𥝱Λ のエネルギーを獲得する", type: "energy", target: 1e25 },
+            { id: 30, category: "energy", title: "宇宙銀行", desc: "累計 100𥝱Λ のエネルギーを獲得する", type: "energy", target: 1e26 },
+            { id: 31, category: "energy", title: "エネルギー帝国", desc: "累計 1穣Λ のエネルギーを獲得する", type: "energy", target: 1e28 },
+            { id: 32, category: "energy", title: "次元経済圏", desc: "累計 10穣Λ のエネルギーを獲得する", type: "energy", target: 1e29 },
+            { id: 33, category: "energy", title: "銀河経済の支配者", desc: "累計 100穣Λ のエネルギーを獲得する", type: "energy", target: 1e30 },
+            { id: 34, category: "energy", title: "宇宙経済の支配者", desc: "累計 1溝Λ のエネルギーを獲得する", type: "energy", target: 1e32 },
+            { id: 35, category: "energy", title: "Λの海", desc: "累計 10溝Λ のエネルギーを獲得する", type: "energy", target: 1e33 },
+            { id: 36, category: "energy", title: "エネルギーの星", desc: "累計 100溝Λ のエネルギーを獲得する", type: "energy", target: 1e34 },
+            { id: 37, category: "energy", title: "エネルギーの銀河", desc: "累計 1澗Λ のエネルギーを獲得する", type: "energy", target: 1e36 },
+            { id: 38, category: "energy", title: "エネルギーの宇宙", desc: "累計 10澗Λ のエネルギーを獲得する", type: "energy", target: 1e37 },
+            { id: 39, category: "energy", title: "次元の貯蔵庫", desc: "累計 100澗Λ のエネルギーを獲得する", type: "energy", target: 1e38 },
+            { id: 40, category: "energy", title: "億万長者への道", desc: "累計獲得エネルギー 1,000,000,000Λ", type: "energy", target: 1000000000 },
 
-            achievementsData.push({ id: i, title, desc, hint, type, target });
-        }
+            // ⚙️ 発電機
+            { id: 41, category: "generator", title: "初めての発電機", desc: "いずれかの発電機を1台購入する", type: "totalGen", target: 1 },
+            { id: 42, category: "generator", title: "小型発電網", desc: "いずれかの発電機を合計 25台所持する", type: "totalGen", target: 25 },
+            { id: 43, category: "generator", title: "発電マニア", desc: "いずれかの発電機を合計 50台所持する", type: "totalGen", target: 50 },
+            { id: 44, category: "generator", title: "機械工場", desc: "いずれかの発電機を合計 100台所持する", type: "totalGen", target: 100 },
+            { id: 45, category: "generator", title: "発電帝国", desc: "いずれかの発電機を合計 250台所持する", type: "totalGen", target: 250 },
+            { id: 46, category: "generator", title: "機械文明", desc: "いずれかの発電機を合計 500台所持する", type: "totalGen", target: 500 },
+            { id: 47, category: "generator", title: "千の機械", desc: "いずれかの発電機を合計 1,000台所持する", type: "totalGen", target: 1000 },
+            { id: 48, category: "generator", title: "発電機コレクター", desc: "いずれかの発電機を合計 2,500台所持する", type: "totalGen", target: 2500 },
+            { id: 49, category: "generator", title: "機械の軍団", desc: "いずれかの発電機を合計 5,000台所持する", type: "totalGen", target: 5000 },
 
-        // 100種類以上解除で獲得できる「実績王」を追加 (ID: 151)
-        achievementsData.push({
-            id: 151,
-            title: "👑 実績王",
-            desc: "他の実績を100種類以上解除する",
-            hint: "他の種類の実績を合計で100個以上達成すると真の王として君臨できるぞ！",
-            type: "king",
-            target: 100
-        });
+            // 🏭 発電機文明
+            { id: 50, category: "civilization", title: "小型文明", desc: "1種類の発電機を10台所持する", type: "genTypeCount", count: 1, target: 10 },
+            { id: 51, category: "civilization", title: "中型文明", desc: "5種類の発電機をそれぞれ10台以上所持する", type: "genTypeCount", count: 5, target: 10 },
+            { id: 52, category: "civilization", title: "大型文明", desc: "10種類の発電機をそれぞれ10台以上所持する", type: "genTypeCount", count: 10, target: 10 },
+            { id: 53, category: "civilization", title: "超文明", desc: "20種類の発電機をそれぞれ10台以上所持する", type: "genTypeCount", count: 20, target: 10 },
+            { id: 54, category: "civilization", title: "次元文明", desc: "30種類の発電機をそれぞれ10台以上所持する", type: "genTypeCount", count: 30, target: 10 },
+            { id: 55, category: "civilization", title: "銀河文明", desc: "40種類の発電機をそれぞれ10台以上所持する", type: "genTypeCount", count: 40, target: 10 },
+            { id: 56, category: "civilization", title: "全機械稼働", desc: "50種類すべての発電機をそれぞれ10台以上所持する", type: "genTypeCount", count: 50, target: 10 },
+
+            // 🔧 発電機世代
+            { id: 57, category: "generation", title: "第一世代完成", desc: "1〜10番の発電機をすべて所持する", type: "genRange", start: 0, end: 9 },
+            { id: 58, category: "generation", title: "第二世代完成", desc: "11〜20番の発電機をすべて所持する", type: "genRange", start: 10, end: 19 },
+            { id: 59, category: "generation", title: "第三世代完成", desc: "21〜30番の発電機をすべて所持する", type: "genRange", start: 20, end: 29 },
+            { id: 60, category: "generation", title: "第四世代完成", desc: "31〜40番の発電機をすべて所持する", type: "genRange", start: 30, end: 39 },
+            { id: 61, category: "generation", title: "最終世代完成", desc: "41〜50番の発電機をすべて所持する", type: "genRange", start: 40, end: 49 },
+            { id: 62, category: "generation", title: "全発電機制覇", desc: "50種類の発電機をすべて所持する", type: "allGenUnlocked", target: 1 },
+            { id: 63, category: "generation", title: "CORE ASCENSION", desc: "最終発電機（CORE ASCENSION）を購入する", type: "specificGen", index: 49, target: 1 },
+
+            // 🛠️ 強化
+            { id: 64, category: "upgrade", title: "初強化", desc: "強化を1回購入する", type: "totalUpgrades", target: 1 },
+            { id: 65, category: "upgrade", title: "強化初心者", desc: "強化を5回購入する", type: "totalUpgrades", target: 5 },
+            { id: 66, category: "upgrade", title: "強化職人", desc: "強化を10回購入する", type: "totalUpgrades", target: 10 },
+            { id: 67, category: "upgrade", title: "強化マニア", desc: "強化を25回購入する", type: "totalUpgrades", target: 25 },
+            { id: 68, category: "upgrade", title: "強化中毒", desc: "強化を50回購入する", type: "totalUpgrades", target: 50 },
+            { id: 69, category: "upgrade", title: "強化の達人", desc: "強化を100回購入する", type: "totalUpgrades", target: 100 },
+            { id: 70, category: "upgrade", title: "強化限界突破", desc: "強化を1,000回購入する", type: "totalUpgrades", target: 1000 },
+
+            // 🔄 転生
+            { id: 71, category: "prestige", title: "次元転生", desc: "はじめて次元転生を行う", type: "prestige", target: 1 },
+            { id: 72, category: "prestige", title: "二つ目の世界", desc: "2回目の次元転生を行う", type: "prestige", target: 2 },
+            { id: 73, category: "prestige", title: "次元旅行者", desc: "5回目の次元転生を行う", type: "prestige", target: 5 },
+            { id: 74, category: "prestige", title: "転生マニア", desc: "10回目の次元転生を行う", type: "prestige", target: 10 },
+            { id: 75, category: "prestige", title: "次元常連", desc: "25回目の次元転生を行う", type: "prestige", target: 25 },
+            { id: 76, category: "prestige", title: "次元征服者", desc: "50回目の次元転生を行う", type: "prestige", target: 50 },
+            { id: 77, category: "prestige", title: "転生職人", desc: "100回目の次元転生を行う", type: "prestige", target: 100 },
+            { id: 78, category: "prestige", title: "無限周回", desc: "250回目の次元転生を行う", type: "prestige", target: 250 },
+            { id: 79, category: "prestige", title: "次元の王", desc: "500回目の次元転生を行う", type: "prestige", target: 500 },
+            { id: 80, category: "prestige", title: "次元の神", desc: "1,000回目の次元転生を行う", type: "prestige", target: 1000 },
+
+            // ✖️ 倍率
+            { id: 81, category: "multiplier", title: "倍率10倍", desc: "獲得倍率が 10倍 以上になる", type: "multiplier", target: 10 },
+            { id: 82, category: "multiplier", title: "倍率50倍", desc: "獲得倍率が 50倍 以上になる", type: "multiplier", target: 50 },
+            { id: 83, category: "multiplier", title: "倍率100倍", desc: "獲得倍率が 100倍 以上になる", type: "multiplier", target: 100 },
+
+            // ⏱️ プレイ時間
+            { id: 84, category: "time", title: "長旅", desc: "累計 6時間プレイする", type: "playTime", target: 21600 },
+            { id: 85, category: "time", title: "一日文明", desc: "累計 24時間プレイする", type: "playTime", target: 86400 },
+            { id: 86, category: "time", title: "宇宙勤務", desc: "累計 100時間プレイする", type: "playTime", target: 360000 },
+
+            // 💰 特殊条件
+            { id: 87, category: "special", title: "逆転劇", desc: "エネルギー0から 1,000,000Λ 獲得する", type: "revival", target: 1000000 },
+            { id: 88, category: "special", title: "一文無し", desc: "エネルギーを 0 Λ にする", type: "exactEnergy", target: 0 },
+            { id: 89, category: "special", title: "再出発", desc: "転生直後に 10,000Λ 獲得する", type: "postPrestigeEarn", target: 10000 },
+            { id: 90, category: "special", title: "最初からやり直す", desc: "セーブデータを1回リセットする", type: "hardReset", target: 1 },
+            { id: 91, category: "special", title: "名前を刻む", desc: "プレイヤー名を変更する", type: "nameChanged", target: 1 },
+            { id: 92, category: "special", title: "ランキング参戦", desc: "ランキングに初めてスコアを同期する", type: "rankingRegistered", target: 1 },
+            { id: 93, category: "special", title: "ランキング上位", desc: "ランキングでTOP10入りする", type: "rankTop10", target: 1 },
+            { id: 94, category: "special", title: "宇宙一", desc: "ランキングで1位を獲得する", type: "rankTop1", target: 1 },
+            { id: 95, category: "special", title: "コアを見つめる者", desc: "何も購入せずに100回タップする", type: "noBuyTaps", target: 100 },
+            { id: 96, category: "special", title: "貧乏文明", desc: "100Λ未満の状態で発電機を10台所持する", type: "poorGen", target: 10 },
+            { id: 97, category: "special", title: "最後まで来た", desc: "50種類すべての発電機を解放する", type: "allGenUnlocked", target: 1 },
+            { id: 98, category: "special", title: "AETHER NEXUS", desc: "他のすべての通常実績を解除する", type: "allAchievementsDone", target: 1 },
+
+            // 🏭 量産
+            { id: 99, category: "mass", title: "第一歩の工場", desc: "同じ発電機を5台所持する", type: "maxSingleGen", target: 5 },
+            { id: 100, category: "mass", title: "量産体制", desc: "同じ発電機を25台所持する", type: "maxSingleGen", target: 25 },
+            { id: 101, category: "mass", title: "大量生産", desc: "同じ発電機を100台所持する", type: "maxSingleGen", target: 100 },
+            { id: 102, category: "mass", title: "工場長", desc: "同じ発電機を500台所持する", type: "maxSingleGen", target: 500 },
+            { id: 103, category: "mass", title: "機械国家", desc: "同じ発電機を1,000台所持する", type: "maxSingleGen", target: 1000 },
+            { id: 104, category: "mass", title: "最安機械卒業", desc: "1番目の発電機を100台所持する", type: "specificGenCount", index: 0, target: 100 },
+            { id: 105, category: "mass", title: "中間地点", desc: "25番目の発電機を1台以上所持する", type: "specificGenCount", index: 24, target: 1 },
+            { id: 106, category: "mass", title: "終盤突入", desc: "40番目の発電機を1台以上所持する", type: "specificGenCount", index: 39, target: 1 },
+            { id: 107, category: "mass", title: "最終兵器", desc: "50番目の発電機を10台所持する", type: "specificGenCount", index: 49, target: 10 },
+            { id: 108, category: "mass", title: "全世代量産", desc: "50種類すべての発電機をそれぞれ5台以上所持する", type: "genTypeCount", count: 50, target: 5 },
+
+            // ⚡ 自動発電
+            { id: 109, category: "cps", title: "秒速100Λ", desc: "自動発電量が 100 Λ/s 以上になる", type: "cps", target: 100 },
+            { id: 110, category: "cps", title: "秒速1万Λ", desc: "自動発電量が 10,000 Λ/s 以上になる", type: "cps", target: 10000 },
+            { id: 111, category: "cps", title: "秒速100万Λ", desc: "自動発電量が 1,000,000 Λ/s 以上になる", type: "cps", target: 1000000 },
+            { id: 112, category: "cps", title: "秒速10億Λ", desc: "自動発電量が 1,000,000,000 Λ/s 以上になる", type: "cps", target: 1000000000 },
+            { id: 113, category: "cps", title: "秒速1兆Λ", desc: "自動発電量が 1,000,000,000,000 Λ/s 以上になる", type: "cps", target: 1000000000000 },
+            { id: 114, category: "cps", title: "エネルギー工場地帯", desc: "自動発電量が 10兆 Λ/s 以上になる", type: "cps", target: 10e12 },
+            { id: 115, category: "cps", title: "止まらない発電", desc: "自動発電量が 100兆 Λ/s 以上になる", type: "cps", target: 100e12 },
+            { id: 116, category: "cps", title: "惑星発電網", desc: "自動発電量が 1京 Λ/s 以上になる", type: "cps", target: 1e16 },
+
+            // 🔨 タップ強化
+            { id: 117, category: "tapup", title: "タップ改造開始", desc: "タップ強化を合計10回購入する", type: "totalUpgrades", target: 10 },
+            { id: 118, category: "tapup", title: "強化工場", desc: "タップ強化を合計30回購入する", type: "totalUpgrades", target: 30 },
+            { id: 119, category: "tapup", title: "強化研究者", desc: "タップ強化を合計75回購入する", type: "totalUpgrades", target: 75 },
+            { id: 120, category: "tapup", title: "究極改造", desc: "タップ強化を合計250回購入する", type: "totalUpgrades", target: 250 },
+            { id: 121, category: "tapup", title: "タップ特化文明", desc: "タップ強化等でタップ力が 100 以上になる", type: "tapPower", target: 100 },
+
+            // 🌌 転生関連
+            { id: 122, category: "prestige_rel", title: "転生準備完了", desc: "次元転生の条件を初めて満たす", type: "prestigeReady", target: 1 },
+            { id: 123, category: "prestige_rel", title: "転生ループ", desc: "転生後、再び転生条件を満たす", type: "prestigeReadyAgain", target: 1 },
+            { id: 124, category: "prestige_rel", title: "次元開拓者", desc: "次元転生を3回行う", type: "prestige", target: 3 },
+            { id: 125, category: "prestige_rel", title: "次元探検隊", desc: "次元転生を15回行う", type: "prestige", target: 15 },
+            { id: 126, category: "prestige_rel", title: "次元遠征軍", desc: "次元転生を75回行う", type: "prestige", target: 75 },
+
+            // 💤 放置
+            { id: 127, category: "idle", title: "ちょっと休憩", desc: "10分以上アプリを離れて復帰する", type: "idleTime", target: 600 },
+            { id: 128, category: "idle", title: "放置研究者", desc: "1時間以上アプリを離れて復帰する", type: "idleTime", target: 3600 },
+            { id: 129, category: "idle", title: "寝落ち文明", desc: "12時間以上アプリを離れて復帰する", type: "idleTime", target: 43200 },
+
+            // 📅 連続プレイ
+            { id: 130, category: "streak", title: "毎日のコア", desc: "3日連続でゲームをプレイする", type: "streakDays", target: 3 },
+            { id: 131, category: "streak", title: "一週間文明", desc: "7日連続でゲームをプレイする", type: "streakDays", target: 7 },
+
+            // 🚫 無購入
+            { id: 132, category: "nobuy", title: "無購入主義", desc: "発電機を1台も買わずに 10,000Λ 獲得する", type: "noBuyEarn", target: 10000 },
+
+            // 🏆 ランキング（追加系）
+            { id: 133, category: "ranking_sub", title: "トップ5文明", desc: "ランキングでTOP5に入る", type: "rankTop5", target: 1 },
+            { id: 134, category: "ranking_sub", title: "王座奪取", desc: "ランキングで再び1位を獲得する", type: "rankTop1", target: 1 },
+
+            // 💥 特殊チャレンジ
+            { id: 135, category: "challenge", title: "ゼロからの反撃", desc: "0Λから10秒以内に 10,000Λ 稼ぐ", type: "speedRun10k", target: 1 },
+            { id: 136, category: "challenge", title: "購入の達人", desc: "1回の購入で 100,000Λ 以上消費する", type: "bigPurchase", target: 100000 },
+            { id: 137, category: "challenge", title: "一気買い", desc: "10秒以内に発電機を10台購入する", type: "fastBuy10", target: 10 },
+            { id: 138, category: "challenge", title: "連続強化", desc: "10秒以内に強化を5回購入する", type: "fastUpgrade5", target: 5 },
+            { id: 139, category: "challenge", title: "静かな10分", desc: "10分間タップせずにゲームを維持する", type: "silentMinutes", target: 600 },
+            { id: 140, category: "challenge", title: "偶然の一致", desc: "エネルギーがぴったりの数になる", type: "luckyEnergy", target: 123456 },
+            { id: 141, category: "challenge", title: "？？？", desc: "条件完全非公開の隠し実績", type: "secretMystery", target: 1 },
+
+            // ➕ 追加分
+            { id: 142, category: "extra", title: "機械の大行進", desc: "1分以内に発電機を50台購入する", type: "fastBuy50", target: 50 },
+            { id: 143, category: "extra", title: "強化の嵐", desc: "1分以内に強化を20回購入する", type: "fastUpgrade20", target: 20 },
+            { id: 144, category: "extra", title: "次元の加速器", desc: "1回の転生で倍率を100倍以上にする", type: "singlePrestigeMult", target: 100 },
+            { id: 145, category: "extra", title: "完全自動化", desc: "タップせずに1時間で 1,000,000Λ 以上獲得する", type: "pureIdle1m", target: 1000000 },
+            { id: 146, category: "extra", title: "最後の謎", desc: "「？？？」の実績を解除した後に訪れる秘密", type: "secretMysteryFinal", target: 1 },
+            { id: 147, category: "extra", title: "超高速文明", desc: "10秒以内に 1,000,000Λ 獲得する", type: "speedRun1M", target: 1000000 },
+            { id: 148, category: "extra", title: "発電機マスター", desc: "1種類の発電機を 2,500台所持する", type: "maxSingleGenCount", target: 2500 },
+            { id: 149, category: "extra", title: "一瞬の頂点", desc: "自動発電量の自己最高記録を更新する", type: "cpsPeakRecord", target: 1 },
+            { id: 150, category: "extra", title: "静かなる成長", desc: "30分間タップせずにエネルギーを増やす", type: "silentGrowth30", target: 1800 },
+            { id: 151, category: "extra", title: "全力稼働", desc: "50種類すべての発電機を同時に1台以上稼働させる", type: "allGenUnlocked", target: 1 },
+            { id: 152, category: "extra", title: "最後の謎・真", desc: "隠し実績の真の姿に到達する", type: "secretTrueMystery", target: 1 },
+            { id: 153, category: "extra", title: "最後の到達者", desc: "すべての実績（153個）を制覇する", type: "allAchievements153", target: 1 }
+        ];
 
         let game = {
             energy: 0,
@@ -885,6 +1015,7 @@
             prestigeMultiplier: 1,
             prestigeCount: 0,
             playerName: "名無しのパイレット",
+            playTime: 0,
             generators: generatorData.map(g => ({
                 name: g.name,
                 cost: g.baseCost,
@@ -897,7 +1028,10 @@
                 ...u,
                 count: 0
             })),
-            unlockedAchievements: []
+            unlockedAchievements: [],
+            nameChangedCount: 0,
+            rankingRegCount: 0,
+            hardResetCount: 0
         };
 
         function getPrestigeRequirement() {
@@ -1032,6 +1166,7 @@
                     game.tapPower += up.value;
                 }
                 up.cost = Math.floor(up.cost * up.mult);
+                checkAchievements();
                 updateUI();
             }
         }
@@ -1056,23 +1191,74 @@
         }
 
         function checkAchievements() {
-            // まず通常の実績をチェック
             achievementsData.forEach(ach => {
-                if (ach.id === 151) return; // 特殊な実績王は後で判定
                 if (game.unlockedAchievements.includes(ach.id)) return;
 
                 let unlocked = false;
-                if (ach.type === 'tap' && game.totalTaps >= ach.target) {
+                let totalGenCount = game.generators.reduce((sum, g) => sum + g.count, 0);
+                let totalUpgradesCount = game.upgrades.reduce((sum, u) => sum + u.count, 0);
+
+                if (ach.type === 'totalTaps' && game.totalTaps >= ach.target) {
                     unlocked = true;
                 } else if (ach.type === 'energy' && game.totalEarned >= ach.target) {
                     unlocked = true;
-                } else if (ach.type === 'generator') {
-                    let genIdx = (ach.id - 76) % generatorData.length;
-                    if (game.generators[genIdx] && game.generators[genIdx].count >= ach.target) {
+                } else if (ach.type === 'totalGen' && totalGenCount >= ach.target) {
+                    unlocked = true;
+                } else if (ach.type === 'genTypeCount') {
+                    let matchingCount = game.generators.filter(g => g.count >= ach.target).length;
+                    if (matchingCount >= ach.count) unlocked = true;
+                } else if (ach.type === 'genRange') {
+                    let allHave = true;
+                    for (let i = ach.start; i <= ach.end; i++) {
+                        if (!game.generators[i] || game.generators[i].count === 0) {
+                            allHave = false;
+                            break;
+                        }
+                    }
+                    if (allHave) unlocked = true;
+                } else if (ach.type === 'allGenUnlocked') {
+                    let allHave = game.generators.every(g => g.count >= (ach.target || 1));
+                    if (allHave) unlocked = true;
+                } else if (ach.type === 'specificGen') {
+                    if (game.generators[ach.index] && game.generators[ach.index].count >= ach.target) {
                         unlocked = true;
                     }
+                } else if (ach.type === 'totalUpgrades' && totalUpgradesCount >= ach.target) {
+                    unlocked = true;
                 } else if (ach.type === 'prestige' && game.prestigeCount >= ach.target) {
                     unlocked = true;
+                } else if (ach.type === 'multiplier' && game.prestigeMultiplier >= ach.target) {
+                    unlocked = true;
+                } else if (ach.type === 'playTime' && game.playTime >= ach.target) {
+                    unlocked = true;
+                } else if (ach.type === 'exactEnergy' && game.energy === ach.target) {
+                    unlocked = true;
+                } else if (ach.type === 'nameChanged' && game.nameChangedCount >= ach.target) {
+                    unlocked = true;
+                } else if (ach.type === 'rankingRegistered' && game.rankingRegCount >= ach.target) {
+                    unlocked = true;
+                } else if (ach.type === 'hardReset' && game.hardResetCount >= ach.target) {
+                    unlocked = true;
+                } else if (ach.type === 'tapPower' && game.tapPower >= ach.target) {
+                    unlocked = true;
+                } else if (ach.type === 'cps' && calculateCPS() >= ach.target) {
+                    unlocked = true;
+                } else if (ach.type === 'maxSingleGen') {
+                    let maxCount = Math.max(...game.generators.map(g => g.count));
+                    if (maxCount >= ach.target) unlocked = true;
+                } else if (ach.type === 'specificGenCount') {
+                    if (game.generators[ach.index] && game.generators[ach.index].count >= ach.target) {
+                        unlocked = true;
+                    }
+                } else if (ach.type === 'allAchievementsDone') {
+                    let otherCount = achievementsData.filter(a => a.id !== ach.id).length;
+                    if (game.unlockedAchievements.length >= otherCount) {
+                        unlocked = true;
+                    }
+                } else if (ach.type === 'allAchievements153') {
+                    if (game.unlockedAchievements.length >= achievementsData.length - 1) {
+                        unlocked = true;
+                    }
                 }
 
                 if (unlocked) {
@@ -1080,16 +1266,6 @@
                     triggerAchievementPopup(ach.title);
                 }
             });
-
-            // 「実績王」(ID: 151) の解除チェック（他の実績が100種類以上解除されているか）
-            if (!game.unlockedAchievements.includes(151)) {
-                // ID 151 以外ですでに解除されている実績の数をカウント
-                const normalUnlockedCount = game.unlockedAchievements.filter(id => id !== 151).length;
-                if (normalUnlockedCount >= 100) {
-                    game.unlockedAchievements.push(151);
-                    triggerAchievementPopup("👑 実績王");
-                }
-            }
         }
 
         let popupTimer = null;
@@ -1138,6 +1314,7 @@
 
         function executeHardReset() {
             isResetting = true;
+            game.hardResetCount++;
             localStorage.removeItem('aether_nexus_save');
             closeModal('resetConfirmModal');
             showCustomAlert("セーブデータをリセットしました。<br>画面を再読み込みします。", () => {
@@ -1192,19 +1369,6 @@
             }
         }
 
-        // 未達成のハテナ部分をタップしたときのヒント表示
-        window.handleAchievementClick = function(id) {
-            const ach = achievementsData.find(a => a.id === id);
-            if (!ach) return;
-            const isDone = game.unlockedAchievements.includes(id);
-
-            if (isDone) {
-                showCustomAlert(`【達成済み実績】<br><br><b>${ach.title}</b><br>${ach.desc}`);
-            } else {
-                showCustomAlert(`🔒 【未達成・図鑑ヒント】<br><br><b>${ach.title}</b><br><br>💡 ヒント:<br>${ach.hint}`);
-            }
-        };
-
         function updateUI() {
             document.getElementById('energy-count').textContent = formatRankingNumber(game.energy) + " Λ";
             const currentCps = calculateCPS();
@@ -1249,34 +1413,24 @@
             });
             document.getElementById('upgrade-list').innerHTML = upHtml;
 
-            // 実績図鑑リストの描画（全150種 + 実績王）
-            const normalUnlockedCount = game.unlockedAchievements.filter(id => id !== 151).length;
-            document.getElementById('ach-unlocked-count').textContent = normalUnlockedCount;
+            // 実績一覧の描画
+            document.getElementById('ach-unlocked-count').textContent = game.unlockedAchievements.length;
+            document.getElementById('ach-total-count').textContent = achievementsData.length;
             
             let achHtml = "";
             achievementsData.forEach(ach => {
                 const isDone = game.unlockedAchievements.includes(ach.id);
-                const isKing = ach.id === 151;
-
-                let cardClass = "";
-                if (isKing) {
-                    cardClass = isKing ? "ach-card special-king " + (isDone ? "done" : "locked") : "";
-                } else {
-                    cardClass = "ach-card " + (!isDone ? "locked" : "");
-                }
-
-                let iconDisplay = isDone ? (isKing ? '👑' : '🏆') : '❓';
-                let titleDisplay = isDone ? ach.title : (isKing ? '👑 実績王 (秘密)' : `No.${ach.id} 未知の実績`);
-                let descDisplay = isDone ? ach.desc : (isKing ? '他の実績を100個解除する' : 'タップしてヒントを確認');
-                let statusClass = isDone ? (isKing ? 'king-done' : 'done') : 'locked-hint';
-                let statusText = isDone ? (isKing ? '王の証' : '達成済') : '💡 ヒント';
+                let cardClass = "ach-card " + (isDone ? "unlocked" : "");
+                let iconDisplay = isDone ? '🏆' : '🔒';
+                let statusClass = isDone ? 'done' : 'yet';
+                let statusText = isDone ? '達成済' : '未達成';
 
                 achHtml += `
-                    <div class="${cardClass}" onclick="handleAchievementClick(${ach.id})">
+                    <div class="${cardClass}">
                         <div class="ach-icon">${iconDisplay}</div>
                         <div class="ach-details">
-                            <h4 class="ach-title">${titleDisplay}</h4>
-                            <p class="ach-desc">${descDisplay}</p>
+                            <h4 class="ach-title">${ach.title}</h4>
+                            <p class="ach-desc">${ach.desc}</p>
                         </div>
                         <div class="ach-status ${statusClass}">
                             ${statusText}
@@ -1306,6 +1460,10 @@
                     game.prestigeMultiplier = parsed.prestigeMultiplier || 1;
                     game.prestigeCount = parsed.prestigeCount || 0;
                     game.unlockedAchievements = parsed.unlockedAchievements || [];
+                    game.playTime = parsed.playTime || 0;
+                    game.nameChangedCount = parsed.nameChangedCount || 0;
+                    game.rankingRegCount = parsed.rankingRegCount || 0;
+                    game.hardResetCount = parsed.hardResetCount || 0;
                     
                     if (parsed.playerName && parsed.playerName.trim() !== "") {
                         game.playerName = parsed.playerName;
@@ -1349,10 +1507,13 @@
             const input = document.getElementById('initial-name-input').value.trim();
             if (input) {
                 game.playerName = input;
+                game.nameChangedCount++;
             }
             document.getElementById('name-modal').classList.remove('active');
             document.getElementById('player-name-input').value = game.playerName;
             
+            game.rankingRegCount++;
+            checkAchievements();
             saveGame();
             updateRankAndStats();
             if (window.syncScoreToFirebase) window.syncScoreToFirebase();
@@ -1362,6 +1523,8 @@
             const input = document.getElementById('player-name-input').value.trim();
             if (input) {
                 game.playerName = input;
+                game.nameChangedCount++;
+                checkAchievements();
                 saveGame();
                 updateRankAndStats();
                 if (window.syncScoreToFirebase) window.syncScoreToFirebase();
@@ -1439,6 +1602,8 @@
             if (deltaTime > 0.5) {
                 deltaTime = 0.5;
             }
+
+            game.playTime += deltaTime;
 
             const cps = calculateCPS();
             if (cps > 0) {
