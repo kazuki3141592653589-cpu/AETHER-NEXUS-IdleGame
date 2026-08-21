@@ -157,6 +157,9 @@
             display: flex;
             gap: 10px;
             z-index: 10;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 90%;
         }
 
         .menu-btn, .buy-btn, .nav-tab, .danger-btn {
@@ -169,10 +172,10 @@
             background: rgba(0, 211, 255, 0.05);
             border: 1px solid rgba(0, 211, 255, 0.3);
             color: var(--text-color);
-            padding: 10px 16px;
+            padding: 10px 14px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             transition: all 0.2s;
         }
 
@@ -251,6 +254,77 @@
             color: var(--sub-text);
         }
 
+        /* 図鑑形式の実績カード用スタイル */
+        .ach-card {
+            background: rgba(0, 243, 255, 0.03);
+            border: 1px solid rgba(0, 243, 255, 0.15);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .ach-card:hover {
+            background: rgba(0, 243, 255, 0.08);
+        }
+        .ach-card.locked {
+            border-color: rgba(138, 184, 248, 0.2);
+            opacity: 0.7;
+        }
+        /* 特別な実績王カードのスタイル */
+        .ach-card.special-king {
+            background: rgba(255, 215, 0, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+        }
+        .ach-card.special-king.done {
+            background: rgba(255, 215, 0, 0.12);
+            border-color: #ffd700;
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+        }
+        .ach-icon {
+            font-size: 1.4rem;
+            width: 36px;
+            text-align: center;
+            margin-right: 10px;
+        }
+        .ach-details {
+            flex: 1;
+        }
+        .ach-title {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: var(--text-color);
+            margin: 0 0 3px 0;
+        }
+        .ach-desc {
+            font-size: 0.78rem;
+            color: var(--sub-text);
+            margin: 0;
+        }
+        .ach-status {
+            font-size: 0.78rem;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+        .ach-status.done {
+            color: var(--accent-color);
+            background: rgba(0, 243, 255, 0.1);
+        }
+        .ach-status.locked-hint {
+            color: var(--sub-text);
+            background: rgba(138, 184, 248, 0.1);
+            border: 1px dashed rgba(138, 184, 248, 0.3);
+        }
+        .ach-status.king-done {
+            color: #ffd700;
+            background: rgba(255, 215, 0, 0.15);
+        }
+
         .buy-btn {
             background: linear-gradient(135deg, #0055ff, #00d3ff);
             border: none;
@@ -298,7 +372,7 @@
             background: none;
             border: none;
             color: var(--sub-text);
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             cursor: pointer;
             display: flex;
             flex-direction: column;
@@ -380,6 +454,24 @@
             color: var(--accent-color);
         }
 
+        /* 実績ポップアップ通知 */
+        #achievement-popup {
+            position: fixed;
+            top: 20px;
+            right: -300px;
+            background: rgba(0, 25, 45, 0.95);
+            border: 1px solid var(--accent-color);
+            box-shadow: 0 0 15px rgba(0, 211, 255, 0.4);
+            border-radius: 8px;
+            padding: 12px 18px;
+            z-index: 1000;
+            transition: right 0.4s cubic-bezier(0, 0.9, 0.2, 1);
+            max-width: 280px;
+        }
+        #achievement-popup.show {
+            right: 20px;
+        }
+
         @keyframes floatUpNumber {
             0% { opacity: 1; transform: scale(1.4) translateY(0) rotate(0deg); }
             50% { opacity: 1; transform: scale(1.1) translateY(-35px) rotate(calc(var(--rand-rot) * 1deg)); }
@@ -424,6 +516,7 @@
             <button class="menu-btn" onclick="openPanel('panel-generators')">発電機</button>
             <button class="menu-btn" onclick="openPanel('panel-upgrades')">強化</button>
             <button class="menu-btn" onclick="openPanel('panel-prestige')">転生</button>
+            <button class="menu-btn" onclick="openPanel('panel-achievements')">🏅 実績図鑑</button>
             <button class="menu-btn" onclick="openPanel('panel-ranking')">🏆 ランキング</button>
         </div>
 
@@ -450,7 +543,7 @@
             </div>
             <div class="panel-content" style="padding: 15px; text-align: center;">
                 <h3 style="margin-top: 5px; color: var(--accent-color);">次元歪曲システム</h3>
-                <p style="color: var(--sub-text); font-size: 0.85rem;">すべてのエネルギーと設備を初期化する代わりに、次回の獲得倍率を上昇させます。</p>
+                <p style="color: var(--sub-text); font-size: 0.85rem;">すべてのエネルギーと設備を初期化する代わりに、次回の獲得倍率を上昇させます。（※実績は引き継がれます）</p>
                 
                 <div style="background: rgba(0, 243, 255, 0.05); border: 1px solid rgba(0, 243, 255, 0.3); border-radius: 6px; padding: 12px; margin: 15px 0; text-align: left;">
                     <div style="font-weight: bold; color: var(--text-color);">📌 転生条件 (回数: <span id="prestige-count-display">0</span>回目)：</div>
@@ -461,6 +554,19 @@
                     獲得予定倍率増加量: <span style="color: var(--accent-color); font-weight: bold;" id="prestige-gain-preview">+1.0x</span>
                 </div>
                 <button id="prestige-btn" class="buy-btn" onclick="doPrestige()" style="padding: 12px 24px; font-size: 0.95rem; width: 100%; margin-top: 15px;" disabled>条件未達成</button>
+            </div>
+        </div>
+
+        <div id="panel-achievements" class="sub-panel">
+            <div class="panel-header">
+                <span>🏅 実績図鑑 (全150種 + 👑王)</span>
+                <button class="close-btn" onclick="closePanel()">閉じる</button>
+            </div>
+            <div class="panel-content">
+                <div style="margin-bottom: 12px; font-size: 0.85rem; color: var(--sub-text);">
+                    図鑑コンプリート率: <span id="ach-unlocked-count" style="color: var(--accent-color); font-weight: bold;">0</span> / 150 <span style="font-size: 0.75rem;">(※ハテナをタップするとヒントが表示されます)</span>
+                </div>
+                <div id="achievement-list"></div>
             </div>
         </div>
 
@@ -573,10 +679,17 @@
         </div>
     </div>
 
+    <!-- 実績解除ポップアップ -->
+    <div id="achievement-popup">
+        <div style="font-size: 0.75rem; color: var(--accent-color); font-weight: bold;">🏅 実績解除！</div>
+        <div id="ach-popup-title" style="font-size: 0.95rem; font-weight: bold; color: #fff; margin-top: 2px;"></div>
+    </div>
+
     <nav id="nav-tabs-bar">
         <button class="nav-tab active" onclick="switchTab('generators')">発電機</button>
         <button class="nav-tab" onclick="switchTab('upgrades')">強化</button>
         <button class="nav-tab" onclick="switchTab('prestige')">転生</button>
+        <button class="nav-tab" onclick="switchTab('achievements')">図鑑</button>
         <button class="nav-tab" onclick="switchTab('ranking')">ランキング</button>
     </nav>
 
@@ -717,8 +830,52 @@
         const upgradeBaseData = [
             { id: 1, name: "サイバネティック・フィンガー", desc: "タップ時のエネルギー生産量が +1 増加", cost: 100, mult: 2.2, type: "tap", value: 1 },
             { id: 2, name: "ナノマシン・ブースト", desc: "タップ時のエネルギー生産量が +10 増加", cost: 1000, mult: 2.4, type: "tap", value: 10 },
-            { id: 3, name: "量子共鳴アンプ", desc: "すべての発電効率が +1.0 増加", cost: 50000, mult: 2.5, type: "cps", value: 1.0 }
+            { id: 3, name: "量子共鳴アンプ", desc: "すべての発電効率が +1.0 増加", cost: 5000, mult: 2.5, type: "cps", value: 1.0 }
         ];
+
+        // 実績データを 150種類 + 特別な「実績王」(ID: 151) に拡張
+        const achievementsData = [];
+        for (let i = 1; i <= 150; i++) {
+            let type = 'tap';
+            let target = i * 15;
+            let title = `タップマニア #${i}`;
+            let desc = `累計 ${i * 15} 回タップする`;
+            let hint = `画面の中心にあるコアを合計 ${i * 15} 回タップしよう！`;
+
+            if (i > 37 && i <= 75) {
+                type = 'energy';
+                let exp = Math.pow(1.8, i - 38);
+                target = i === 38 ? 5000 : Math.floor(5000 * exp);
+                title = `エネルギー収集 #${i - 37}`;
+                desc = `累計 ${target.toLocaleString()} Λ のエネルギーを獲得する`;
+                hint = `発電やタップで累計 ${target.toLocaleString()} Λ のエネルギーを稼ぐとひらめくぞ。`;
+            } else if (i > 75 && i <= 112) {
+                type = 'generator';
+                let genIdx = (i - 76) % generatorData.length;
+                target = Math.floor((i - 75) / 4) + 1;
+                title = `インフラ構築 #${i - 75}`;
+                desc = `${generatorData[genIdx].name}を計 ${target} 基所持する`;
+                hint = `「発電機」タブから【${generatorData[genIdx].name}】を合計 ${target} 基購入しよう。`;
+            } else if (i > 112) {
+                type = 'prestige';
+                target = i - 112;
+                title = `次元の旅人 #${i - 112}`;
+                desc = `次元転生を ${target} 回行う`;
+                hint = `「転生」タブの条件を満たし、次元転生を合計 ${target} 回行おう。`;
+            }
+
+            achievementsData.push({ id: i, title, desc, hint, type, target });
+        }
+
+        // 100種類以上解除で獲得できる「実績王」を追加 (ID: 151)
+        achievementsData.push({
+            id: 151,
+            title: "👑 実績王",
+            desc: "他の実績を100種類以上解除する",
+            hint: "他の種類の実績を合計で100個以上達成すると真の王として君臨できるぞ！",
+            type: "king",
+            target: 100
+        });
 
         let game = {
             energy: 0,
@@ -739,7 +896,8 @@
             upgrades: upgradeBaseData.map(u => ({
                 ...u,
                 count: 0
-            }))
+            })),
+            unlockedAchievements: []
         };
 
         function getPrestigeRequirement() {
@@ -830,6 +988,7 @@
             }
 
             showFloatingText(clientX, clientY, "+" + formatNumber(gain));
+            checkAchievements();
             updateUI();
         }
 
@@ -859,6 +1018,7 @@
                 game.energy -= gen.cost;
                 gen.count++;
                 gen.cost = Math.floor(gen.baseCost * Math.pow(gen.mult, gen.count));
+                checkAchievements();
                 updateUI();
             }
         }
@@ -895,6 +1055,55 @@
             return cps * additiveBonus * game.prestigeMultiplier;
         }
 
+        function checkAchievements() {
+            // まず通常の実績をチェック
+            achievementsData.forEach(ach => {
+                if (ach.id === 151) return; // 特殊な実績王は後で判定
+                if (game.unlockedAchievements.includes(ach.id)) return;
+
+                let unlocked = false;
+                if (ach.type === 'tap' && game.totalTaps >= ach.target) {
+                    unlocked = true;
+                } else if (ach.type === 'energy' && game.totalEarned >= ach.target) {
+                    unlocked = true;
+                } else if (ach.type === 'generator') {
+                    let genIdx = (ach.id - 76) % generatorData.length;
+                    if (game.generators[genIdx] && game.generators[genIdx].count >= ach.target) {
+                        unlocked = true;
+                    }
+                } else if (ach.type === 'prestige' && game.prestigeCount >= ach.target) {
+                    unlocked = true;
+                }
+
+                if (unlocked) {
+                    game.unlockedAchievements.push(ach.id);
+                    triggerAchievementPopup(ach.title);
+                }
+            });
+
+            // 「実績王」(ID: 151) の解除チェック（他の実績が100種類以上解除されているか）
+            if (!game.unlockedAchievements.includes(151)) {
+                // ID 151 以外ですでに解除されている実績の数をカウント
+                const normalUnlockedCount = game.unlockedAchievements.filter(id => id !== 151).length;
+                if (normalUnlockedCount >= 100) {
+                    game.unlockedAchievements.push(151);
+                    triggerAchievementPopup("👑 実績王");
+                }
+            }
+        }
+
+        let popupTimer = null;
+        function triggerAchievementPopup(title) {
+            const popup = document.getElementById('achievement-popup');
+            document.getElementById('ach-popup-title').textContent = title;
+            popup.classList.add('show');
+
+            if (popupTimer) clearTimeout(popupTimer);
+            popupTimer = setTimeout(() => {
+                popup.classList.remove('show');
+            }, 3000);
+        }
+
         function doPrestige() {
             let req = getPrestigeRequirement();
             if (game.energy < req) return;
@@ -914,10 +1123,11 @@
                 up.cost = upgradeBaseData[index].cost;
             });
 
+            checkAchievements();
             saveGame();
             updateUI();
             closePanel();
-            showCustomAlert("次元転生が完了しました！<br>獲得エネルギー倍率が大きく上昇します。");
+            showCustomAlert("次元転生が完了しました！<br>獲得エネルギー倍率が大きく上昇します。<br>（実績はそのまま引き継がれました）");
         }
 
         let isResetting = false;
@@ -982,6 +1192,19 @@
             }
         }
 
+        // 未達成のハテナ部分をタップしたときのヒント表示
+        window.handleAchievementClick = function(id) {
+            const ach = achievementsData.find(a => a.id === id);
+            if (!ach) return;
+            const isDone = game.unlockedAchievements.includes(id);
+
+            if (isDone) {
+                showCustomAlert(`【達成済み実績】<br><br><b>${ach.title}</b><br>${ach.desc}`);
+            } else {
+                showCustomAlert(`🔒 【未達成・図鑑ヒント】<br><br><b>${ach.title}</b><br><br>💡 ヒント:<br>${ach.hint}`);
+            }
+        };
+
         function updateUI() {
             document.getElementById('energy-count').textContent = formatRankingNumber(game.energy) + " Λ";
             const currentCps = calculateCPS();
@@ -1026,6 +1249,43 @@
             });
             document.getElementById('upgrade-list').innerHTML = upHtml;
 
+            // 実績図鑑リストの描画（全150種 + 実績王）
+            const normalUnlockedCount = game.unlockedAchievements.filter(id => id !== 151).length;
+            document.getElementById('ach-unlocked-count').textContent = normalUnlockedCount;
+            
+            let achHtml = "";
+            achievementsData.forEach(ach => {
+                const isDone = game.unlockedAchievements.includes(ach.id);
+                const isKing = ach.id === 151;
+
+                let cardClass = "";
+                if (isKing) {
+                    cardClass = isKing ? "ach-card special-king " + (isDone ? "done" : "locked") : "";
+                } else {
+                    cardClass = "ach-card " + (!isDone ? "locked" : "");
+                }
+
+                let iconDisplay = isDone ? (isKing ? '👑' : '🏆') : '❓';
+                let titleDisplay = isDone ? ach.title : (isKing ? '👑 実績王 (秘密)' : `No.${ach.id} 未知の実績`);
+                let descDisplay = isDone ? ach.desc : (isKing ? '他の実績を100個解除する' : 'タップしてヒントを確認');
+                let statusClass = isDone ? (isKing ? 'king-done' : 'done') : 'locked-hint';
+                let statusText = isDone ? (isKing ? '王の証' : '達成済') : '💡 ヒント';
+
+                achHtml += `
+                    <div class="${cardClass}" onclick="handleAchievementClick(${ach.id})">
+                        <div class="ach-icon">${iconDisplay}</div>
+                        <div class="ach-details">
+                            <h4 class="ach-title">${titleDisplay}</h4>
+                            <p class="ach-desc">${descDisplay}</p>
+                        </div>
+                        <div class="ach-status ${statusClass}">
+                            ${statusText}
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('achievement-list').innerHTML = achHtml;
+
             updateRankAndStats();
         }
 
@@ -1045,6 +1305,7 @@
                     game.tapPower = parsed.tapPower || 1;
                     game.prestigeMultiplier = parsed.prestigeMultiplier || 1;
                     game.prestigeCount = parsed.prestigeCount || 0;
+                    game.unlockedAchievements = parsed.unlockedAchievements || [];
                     
                     if (parsed.playerName && parsed.playerName.trim() !== "") {
                         game.playerName = parsed.playerName;
@@ -1134,8 +1395,11 @@
             } else if (tabName === 'prestige') {
                 document.querySelectorAll('.nav-tab')[2].classList.add('active');
                 openPanel('panel-prestige');
-            } else if (tabName === 'ranking') {
+            } else if (tabName === 'achievements') {
                 document.querySelectorAll('.nav-tab')[3].classList.add('active');
+                openPanel('panel-achievements');
+            } else if (tabName === 'ranking') {
+                document.querySelectorAll('.nav-tab')[4].classList.add('active');
                 openPanel('panel-ranking');
                 if (window.loadOnlineRanking) {
                     window.syncScoreToFirebase().then(() => {
@@ -1183,6 +1447,7 @@
                 game.totalEarned += addAmount;
             }
 
+            checkAchievements();
             updateUI();
             requestAnimationFrame(gameLoop);
         }
