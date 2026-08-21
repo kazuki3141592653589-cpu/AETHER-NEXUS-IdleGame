@@ -718,7 +718,7 @@
                 let rank = 1;
                 rankings.forEach((data) => {
                     const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${rank}位</td><td>${escapeHtml(data.name)}</td><td>${formatRankingNumber(data.score)} Λ</td>`;
+                    tr.innerHTML = `<td>${formatRankingNumber(rank)}位</td><td>${escapeHtml(data.name)}</td><td>${formatRankingNumber(data.score)} Λ</td>`;
                     tbody.appendChild(tr);
                     rank++;
                 });
@@ -813,21 +813,21 @@
             { val: 1000, name: "スパーク誕生", desc: "1,000 Λ のエネルギーを獲得する", hint: "累計エネルギー1,000 Λ を達成しよう" },
             { val: 5000, name: "電流の流れ", desc: "5,000 Λ のエネルギーを獲得する", hint: "累計エネルギー5,000 Λ を達成しよう" },
             { val: 25000, name: "エネルギー回路", desc: "25,000 Λ のエネルギーを獲得する", hint: "累計エネルギー25,000 Λ を達成しよう" },
-            { val: 100000, name: "プラズマ初動", desc: "100,000 Λ のエネルギーを獲得する", hint: "累計エネルギー10万 Λ を獲得しよう" },
-            { val: 500000, name: "都市の明かり", desc: "500,000 Λ のエネルギーを獲得する", hint: "累計エネルギー50万 Λ を獲得しよう" },
-            { val: 1000000, name: "メガエネルギー", desc: "1,000,000 Λ のエネルギーを獲得する", hint: "累計エネルギー100万 Λ を達成しよう" },
-            { val: 5000000, name: "電力網の確立", desc: "5,000,000 Λ のエネルギーを獲得する", hint: "累計エネルギー500万 Λ を達成しよう" },
-            { val: 25000000, name: "国家級プラント", desc: "25,000,000 Λ のエネルギーを獲得する", hint: "累計エネルギー2500万 Λ を達成しよう" },
-            { val: 100000000, name: "大陸の心臓部", desc: "100,000,000 Λ のエネルギーを獲得する", hint: "累計エネルギー1億 Λ を達成しよう" },
-            { val: 500000000, name: "ギガ・グリッド", desc: "500,000,000 Λ のエネルギーを獲得する", hint: "累計エネルギー5億 Λ を達成しよう" },
-            { val: 1000000000, name: "惑星の鼓動", desc: "1,000,000,000 Λ のエネルギーを獲得する", hint: "累計エネルギー10億 Λ を達成しよう" },
-            { val: 5000000000, name: "惑星経済の始まり", desc: "5,000,000,000 Λ のエネルギーを獲得する", hint: "累計エネルギー50億 Λ を達成しよう" },
-            { val: 25000000000, name: "ダイソン・スフィア前夜", desc: "25,000,000,000 Λ のエネルギーを獲得する", hint: "累計エネルギー250億 Λ を達成しよう" },
-            { val: 100000000000, name: "テラへの入口", desc: "1,000,000,000,000 Λ (1兆Λ) のエネルギーを獲得する", hint: "累計エネルギー1兆 Λ を達成しよう" },
+            { val: 100000, name: "プラズマ初動", desc: "100,000 Λ のエネルギーを獲得する", hint: "累計エネルギー100,000 Λ を獲得しよう" },
+            { val: 500000, name: "都市の明かり", desc: "500,000 Λ のエネルギーを獲得する", hint: "累計エネルギー500,000 Λ を獲得しよう" },
+            { val: 1000000, name: "メガエネルギー", desc: "1,000,000 Λ のエネルギーを獲得する", hint: "累計エネルギー1,000,000 Λ を達成しよう" },
+            { val: 5000000, name: "電力網の確立", desc: "5,000,000 Λ のエネルギーを獲得する", hint: "累計エネルギー5,000,000 Λ を達成しよう" },
+            { val: 25000000, name: "国家級プラント", desc: "25,000,000 Λ のエネルギーを獲得する", hint: "累計エネルギー25,000,000 Λ を達成しよう" },
+            { val: 100000000, name: "大陸の心臓部", desc: "100,000,000 Λ のエネルギーを獲得する", hint: "累計エネルギー100,000,000 Λ を達成しよう" },
+            { val: 500000000, name: "ギガ・グリッド", desc: "500,000,000 Λ のエネルギーを獲得する", hint: "累計エネルギー500,000,000 Λ を達成しよう" },
+            { val: 1000000000, name: "惑星の鼓動", desc: "1,000,000,000 Λ のエネルギーを獲得する", hint: "累計エネルギー1,000,000,000 Λ を達成しよう" },
+            { val: 5000000000, name: "惑星経済の始まり", desc: "5,000,000,000 Λ のエネルギーを獲得する", hint: "累計エネルギー5,000,000,000 Λ を達成しよう" },
+            { val: 25000000000, name: "ダイソン・スフィア前夜", desc: "25,000,000,000 Λ のエネルギーを獲得する", hint: "累計エネルギー25,000,000,000 Λ を達成しよう" },
+            { val: 100000000000, name: "テラへの入口", desc: "1,000,000,000,000 Λ (1兆Λ) のエネルギーを獲得する", hint: "累計エネルギー1,000,000,000,000 Λ を達成しよう" },
             { val: 500000000000, name: "恒星系グリッド", desc: "500,000,000,000 Λ のエネルギーを獲得する", hint: "さらに大規模なエネルギーを蓄積しよう" },
             { val: 1000000000000, name: "ソーラー・マイスター", desc: "1,000,000,000,000,000 Λ 相当のエネルギー獲得", hint: "圧倒的なエネルギー量を誇る域へ到達しよう" },
             { val: 1000000000000000n, name: "宇宙経済の支配者", desc: "圧倒的なエネルギー流通を達成する", hint: "宇宙全体を支配するレベルのエネルギーを獲得しよう" },
-            { val: 100000000000000000n, name: "次元の貯蔵庫", desc: "100澗Λ のエネルギーを蓄える", hint: "最果てのエネルギー単位「澗」に到達しよう" }
+            { val: 100000000000000000n, name: "次元の貯蔵庫", desc: "100澗Λ のエネルギーを蓄える", hint: "最果てのエネルギー単位に到達しよう" }
         ];
 
         energyMilestones.forEach(m => {
@@ -898,7 +898,7 @@
                 id: `gen_own_${genIdx}`,
                 name: `${genName}の開拓者`,
                 desc: `${genName}を1基以上所有する`,
-                hint: `ショップで第 ${genIdx + 1} の発電機を新しく解放・購入しよう`,
+                hint: `ショップで第 ${formatRankingNumber(genIdx + 1)} の発電機を新しく解放・購入しよう`,
                 icon: "🔧",
                 condition: () => game.generators[genIdx].count >= 1
             });
@@ -943,7 +943,7 @@
                 id: `extra_ach_${idxNum}`,
                 name: `次元の探求者 No.${idxNum}`,
                 desc: `さらなる宇宙の真理へ近づく実績 No.${idxNum}`,
-                hint: `中央のコアを合計 ${targetTaps} 回以上タップしよう`,
+                hint: `中央のコアを合計 ${formatRankingNumber(targetTaps)} 回以上タップしよう`,
                 icon: "🏆",
                 condition: () => game.totalTaps >= targetTaps
             });
@@ -1007,7 +1007,6 @@
             return Math.floor(num).toLocaleString('en-US');
         }
 
-        // kやmなどの短縮表記を行わず、そのままの数字をカンマ区切りで表示するように修正
         function formatRankingNumber(num) {
             if (num === null || num === undefined || isNaN(num)) return "0";
             return Math.floor(num).toLocaleString('en-US');
@@ -1226,7 +1225,7 @@
 
             let currentReq = getPrestigeRequirement();
             document.getElementById('prestige-req-display').textContent = formatNumber(currentReq);
-            document.getElementById('prestige-count-display').textContent = game.prestigeCount + 1;
+            document.getElementById('prestige-count-display').textContent = formatRankingNumber(game.prestigeCount + 1);
 
             let nextGain = getPrestigeGainAmount();
             document.getElementById('prestige-gain-preview').textContent = `+${nextGain.toFixed(1)}x`;
@@ -1292,14 +1291,14 @@
                 let itemCps = baseCps * gen.count;
                 
                 const isUnlocked = gen.count > 0;
-                const displayName = isUnlocked ? `${index + 1}. ${gen.name}` : `${index + 1}. ？？？ (未解放)`;
+                const displayName = isUnlocked ? `${formatRankingNumber(index + 1)}. ${gen.name}` : `${formatRankingNumber(index + 1)}. ？？？ (未解放)`;
                 const displayCps = isUnlocked ? `生産: +${formatRankingNumber(itemCps)} Λ/s` : `生産: ？？？`;
                 const displayCost = `費用: ${formatRankingNumber(gen.cost)} Λ`;
 
                 genHtml += `
                     <div class="item-card ${!isUnlocked ? 'locked' : ''}">
                         <div class="item-info">
-                            <h4>${isUnlocked ? '' : '🔒 '}${displayName} (所持: ${gen.count})</h4>
+                            <h4>${isUnlocked ? '' : '🔒 '}${displayName} (所持: ${formatRankingNumber(gen.count)})</h4>
                             <p>${displayCps}</p>
                             <p>${displayCost}</p>
                         </div>
@@ -1314,7 +1313,7 @@
                 upHtml += `
                     <div class="item-card">
                         <div class="item-info">
-                            <h4>${up.name} (Lv.${up.count})</h4>
+                            <h4>${up.name} (Lv.${formatRankingNumber(up.count)})</h4>
                             <p>${up.desc}</p>
                             <p>費用: ${formatRankingNumber(up.cost)} Λ</p>
                         </div>
