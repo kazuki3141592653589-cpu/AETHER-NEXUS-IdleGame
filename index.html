@@ -465,7 +465,6 @@
             right: 20px;
         }
 
-        /* 攻略ガイド＆馴染んだ「実は」ボタンのスタイル */
         .guide-box {
             background: rgba(0, 243, 255, 0.015);
             border: 1px solid rgba(0, 243, 255, 0.15);
@@ -538,7 +537,6 @@
             <button class="menu-btn" onclick="openPanel('panel-ranking')">🌐 ランキング</button>
         </div>
 
-        <!-- 攻略ガイドパネル（隠し実績セクション付き） -->
         <div id="panel-guide" class="sub-panel">
             <div class="panel-header">
                 <span>ゲーム説明＆攻略ガイド</span>
@@ -555,7 +553,6 @@
                     <li>進行が遅くなってきたら、エネルギーや設備を初期化して倍率を上げる「次元転生」を活用しましょう。</li>
                 </ul>
 
-                <!-- 馴染んだデザインの「実は」ボタン＆裏情報セクション -->
                 <div class="guide-box">
                     <button class="secret-toggle-btn" onclick="toggleSecretGuide()">
                         <span id="secret-arrow">▶</span> 実は…（開発裏・隠し実績のヒント）
@@ -706,7 +703,6 @@
             </div>
         </div>
 
-        <!-- 未解放実績のヒント表示用モーダル -->
         <div id="achievement-hint-modal" class="modal-overlay" onclick="outsideClose(event, 'achievement-hint-modal')">
             <div class="modal-box" style="max-width: 350px;">
                 <div class="panel-header">
@@ -763,7 +759,7 @@
     <nav id="nav-tabs-bar">
         <button class="nav-tab" onclick="switchTab('generators')">発電機</button>
         <button class="nav-tab" onclick="switchTab('upgrades')">強化</button>
-        <button class="nav-tab active" onclick="switchTab('achievements')">実績</button>
+        <button class="nav-tab" onclick="switchTab('achievements')">実績</button>
         <button class="nav-tab" onclick="switchTab('prestige')">転生</button>
         <button class="nav-tab" onclick="switchTab('ranking')">ランキング</button>
     </nav>
@@ -1040,7 +1036,6 @@
             condition: () => game.generators[49].count >= 1
         });
 
-        // 隠し実績（4つ）
         const hiddenAchievements = [
             {
                 id: "hidden_midnight",
@@ -1100,7 +1095,6 @@
 
         achievementData.push(...hiddenAchievements);
 
-        // 全体数がちょうど150になるように調整
         while (achievementData.length < 150) {
             let idxNum = achievementData.length + 1;
             let targetTaps = idxNum * 10;
@@ -1265,7 +1259,6 @@
 
         function tapCore(event) {
             playTapSound();
-            
             window.lastTapTimestamp = Date.now();
 
             let gain = game.tapPower * game.prestigeMultiplier;
@@ -1744,8 +1737,7 @@
             loadGame();
             updateUI();
             requestAnimationFrame(gameLoop);
-            
-            openPanel('panel-achievements');
+            // ページ更新時に実績図鑑が勝手に開かないようにこの行を削除しました
         };
 
         window.resetGameData = resetGameData;
