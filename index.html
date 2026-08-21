@@ -745,7 +745,7 @@
                 <div class="modal-body" style="text-align: center;">
                     <div id="hint-icon" style="font-size: 2.2rem; margin-bottom: 8px;">💡</div>
                     <div id="hint-title" style="font-weight: bold; margin-bottom: 8px; color: var(--accent-color);"></div>
-                    <p id="hint-desc" style="font-size: 0.85rem; color: var(--sub-text); margin-bottom: 20px;"></p>
+                    <p id="hint-desc" style="font-size: 0.85rem; color: var(--sub-text); margin-bottom: 20px; white-space: pre-line;"></p>
                     <button class="buy-btn" style="width: 100%;" onclick="closeModal('achievement-hint-modal')">閉じる</button>
                 </div>
             </div>
@@ -1128,14 +1128,15 @@
 
         achievementData.push(...hiddenAchievements);
 
+        // 実績No.95から150まで（配列インデックス94〜149）を タップ数 × 50 に設定
         while (achievementData.length < 150) {
             let idxNum = achievementData.length + 1;
-            let targetTaps = idxNum * 10;
+            let targetTaps = idxNum * 50;
             achievementData.push({
                 id: `extra_ach_${idxNum}`,
                 name: `次元の探求者 No.${idxNum}`,
-                desc: `さらなる宇宙の真理へ近づく実績 No.${idxNum}`,
-                hint: `タップ数を重ねてさらなる実績を紐解きましょう。`,
+                desc: `累計タップ数が ${formatRankingNumber(targetTaps)} 回に到達する`,
+                hint: `累計タップ数を ${formatRankingNumber(targetTaps)} 回以上にしましょう。`,
                 icon: "🏆",
                 condition: () => game.totalTaps >= targetTaps
             });
@@ -1198,6 +1199,16 @@
             const ach = achievementData[index];
             const isUnlocked = !!game.unlockedAchievements[ach.id];
 
+            let reqInfo = "";
+            if (ach.id.startsWith('extra_ach_')) {
+                let parts = ach.id.split('_');
+                let idxNum = parseInt(parts[2]);
+                let reqTaps = idxNum * 50;
+                let currentTaps = game.totalTaps;
+                let progressPercent = Math.min(100, Math.floor((currentTaps / reqTaps) * 100));
+                reqInfo = `\n\n【必要タップ数】\n${formatRankingNumber(reqTaps)} 回 (現在: ${formatRankingNumber(currentTaps)} 回 / 達成率: ${progressPercent}%)`;
+            }
+
             if (ach.hidden && !isUnlocked) {
                 document.getElementById('hint-icon').textContent = "❓";
                 document.getElementById('hint-title').textContent = "No." + formatRankingNumber(index + 1) + " ？？？？？";
@@ -1205,11 +1216,11 @@
             } else if (isUnlocked) {
                 document.getElementById('hint-icon').textContent = ach.icon;
                 document.getElementById('hint-title').textContent = "No." + formatRankingNumber(index + 1) + " " + ach.name + " (達成済み)";
-                document.getElementById('hint-desc').textContent = ach.desc;
+                document.getElementById('hint-desc').textContent = ach.desc + reqInfo;
             } else {
                 document.getElementById('hint-icon').textContent = ach.icon;
                 document.getElementById('hint-title').textContent = "No." + formatRankingNumber(index + 1) + " " + ach.name;
-                document.getElementById('hint-desc').textContent = "【ヒント】\n" + (ach.hint || ach.desc);
+                document.getElementById('hint-desc').textContent = "【ヒント】\n" + (ach.hint || ach.desc) + reqInfo;
             }
             openModal('achievement-hint-modal');
         }
@@ -1339,7 +1350,6 @@
             }, 450);
         }
 
-        // 等比数列の和を用いた購入計算ロジック
         function getBatchCost(gen, count) {
             if (count <= 0) return 0;
             return gen.cost * (Math.pow(gen.mult, count) - 1) / (gen.mult - 1);
@@ -1348,10 +1358,8 @@
         function getMaxAffordableCount(gen) {
             let maxCount = 0;
             let currentCostSum = 0;
-            let tempCost = gen.cost;
             let tempCount = gen.count;
             
-            // 安全のため上限を設ける
             for (let i = 0; i < 10000; i++) {
                 let nextCost = Math.floor(gen.baseCost * Math.pow(gen.mult, tempCount + i));
                 if (game.energy >= currentCostSum + nextCost) {
@@ -1380,7 +1388,6 @@
 
             let totalCost = 0;
             if (game.buyMode === 'MAX' || game.buyMode === 1) {
-                // MAXか1の場合は1つずつあるいはシミュレーションしたコストを計算
                 let tempCount = gen.count;
                 for (let i = 0; i < buyCount; i++) {
                     totalCost += Math.floor(gen.baseCost * Math.pow(gen.mult, tempCount + i));
@@ -1596,13 +1603,12 @@
             game.generators.forEach((gen, index) => {
                 const baseCps = generatorData[index] ? generatorData[index].baseCps : 0;
                 
-                // 現在の購入モードに応じたコスト計算
                 let targetCount = 1;
                 if (game.buyMode === 10) targetCount = 10;
                 else if (game.buyMode === 50) targetCount = 50;
                 else if (game.buyMode === 'MAX') targetCount = getMaxAffordableCount(gen);
 
-                if (targetCount < 1 && game.buyMode === 'MAX') targetCount = 1; // 最低1表示用
+                if (targetCount < 1 && game.buyMode === 'MAX') targetCount = 1;
 
                 let costToShow = 0;
                 if (game.buyMode === 'MAX' || game.buyMode === 1) {
