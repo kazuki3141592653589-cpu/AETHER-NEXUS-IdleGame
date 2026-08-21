@@ -231,6 +231,33 @@
             -webkit-overflow-scrolling: touch;
         }
 
+        .buy-mode-bar {
+            display: flex;
+            gap: 5px;
+            padding: 10px 15px;
+            background: rgba(0,0,0,0.2);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.1);
+        }
+
+        .buy-mode-btn {
+            flex: 1;
+            background: rgba(0, 211, 255, 0.05);
+            border: 1px solid rgba(0, 211, 255, 0.3);
+            color: var(--sub-text);
+            padding: 6px 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .buy-mode-btn.active {
+            background: rgba(0, 211, 255, 0.2);
+            border-color: var(--accent-color);
+            color: var(--text-color);
+            font-weight: bold;
+        }
+
         .item-card {
             background: rgba(0, 243, 255, 0.03);
             border: 1px solid rgba(0, 243, 255, 0.15);
@@ -577,6 +604,12 @@
             <div class="panel-header">
                 <span>次元発電機 (全50種)</span>
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
+            </div>
+            <div class="buy-mode-bar">
+                <button class="buy-mode-btn active" onclick="setBuyMode(1, this)">×1</button>
+                <button class="buy-mode-btn" onclick="setBuyMode(10, this)">×10</button>
+                <button class="buy-mode-btn" onclick="setBuyMode(50, this)">×50</button>
+                <button class="buy-mode-btn" onclick="setBuyMode('MAX', this)">MAX</button>
             </div>
             <div class="panel-content" id="generator-list"></div>
         </div>
@@ -1116,6 +1149,7 @@
             prestigeMultiplier: 1,
             prestigeCount: 0,
             playerName: "名無しのパイレット",
+            buyMode: 1, // 1, 10, 50, 'MAX'
             unlockedAchievements: {},
             generators: generatorData.map(g => ({
                 name: g.name,
@@ -1130,6 +1164,13 @@
                 count: 0
             }))
         };
+
+        function setBuyMode(mode, btnEl) {
+            game.buyMode = mode;
+            document.querySelectorAll('.buy-mode-btn').forEach(b => b.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+            updateUI();
+        }
 
         function getTotalGeneratorCount() {
             let total = 0;
@@ -1298,11 +1339,59 @@
             }, 450);
         }
 
+        // 等比数列の和を用いた購入計算ロジック
+        function getBatchCost(gen, count) {
+            if (count <= 0) return 0;
+            return gen.cost * (Math.pow(gen.mult, count) - 1) / (gen.mult - 1);
+        }
+
+        function getMaxAffordableCount(gen) {
+            let maxCount = 0;
+            let currentCostSum = 0;
+            let tempCost = gen.cost;
+            let tempCount = gen.count;
+            
+            // 安全のため上限を設ける
+            for (let i = 0; i < 10000; i++) {
+                let nextCost = Math.floor(gen.baseCost * Math.pow(gen.mult, tempCount + i));
+                if (game.energy >= currentCostSum + nextCost) {
+                    currentCostSum += nextCost;
+                    maxCount++;
+                } else {
+                    break;
+                }
+            }
+            return maxCount;
+        }
+
         function buyGenerator(index) {
             const gen = game.generators[index];
-            if (game.energy >= gen.cost) {
-                game.energy -= gen.cost;
-                gen.count++;
+            let buyCount = 1;
+
+            if (game.buyMode === 10) {
+                buyCount = 10;
+            } else if (game.buyMode === 50) {
+                buyCount = 50;
+            } else if (game.buyMode === 'MAX') {
+                buyCount = getMaxAffordableCount(gen);
+            }
+
+            if (buyCount <= 0) return;
+
+            let totalCost = 0;
+            if (game.buyMode === 'MAX' || game.buyMode === 1) {
+                // MAXか1の場合は1つずつあるいはシミュレーションしたコストを計算
+                let tempCount = gen.count;
+                for (let i = 0; i < buyCount; i++) {
+                    totalCost += Math.floor(gen.baseCost * Math.pow(gen.mult, tempCount + i));
+                }
+            } else {
+                totalCost = Math.floor(getBatchCost(gen, buyCount));
+            }
+
+            if (game.energy >= totalCost) {
+                game.energy -= totalCost;
+                gen.count += buyCount;
                 gen.cost = Math.floor(gen.baseCost * Math.pow(gen.mult, gen.count));
                 checkAchievements();
                 updateUI();
@@ -1506,12 +1595,36 @@
             let genHtml = "";
             game.generators.forEach((gen, index) => {
                 const baseCps = generatorData[index] ? generatorData[index].baseCps : 0;
-                let itemCps = baseCps * gen.count;
+                
+                // 現在の購入モードに応じたコスト計算
+                let targetCount = 1;
+                if (game.buyMode === 10) targetCount = 10;
+                else if (game.buyMode === 50) targetCount = 50;
+                else if (game.buyMode === 'MAX') targetCount = getMaxAffordableCount(gen);
+
+                if (targetCount < 1 && game.buyMode === 'MAX') targetCount = 1; // 最低1表示用
+
+                let costToShow = 0;
+                if (game.buyMode === 'MAX' || game.buyMode === 1) {
+                    let tempCostSum = 0;
+                    let actualCount = targetCount === 0 ? 1 : targetCount;
+                    for (let i = 0; i < actualCount; i++) {
+                        tempCostSum += Math.floor(gen.baseCost * Math.pow(gen.mult, gen.count + i));
+                    }
+                    costToShow = tempCostSum;
+                } else {
+                    costToShow = Math.floor(getBatchCost(gen, targetCount));
+                }
+
+                let itemCps = baseCps * (game.buyMode === 'MAX' ? (targetCount > 0 ? targetCount : 1) : targetCount);
                 
                 const isUnlocked = gen.count > 0;
                 const displayName = isUnlocked ? `${formatRankingNumber(index + 1)}. ${gen.name}` : `${formatRankingNumber(index + 1)}. ？？？ (未解放)`;
-                const displayCps = isUnlocked ? `生産: +${formatShortNumber(itemCps)} Λ/s` : `生産: ？？？`;
-                const displayCost = `費用: ${formatShortNumber(gen.cost)} Λ`;
+                const displayCps = isUnlocked ? `生産: +${formatShortNumber(baseCps * (game.buyMode === 'MAX' ? (targetCount > 0 ? targetCount : 1) : targetCount))} Λ/s` : `生産: ？？？`;
+                const displayCost = `費用(${game.buyMode}): ${formatShortNumber(costToShow)} Λ`;
+
+                let canAfford = game.energy >= costToShow;
+                if (game.buyMode === 'MAX' && targetCount === 0) canAfford = false;
 
                 genHtml += `
                     <div class="item-card ${!isUnlocked ? 'locked' : ''}">
@@ -1520,7 +1633,7 @@
                             <p>${displayCps}</p>
                             <p>${displayCost}</p>
                         </div>
-                        <button class="buy-btn" ${game.energy < gen.cost ? 'disabled' : ''} onclick="buyGenerator(${index})">購入</button>
+                        <button class="buy-btn" ${!canAfford ? 'disabled' : ''} onclick="buyGenerator(${index})">${game.buyMode === 'MAX' ? 'MAX購入' : `+${game.buyMode}`}</button>
                     </div>
                 `;
             });
@@ -1737,7 +1850,6 @@
             loadGame();
             updateUI();
             requestAnimationFrame(gameLoop);
-            // ページ更新時に実績図鑑が勝手に開かないようにこの行を削除しました
         };
 
         window.resetGameData = resetGameData;
@@ -1755,6 +1867,7 @@
         window.switchAchTab = switchAchTab;
         window.toggleSecretGuide = toggleSecretGuide;
         window.showAchievementHint = showAchievementHint;
+        window.setBuyMode = setBuyMode;
     </script>
 </body>
 </html>
