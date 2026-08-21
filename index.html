@@ -457,6 +457,44 @@
         #achievement-popup.show {
             right: 20px;
         }
+
+        /* 攻略サイト風隠し実績セクション用スタイル */
+        .guide-box {
+            background: rgba(0, 243, 255, 0.02);
+            border: 1px dashed rgba(0, 243, 255, 0.25);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 15px;
+            text-align: left;
+        }
+        .secret-toggle-btn {
+            background: rgba(0, 211, 255, 0.1);
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            width: 100%;
+            font-weight: bold;
+            transition: background 0.2s;
+            pointer-events: auto !important;
+        }
+        .secret-toggle-btn:hover {
+            background: rgba(0, 211, 255, 0.2);
+        }
+        .secret-content {
+            display: none;
+            margin-top: 12px;
+            font-size: 0.82rem;
+            line-height: 1.6;
+            color: var(--text-color);
+            border-top: 1px solid rgba(0, 243, 255, 0.15);
+            padding-top: 10px;
+        }
+        .secret-content.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -486,6 +524,43 @@
             <button class="menu-btn" onclick="openPanel('panel-achievements')">🏆 実績</button>
             <button class="menu-btn" onclick="openPanel('panel-prestige')">転生</button>
             <button class="menu-btn" onclick="openPanel('panel-ranking')">🌐 ランキング</button>
+            <button class="menu-btn" onclick="openPanel('panel-guide')">📖 攻略ガイド</button>
+        </div>
+
+        <!-- 攻略ガイドパネル（隠し実績セクション付き） -->
+        <div id="panel-guide" class="sub-panel">
+            <div class="panel-header">
+                <span>ゲーム説明＆攻略ガイド</span>
+                <button class="close-btn" onclick="closePanel()">閉じる</button>
+            </div>
+            <div class="panel-content" style="text-align: left;">
+                <h3 style="color: var(--accent-color); margin-top:0;">🌌 AETHER NEXUS とは？</h3>
+                <p style="font-size: 0.85rem; color: var(--sub-text);">中央のエネルギーコアをタップしたり、全50種類の「次元発電機」を稼働させたりしながら、無限のエネルギー（Λ）を集めて宇宙文明を発展させる放置系クリッカーゲームです。</p>
+                
+                <h3 style="color: var(--accent-color);">📈 序盤の効率的な進め方</h3>
+                <ul style="font-size: 0.82rem; color: var(--sub-text); padding-left: 20px;">
+                    <li>最初は手動タップでコツコツと資金を貯め、「小型発電セル」などの自動発電機を購入しましょう。</li>
+                    <li>発電機はバランスよく数（10台区切りなど）を揃えるのが実績解除や効率面でおすすめです。</li>
+                    <li>進行が遅くなってきたら、エネルギーや設備を初期化して倍率を上げる「次元転生」を活用しましょう。</li>
+                </ul>
+
+                <!-- 隠し実績攻略サイト風セクション -->
+                <div class="guide-box">
+                    <button class="secret-toggle-btn" onclick="toggleSecretGuide()">▼ 「実は…」と書かれた怪しげなボタンを押す</button>
+                    <div id="secret-guide-content" class="secret-content">
+                        <p style="color: #00ff88; font-weight: bold; margin-top:0;">【裏・攻略情報】隠し実績の全貌</p>
+                        <p style="color: var(--sub-text);">宇宙の彼方に眠る、通常プレイではなかなか気づきにくい4つの隠し実績と条件です。</p>
+                        
+                        <div style="margin-bottom: 8px;"><strong>1. 深夜のエネルギー学者</strong><br>・条件: 深夜（0:00 〜 3:00）の間にエネルギーを観測する。<br>・攻略メモ: 夜更かしして次元の研究に没頭しているプレイヤーへのご褒美実績です。</div>
+                        
+                        <div style="margin-bottom: 8px;"><strong>2. 石器時代の忘れ物</strong><br>・条件: 発電機を1台も購入せず、完全な人力だけで1,000回タップする。<br>・攻略メモ: 機械文明に頼らない原始的なプレイスタイルを貫く、ド根性が必要な実績です。</div>
+                        
+                        <div style="margin-bottom: 8px;"><strong>3. ゾロ目の奇跡</strong><br>・条件: 所持エネルギーの下4桁がすべて同じ数字（例: 1111Λ、5555Λなど）の状態で条件を満たす。<br>・攻略メモ: 1,000Λを超えたあたりから数字の並びに目を光らせましょう。</div>
+                        
+                        <div><strong>4. 何もしない贅沢</strong><br>・条件: 1分間（60秒間）、一度もコアをタップせずにじっと画面を見守る。<br>・攻略メモ: 放置系ゲームならではの、あえて「何もしない」ことで見えてくる宇宙の真理です。</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="panel-generators" class="sub-panel">
@@ -929,7 +1004,7 @@
             condition: () => game.generators[49].count >= 1
         });
 
-        // 隠れ実績（4つ）の追加
+        // 隠し実績（4つ）の追加
         const hiddenAchievements = [
             {
                 id: "hidden_midnight",
@@ -1129,7 +1204,6 @@
         function tapCore(event) {
             playTapSound();
             
-            // 何もしない贅沢用のタップ時刻更新
             window.lastTapTimestamp = Date.now();
 
             let gain = game.tapPower * game.prestigeMultiplier;
@@ -1323,7 +1397,6 @@
                 const isUnlocked = !!game.unlockedAchievements[ach.id];
                 if (isUnlocked) unlockedCount++;
 
-                // 隠れ実績かつ未解除の場合はリストに表示しない
                 if (ach.hidden && !isUnlocked) {
                     return;
                 }
@@ -1498,6 +1571,11 @@
             }
         }
 
+        function toggleSecretGuide() {
+            const content = document.getElementById('secret-guide-content');
+            content.classList.toggle('active');
+        }
+
         function openPanel(panelId) {
             document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
             document.getElementById(panelId).classList.add('active');
@@ -1615,6 +1693,7 @@
         window.switchTab = switchTab;
         window.tapCore = tapCore;
         window.switchAchTab = switchAchTab;
+        window.toggleSecretGuide = toggleSecretGuide;
     </script>
 </body>
 </html>
