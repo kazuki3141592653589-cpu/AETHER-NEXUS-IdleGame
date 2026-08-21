@@ -1846,5 +1846,21 @@
         window.showAchievementHint = showAchievementHint;
         window.setBuyMode = setBuyMode;
     </script>
+    <div id="hidden-hint-modal" class="sub-panel" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center;">
+    <div class="panel-box" style="background: var(--panel-bg, #0b131e); border: 1px solid var(--accent-color, #00ff88); border-radius: 12px; width: 90%; max-width: 400px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+        <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <span style="color: var(--accent-color); font-weight: bold; font-size: 1.1rem;">隠し実績のヒント</span>
+            <button class="close-btn" onclick="document.getElementById('hidden-hint-modal').style.display='none'" style="background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer;">×</button>
+        </div>
+        <div class="modal-body" style="font-size: 0.9rem; line-height: 1.6; color: var(--main-text);">
+            <p style="margin-bottom: 10px;"><strong style="color: var(--accent-color);">1. 深夜のエネルギー学者</strong><br>・深夜（0:00〜3:00）の間にエネルギーを観測する</p>
+            <p style="margin-bottom: 10px;"><strong style="color: var(--accent-color);">2. 石器時代の忘れ物</strong><br>・発電機を0台で1,000回タップする</p>
+            <p style="margin-bottom: 10px;"><strong style="color: var(--accent-color);">3. ゾロ目の奇跡</strong><br>・所持エネルギーの下4桁をゾロ目にする</p>
+            <p style="margin-bottom: 15px;"><strong style="color: var(--accent-color);">4. 何もしない贅沢</strong><br>・1分間放置する</p>
+        </div>
+        <button class="menu-btn" style="width: 100%; padding: 10px; margin-top: 10px; background: var(--accent-color); color: #000; font-weight: bold; border: none; border-radius: 6px;" onclick="document.getElementById('hidden-hint-modal').style.display='none'">閉じる</button>
+    </div>
+</div>
+
 </body>
 </html>
