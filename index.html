@@ -999,7 +999,6 @@
             if (index === -1) return;
             const ach = achievementData[index];
             const hintText = ach.hint || "ゲームを進めて条件を達成しよう！";
-            // ヒント内の番号表示もkなどの単位に合わせるため formatRankingNumber を適用
             showCustomAlert(`<b>【実績 No.${formatRankingNumber(index + 1)} のヒント】</b><br><br>${hintText}`);
         };
 
@@ -1008,28 +1007,10 @@
             return Math.floor(num).toLocaleString('en-US');
         }
 
+        // kやmなどの短縮表記を行わず、そのままの数字をカンマ区切りで表示するように修正
         function formatRankingNumber(num) {
             if (num === null || num === undefined || isNaN(num)) return "0";
-            if (num <= 999999999) return Math.floor(num).toLocaleString('en-US');
-
-            const units = [
-                '', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc', 
-                'Udc', 'Ddc', 'Tdc', 'qdc', 'Qdc', 'Hdc', 'Sdc', 'Odc', 'Ndc', 
-                'Vg', 'Uvg', 'Dvg', 'Tvg', 'qvg', 'Qvg', 'Hvg', 'Svg', 'Ovg', 'Nvg', 
-                'Tg', 'Utg', 'Dtg', 'Googol', 'Ttg', 'Qatg', 'Qitg', 'Sxtg', 'Stg', 'Otg', 'Ntg', 
-                'Qag', 'Uqag', 'Dqag', 'Tqag', 'Qaqag', 'Qiqag', 'Sxqag', 'Spqag', 'Ocqag', 'Noqag', 
-                'Qig', 'Uqig', 'Dqig', 'Tqig', 'Qaqig', 'Qiqig'
-            ];
-
-            let i = 3; 
-            let n = num / 1000000000; 
-
-            while (n >= 1000 && i < units.length - 1) {
-                n /= 1000;
-                i++;
-            }
-
-            return n.toFixed(2) + ' ' + units[i];
+            return Math.floor(num).toLocaleString('en-US');
         }
 
         let audioCtx = null;
@@ -1269,7 +1250,6 @@
                 const isUnlocked = !!game.unlockedAchievements[ach.id];
                 if (isUnlocked) unlockedCount++;
 
-                // 実績の番号をkなどの単位（formatRankingNumber）でフォーマット
                 const achNum = formatRankingNumber(index + 1);
 
                 if (isUnlocked) {
@@ -1296,7 +1276,6 @@
             });
 
             document.getElementById('achievement-list').innerHTML = achHtml;
-            // 解除数や総数にも単位適用
             document.getElementById('ach-count-display').textContent = formatRankingNumber(unlockedCount);
             document.getElementById('ach-total-display').textContent = formatRankingNumber(achievementData.length);
         }
