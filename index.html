@@ -512,10 +512,17 @@
 
         <div id="panel-achievements" class="sub-panel">
             <div class="panel-header">
-                <span>実績一覧 (<span id="ach-count-display">0</span> / <span id="ach-total-display">150</span>)</span>
+                <span>🏆 実績図鑑 (<span id="ach-count-display">0</span> / <span id="ach-total-display">150</span>)</span>
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
             </div>
-            <div class="panel-content" id="achievement-list"></div>
+            <!-- 図鑑カテゴリタブ -->
+            <div style="display: flex; gap: 5px; padding: 10px 15px 0 15px; background: rgba(0,0,0,0.2);">
+                <button class="menu-btn ach-tab-btn active" onclick="switchAchTab('all', this)" style="flex:1; font-size:0.75rem; padding:6px 4px; background: rgba(0, 211, 255, 0.2); border-color: var(--accent-color);">すべて</button>
+                <button class="menu-btn ach-tab-btn" onclick="switchAchTab('energy', this)" style="flex:1; font-size:0.75rem; padding:6px 4px;">⚡ エネルギー</button>
+                <button class="menu-btn ach-tab-btn" onclick="switchAchTab('generator', this)" style="flex:1; font-size:0.75rem; padding:6px 4px;">⚙️ 発電機</button>
+                <button class="menu-btn ach-tab-btn" onclick="switchAchTab('other', this)" style="flex:1; font-size:0.75rem; padding:6px 4px;">🏆 その他</button>
+            </div>
+            <div class="panel-content" id="achievement-list" style="padding-top: 10px;"></div>
         </div>
 
         <div id="panel-prestige" class="sub-panel">
@@ -1241,6 +1248,21 @@
             }
         }
 
+        let currentAchTab = 'all';
+
+        function switchAchTab(tab, btnEl) {
+            currentAchTab = tab;
+            document.querySelectorAll('.ach-tab-btn').forEach(b => {
+                b.style.background = 'rgba(0, 211, 255, 0.05)';
+                b.style.borderColor = 'rgba(0, 211, 255, 0.3)';
+            });
+            if (btnEl) {
+                btnEl.style.background = 'rgba(0, 211, 255, 0.2)';
+                btnEl.style.borderColor = 'var(--accent-color)';
+            }
+            updateAchievementUI();
+        }
+
         function updateAchievementUI() {
             let unlockedCount = 0;
             let achHtml = "";
@@ -1248,6 +1270,19 @@
             achievementData.forEach((ach, index) => {
                 const isUnlocked = !!game.unlockedAchievements[ach.id];
                 if (isUnlocked) unlockedCount++;
+
+                // カテゴリ判定
+                let category = 'other';
+                if (ach.id.startsWith('energy_')) {
+                    category = 'energy';
+                } else if (ach.id.startsWith('gcount_') || ach.id.startsWith('civ_') || ach.id.startsWith('gen_')) {
+                    category = 'generator';
+                }
+
+                // タブフィルター適用
+                if (currentAchTab !== 'all' && currentAchTab !== category) {
+                    return;
+                }
 
                 const achNum = formatRankingNumber(index + 1);
 
@@ -1274,7 +1309,7 @@
                 }
             });
 
-            document.getElementById('achievement-list').innerHTML = achHtml;
+            document.getElementById('achievement-list').innerHTML = achHtml || '<div style="text-align:center; color:var(--sub-text); padding:20px;">該当する実績はありません</div>';
             document.getElementById('ach-count-display').textContent = formatRankingNumber(unlockedCount);
             document.getElementById('ach-total-display').textContent = formatRankingNumber(achievementData.length);
         }
@@ -1524,6 +1559,7 @@
         window.saveInitialName = saveInitialName;
         window.switchTab = switchTab;
         window.tapCore = tapCore;
+        window.switchAchTab = switchAchTab;
     </script>
 </body>
 </html>
