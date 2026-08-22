@@ -1,4 +1,15 @@
-<!DOCTYPE html>
+<div id="nameModal" class="modal-overlay">
+        <div class="modal-box">
+          <div class="panel-header">
+            <span>パイロット登録</span>
+          </div>
+          <div class="modal-body" style="text-align: center;">
+            <p style="margin-bottom: 15px;">プレイヤー名を入力してください</p>
+            <input type="text" id="playerNameInput" placeholder="名前を入力" style="width: 100%; padding: 8px; margin-bottom: 15px; box-sizing: border-box; background: var(--bg-color); color: #fff; border: 1px solid var(--accent-color); border-radius: 4px;">
+            <button class="buy-btn" onclick="savePlayerName()" style="width: 100%;">決定</button>
+          </div>
+        </div>
+</div><!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -755,18 +766,13 @@
                     <span>パイレット登録</span>
                 </div>
                 <div class="modal-body" style="text-align: center;">
-                 <div style="font-weight: bold; margin-bottom: 12px; color: var(--accent-color);">【裏・攻略情報】隠し実績のヒント</div>
-                 <p style="font-size: 0.85rem; color: var(--sub-text); margin-bottom: 15px; text-align: left; line-height: 1.6;">
-                   <strong>1. 深夜のエネ学者:</strong> 深夜（0:00〜3:00）に観測せよ<br>
-                   <strong>2. 石器時代の忘れ物:</strong> 発電機0台で人力1,000回タップ<br>
-                   <strong>3. ゾロ目の奇跡:</strong> 所持エネルギーの下4桁を同じ数字に<br>
-                   <strong>4. 何もしない贅沢:</strong> 1分間タップせずじっと見守る
-                 </p>
-                 <button class="buy-btn" id="close-hint-btn" style="width: 100%;">閉じる</button>
+                  <p style="margin-bottom: 15px;">プレイヤー名を入力してください</p>
+                  <input type="text" id="playerNameInput" placeholder="名前を入力" style="width: 100%; padding: 8px; margin-bottom: 15px; box-sizing: border-box; background: var(--bg-color); color: #fff; border: 1px solid var(--accent-color); border-radius: 4px;">
+                  <button class="buy-btn" onclick="savePlayerName()" style="width: 100%;">決定</button>
+                   </div>
+                  </div>
+                 </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
     <div id="achievement-popup">
         <div class="achievement-icon" id="popup-icon">🏆</div>
@@ -791,13 +797,17 @@
                 <span>実績のヒント</span>
                 <button class="close-btn" id="close-x-btn">×</button>
             </div>
-            <div class="modal-body" style="text-align: center;">
-                <div style="font-size: 2.2rem; margin-bottom: 8px;">⚡</div>
-                <div style="font-weight: bold; margin-bottom: 8px; color: var(--accent-color);">No.3 エネルギーの予感</div>
-                <p style="font-size: 0.85rem; color: var(--sub-text); margin-bottom: 20px;">【ヒント】<br>コツコツとタップを重ねて100Λを目指しましょう。</p>
-                <button class="buy-btn" id="close-main-btn" style="width: 100%;">閉じる</button>
-            </div>
-        </div>
+             <div class="modal-body" style="text-align: center;">
+        <div style="font-weight: bold; margin-bottom: 12px; color: var(--accent-color);">【裏・攻略情報】隠し実績のヒント</div>
+          <p style="font-size: 0.85rem; color: var(--sub-text); margin-bottom: 15px; text-align: left; line-height: 1.6;">
+          <strong>1. 深夜のエネ学者:</strong> 深夜（0:00〜3:00）に観測せよ<br>
+          <strong>2. 石器時代の忘れ物:</strong> 発電機0台で人力1,000回タップ<br>
+          <strong>3. ゾロ目の奇跡:</strong> 所持エネルギーの下4桁を同じ数字に<br>
+          <strong>4. 何もしない贅沢:</strong> 1分間タップせずじっと見守る
+        </p>
+        <button class="buy-btn" id="close-main-btn" style="width: 100%;">閉じる</button>
+      </div>
+     </div>
     </div>
 
     <script type="module">
