@@ -544,28 +544,7 @@
             <button class="header-link-btn" onclick="openModal('contact-modal')">問合せ</button>
         </div>
     </header>
-    <div id="hidden-hint-modal" class="modal" style="display: none;">
-    <div class="modal-content" style="background: var(--panel-bg, #0b131e); border: 1px solid var(--accent-color, #00ff88); border-radius: 12px; padding: 20px; max-width: 400px; width: 90%; margin: auto; position: relative; top: 20%;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <span style="color: var(--accent-color); font-weight: bold; font-size: 1.1rem;">隠し実績のヒント</span>
-            <button class="close-btn" onclick="closeModal('hidden-hint-modal')" style="background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer;">×</button>
-        </div>
-        <div style="font-size: 0.9rem; line-height: 1.6; color: var(--main-text); margin-bottom: 15px;">
-            <p style="margin-bottom: 10px;"><strong style="color: var(--accent-color);">1. 深夜のエネルギー学者</strong><br>・深夜（0:00〜3:00）の間にエネルギーを観測する</p>
-            <p style="margin-bottom: 10px;"><strong style="color: var(--accent-color);">2. 石器時代の忘れ物</strong><br>・発電機を0台で1,000回タップする</p>
-            <p style="margin-bottom: 10px;"><strong style="color: var(--accent-color);">3. ゾロ目の奇跡</strong><br>・所持エネルギーの下4桁をゾロ目にする</p>
-            <p style="margin-bottom: 0;"><strong style="color: var(--accent-color);">4. 何もしない贅沢</strong><br>・1分間放置する</p>
-        </div>
-        <button class="menu-btn" style="width: 100%; padding: 10px; background: var(--accent-color); color: #000; font-weight: bold; border: none; border-radius: 6px; cursor: pointer;" onclick="closeModal('hidden-hint-modal')">閉じる</button>
-    </div>
-</div>
-   
-</div>
-        <button class="menu-btn" style="width: 100%; padding: 10px; margin-top: 10px; background: var(--accent-color); color: #000; font-weight: bold; border: none; border-radius: 6px;" onclick="openModal('hidden-hint-modal')">閉じる</button>
-    </div>
-</div>
 
-    
     <div class="main-container">
         <div class="energy-display">
             <div id="energy-count" class="energy-value">0 Λ</div>
@@ -596,10 +575,28 @@
                 
                 <h3 style="color: var(--accent-color);">📈 序盤の効率的な進め方</h3>
                 <ul style="font-size: 0.82rem; color: var(--sub-text); padding-left: 20px;">
-                <li>最初は手動タップでコツコツと資金を貯め、「小型発電セル」などの自動発電機を購入しましょう。
-                <li>発電機はバランスよく数（10台区切りなど）を揃えるのが<button class="menu-btn" style="padding: 2px 6px; font-size: 0.8rem; vertical-align: middle;" onclick="showAchievementHint('隠し実績のヒント', '1. 深夜のエネルギー学者\n・条件: 深夜（0:00〜3:00）の間にエネルギーを観測する\n\n2. 石器時代の忘れ物\n・条件: 発電機を0台で1,000回タップする\n\n3. ゾロ目の奇跡\n・条件: 所持エネルギーの下4桁をゾロ目にする\n\n4. 何もしない贅沢\n・条件: 1分間放置する')">実績解除</button>や効率面でおすすめです。</li>
-                <li>進行が遅くなってきたら、エネルギーや設備を初期化して倍率を上げる「次元転生」を活用しましょう。</li>
+                    <li>最初は手動タップでコツコツと資金を貯め、「小型発電セル」などの自動発電機を購入しましょう。</li>
+                    <li>発電機はバランスよく数（10台区切りなど）を揃えるのが実績解除や効率面でおすすめです。</li>
+                    <li>進行が遅くなってきたら、エネルギーや設備を初期化して倍率を上げる「次元転生」を活用しましょう。</li>
                 </ul>
+
+                <div class="guide-box">
+                    <button class="secret-toggle-btn" onclick="toggleSecretGuide()">
+                        <span id="secret-arrow">▶</span> 実は…（開発裏・隠し実績のヒント）
+                    </button>
+                    <div id="secret-guide-content" class="secret-content">
+                        <p style="color: #00ff88; font-weight: bold; margin-top:0;">【裏・攻略情報】隠し実績の全貌</p>
+                        <p style="color: var(--sub-text);">宇宙の彼方に眠る、通常プレイではなかなか気づきにくい4つの隠し実績と条件です。</p>
+                        
+                        <div style="margin-bottom: 8px;"><strong>1. 深夜のエネルギー学者</strong><br>• 条件: 深夜（0:00 〜 3:00）の間にエネルギーを観測する。<br>• 攻略メモ: 夜更かしして次元の研究に没頭しているプレイヤーへのご褒美実績です。</div>
+                        
+                        <div style="margin-bottom: 8px;"><strong>2. 石器時代の忘れ物</strong><br>• 条件: 発電機を1台も購入せず、完全な人力だけで1,000回タップする。<br>• 攻略メモ: 機械文明に頼らない原始的なプレイスタイルを貫く、ド根性が必要な実績です。</div>
+                        
+                        <div style="margin-bottom: 8px;"><strong>3. ゾロ目の奇跡</strong><br>• 条件: 所持エネルギーの下4桁がすべて同じ数字（例: 1111Λ、5555Λなど）の状態で条件を満たす。<br>• 攻略メモ: 1,000Λを超えたあたりから数字の並びに目を光らせましょう。</div>
+                        
+                        <div><strong>4. 何もしない贅沢</strong><br>• 条件: 1分間（60秒間）、一度もコアをタップせずにじっと画面を見守る。<br>• 攻略メモ: 放置系ゲームならではの、あえて「何もしない」ことで見えてくる宇宙の真理です。</div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1867,7 +1864,5 @@
         window.showAchievementHint = showAchievementHint;
         window.setBuyMode = setBuyMode;
     </script>
-</div>
-
 </body>
 </html>
