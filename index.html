@@ -579,24 +579,6 @@
                     <li>発電機はバランスよく数（10台区切りなど）を揃えるのが<span id="achievement-trigger" style="color:#00d3ff; cursor:pointer; text-decoration:underline; font-weight:bold;">実績解除</span>や効率面でおすすめです。</li>
                     <li>進行が遅くなってきたら、エネルギーや設備を初期化して倍率を上げる「次元転生」を活用しましょう。</li>
                 </ul>
-
-                <div class="guide-box">
-                    <button class="secret-toggle-btn" onclick="toggleSecretGuide()">
-                        <span id="secret-arrow">▶</span> 実は…（開発裏・隠し実績のヒント）
-                    </button>
-                    <div id="secret-guide-content" class="secret-content">
-                        <p style="color: #00ff88; font-weight: bold; margin-top:0;">【裏・攻略情報】隠し実績の全貌</p>
-                        <p style="color: var(--sub-text);">宇宙の彼方に眠る、通常プレイではなかなか気づきにくい4つの隠し実績と条件です。</p>
-                        
-                        <div style="margin-bottom: 8px;"><strong>1. 深夜のエネルギー学者</strong><br>• 条件: 深夜（0:00 〜 3:00）の間にエネルギーを観測する。<br>• 攻略メモ: 夜更かしして次元の研究に没頭しているプレイヤーへのご褒美実績です。</div>
-                        
-                        <div style="margin-bottom: 8px;"><strong>2. 石器時代の忘れ物</strong><br>• 条件: 発電機を1台も購入せず、完全な人力だけで1,000回タップする。<br>• 攻略メモ: 機械文明に頼らない原始的なプレイスタイルを貫く、ド根性が必要な実績です。</div>
-                        
-                        <div style="margin-bottom: 8px;"><strong>3. ゾロ目の奇跡</strong><br>• 条件: 所持エネルギーの下4桁がすべて同じ数字（例: 1111Λ、5555Λなど）の状態で条件を満たす。<br>• 攻略メモ: 1,000Λを超えたあたりから数字の並びに目を光らせましょう。</div>
-                        
-                        <div><strong>4. 何もしない贅沢</strong><br>• 条件: 1分間（60秒間）、一度もコアをタップせずにじっと画面を見守る。<br>• 攻略メモ: 放置系ゲームならではの、あえて「何もしない」ことで見えてくる宇宙の真理です。</div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -773,9 +755,14 @@
                     <span>パイレット登録</span>
                 </div>
                 <div class="modal-body" style="text-align: center;">
-                    <p style="font-size: 0.85rem; color: var(--sub-text); margin-top: 0;"><br>ランキングに登録するあなたの名前を入力してください（15文字以内）</p>
-                    <input type="text" id="initial-name-input" class="name-input" maxlength="15" placeholder="名前を入力">
-                    <button class="buy-btn" style="width: 100%; padding: 10px;" onclick="saveInitialName()">宇宙へ旅立つ</button>
+                 <div style="font-weight: bold; margin-bottom: 12px; color: var(--accent-color);">【裏・攻略情報】隠し実績のヒント</div>
+                 <p style="font-size: 0.85rem; color: var(--sub-text); margin-bottom: 15px; text-align: left; line-height: 1.6;">
+                   <strong>1. 深夜のエネ学者:</strong> 深夜（0:00〜3:00）に観測せよ<br>
+                   <strong>2. 石器時代の忘れ物:</strong> 発電機0台で人力1,000回タップ<br>
+                   <strong>3. ゾロ目の奇跡:</strong> 所持エネルギーの下4桁を同じ数字に<br>
+                   <strong>4. 何もしない贅沢:</strong> 1分間タップせずじっと見守る
+                 </p>
+                 <button class="buy-btn" id="close-hint-btn" style="width: 100%;">閉じる</button>
                 </div>
             </div>
         </div>
