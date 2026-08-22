@@ -13,21 +13,7 @@
             --text-color: #e0f7ff;
             --sub-text: #8ab8f8;
             --glow: 0 0 10px rgba(0, 243, 255, 0.2);
-            }
-            /* 実績ポップアップのCSS */
-    .achievement-item { color: #00d2ff; cursor: pointer; display: inline-block; padding: 8px; }
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.75); display: flex; justify-content: center; align-items: center; z-index: 9999; }
-    .modal-card { background: #031424; border: 1px solid #0f4c75; border-radius: 12px; width: 90%; max-width: 360px; padding: 20px; text-align: center; }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; }
-    .modal-header h2 { color: #00d2ff; font-size: 18px; margin: 0; }
-    .close-x-btn { background: transparent; border: 1px solid #1b3a4b; color: #8ab4f8; border-radius: 4px; width: 28px; height: 28px; cursor: pointer; }
-    .icon { font-size: 36px; color: #ffcc00; margin: 10px 0; }
-    .achievement-title { color: #00d2ff; font-size: 16px; margin: 5px 0 15px 0; }
-    .hint-label { color: #00d2ff; font-size: 13px; margin: 0; }
-    .hint-text { color: #a0c4df; font-size: 14px; margin: 8px 0 20px 0; }
-    .close-main-btn { width: 100%; background: linear-gradient(180deg, #007bff 0%, #00d2ff 100%); border: none; border-radius: 8px; color: #fff; padding: 12px 0; font-weight: bold; cursor: pointer; }
-    .modal-hidden { display: none !important; }
-
+        }
 
         * {
             box-sizing: border-box;
@@ -590,12 +576,27 @@
                 <h3 style="color: var(--accent-color);">📈 序盤の効率的な進め方</h3>
                 <ul style="font-size: 0.82rem; color: var(--sub-text); padding-left: 20px;">
                     <li>最初は手動タップでコツコツと資金を貯め、「小型発電セル」などの自動発電機を購入しましょう。</li>
-                    <li>発電機はバランスよく数（10台区切りなど）を揃えるのが実績解除や効率面でおすすめです。</li>
+                    <li>発電機はバランスよく数（10台区切りなど）を揃えるのが<span id="achievement-trigger" style="color:#00d3ff; cursor:pointer; text-decoration:underline; font-weight:bold;">実績解除</span>や効率面でおすすめです。</li>
                     <li>進行が遅くなってきたら、エネルギーや設備を初期化して倍率を上げる「次元転生」を活用しましょう。</li>
                 </ul>
-                <span id="achievement-trigger" class="achievement-item">実績解除</span>
+
                 <div class="guide-box">
-                
+                    <button class="secret-toggle-btn" onclick="toggleSecretGuide()">
+                        <span id="secret-arrow">▶</span> 実は…（開発裏・隠し実績のヒント）
+                    </button>
+                    <div id="secret-guide-content" class="secret-content">
+                        <p style="color: #00ff88; font-weight: bold; margin-top:0;">【裏・攻略情報】隠し実績の全貌</p>
+                        <p style="color: var(--sub-text);">宇宙の彼方に眠る、通常プレイではなかなか気づきにくい4つの隠し実績と条件です。</p>
+                        
+                        <div style="margin-bottom: 8px;"><strong>1. 深夜のエネルギー学者</strong><br>• 条件: 深夜（0:00 〜 3:00）の間にエネルギーを観測する。<br>• 攻略メモ: 夜更かしして次元の研究に没頭しているプレイヤーへのご褒美実績です。</div>
+                        
+                        <div style="margin-bottom: 8px;"><strong>2. 石器時代の忘れ物</strong><br>• 条件: 発電機を1台も購入せず、完全な人力だけで1,000回タップする。<br>• 攻略メモ: 機械文明に頼らない原始的なプレイスタイルを貫く、ド根性が必要な実績です。</div>
+                        
+                        <div style="margin-bottom: 8px;"><strong>3. ゾロ目の奇跡</strong><br>• 条件: 所持エネルギーの下4桁がすべて同じ数字（例: 1111Λ、5555Λなど）の状態で条件を満たす。<br>• 攻略メモ: 1,000Λを超えたあたりから数字の並びに目を光らせましょう。</div>
+                        
+                        <div><strong>4. 何もしない贅沢</strong><br>• 条件: 1分間（60秒間）、一度もコアをタップせずにじっと画面を見守る。<br>• 攻略メモ: 放置系ゲームならではの、あえて「何もしない」ことで見えてくる宇宙の真理です。</div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -795,6 +796,22 @@
         <button class="nav-tab" onclick="switchTab('prestige')">転生</button>
         <button class="nav-tab" onclick="switchTab('ranking')">ランキング</button>
     </nav>
+
+    <!-- 実績ヒントのポップアップ（既存デザイン共通スタイル適用版） -->
+    <div id="hint-modal" class="modal-overlay" onclick="outsideClose(event, 'hint-modal')">
+        <div class="modal-box" style="max-width: 350px;">
+            <div class="panel-header">
+                <span>実績のヒント</span>
+                <button class="close-btn" id="close-x-btn">×</button>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <div style="font-size: 2.2rem; margin-bottom: 8px;">⚡</div>
+                <div style="font-weight: bold; margin-bottom: 8px; color: var(--accent-color);">No.3 エネルギーの予感</div>
+                <p style="font-size: 0.85rem; color: var(--sub-text); margin-bottom: 20px;">【ヒント】<br>コツコツとタップを重ねて100Λを目指しましょう。</p>
+                <button class="buy-btn" id="close-main-btn" style="width: 100%;">閉じる</button>
+            </div>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
@@ -1846,6 +1863,24 @@
             requestAnimationFrame(gameLoop);
         };
 
+        // 実績ヒントポップアップのイベントを設定
+        document.addEventListener('DOMContentLoaded', () => {
+            const trigger = document.getElementById('achievement-trigger');
+            const modal = document.getElementById('hint-modal');
+            const closeX = document.getElementById('close-x-btn');
+            const closeMain = document.getElementById('close-main-btn');
+
+            if (trigger && modal) {
+                trigger.addEventListener('click', () => modal.classList.add('active'));
+            }
+            if (closeX && modal) {
+                closeX.addEventListener('click', () => modal.classList.remove('active'));
+            }
+            if (closeMain && modal) {
+                closeMain.addEventListener('click', () => modal.classList.remove('active'));
+            }
+        });
+
         window.resetGameData = resetGameData;
         window.executeHardReset = executeHardReset;
         window.openModal = openModal;
@@ -1863,41 +1898,5 @@
         window.showAchievementHint = showAchievementHint;
         window.setBuyMode = setBuyMode;
     </script>
-      <!-- 実績解除の押せる文字 -->
-  <div id="achievement-trigger" class="achievement-item">
-    実績解除
-  </div>
-
-  <!-- ポップアップ本体 -->
-  <div id="hint-modal" class="modal-overlay modal-hidden">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h2>実績のヒント</h2>
-        <button class="close-x-btn" id="close-x-btn">×</button>
-      </div>
-      <div class="modal-body">
-        <div class="icon">⚡</div>
-        <h3 class="achievement-title">No.3 エネルギーの予感</h3>
-        <p class="hint-label">【ヒント】</p>
-        <p class="hint-text">コツコツとタップを重ねて100Aを目指しましょう。</p>
-      </div>
-      <div class="modal-footer">
-        <button class="close-main-btn" id="close-main-btn">閉じる</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ポップアップを動かすJavaScript -->
-  <script>
-    const trigger = document.getElementById('achievement-trigger');
-    const modal = document.getElementById('hint-modal');
-    const closeX = document.getElementById('close-x-btn');
-    const closeMain = document.getElementById('close-main-btn');
-
-    trigger.addEventListener('click', () => modal.classList.remove('modal-hidden'));
-    closeX.addEventListener('click', () => modal.classList.add('modal-hidden'));
-    closeMain.addEventListener('click', () => modal.classList.add('modal-hidden'));
-  </script>
-
 </body>
 </html>
