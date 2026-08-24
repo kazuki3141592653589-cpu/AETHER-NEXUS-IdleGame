@@ -2192,18 +2192,20 @@ setInterval(() => {
   }
 }, 100);
 
-// 3. コアタップ時のみダンジョンへダメージを与える
+// 3. コアタップ、またはダンジョンの敵タップ時にダメージ
 document.body.addEventListener('pointerdown', (e) => {
   if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
 
-  // コア（青い球体）またはメインタップ領域を押したか判定
-  const isCore = e.target.closest('#core-btn') || 
-                 e.target.closest('.core') || 
-                 e.target.closest('#app-core') ||
-                 e.target.tagName === 'CIRCLE' ||
-                 e.target.tagName === 'SVG';
+  // コア（青い球体）またはダンジョンの敵（赤い球体）を押したか判定
+  const isTarget = e.target.closest('#core-btn') || 
+                   e.target.closest('.core') || 
+                   e.target.closest('#app-core') ||
+                   e.target.closest('#dungeon-enemy') ||
+                   e.target.closest('.dungeon-enemy') ||
+                   e.target.tagName === 'CIRCLE' ||
+                   e.target.tagName === 'SVG';
 
-  if (isCore && typeof game !== 'undefined' && game.enemyHp > 0) {
+  if (isTarget && typeof game !== 'undefined' && game.enemyHp > 0) {
     let tapDmg = 1;
     if (typeof getEnergyPerTap === 'function') tapDmg = getEnergyPerTap();
     else if (typeof getTapPower === 'function') tapDmg = getTapPower();
@@ -2223,7 +2225,7 @@ document.body.addEventListener('pointerdown', (e) => {
     }
   }
 });
-
+      
 </script>
 </body>
 </html>
