@@ -2228,10 +2228,160 @@ function updateEventUI() {
       if (game.eventItems && game.eventItems[id]) {
         btn.innerText = '獲得済み';
         btn.disabled = true;
+// ==========================================
+// AETHER NEXUS - 安全同期型ダンジョンシステム
+// ==========================================
+
+// --- 1. 安全なデータ管理 ---
+function getGameObj() {
+  if (typeof window.game !== 'undefined' && window.game) return window.game;
+  if (typeof game !== 'undefined' && game) return game;
+  return null;
+}
+
+function loadDungeonState() {
+  const g = getGameObj();
+  if (!g) return;
+  const saved = localStorage.getItem('aether_dungeon_only_save');
+  if (saved) {
+    try {
+      const data = JSON.parse(saved);
+      g.dungeonFloor = data.floor || 1;
+      g.maxDungeonFloor = data.maxFloor || data.floor || 1;
+      g.enemyMaxHp = data.maxHp || 100;
+      g.enemyHp = typeof data.hp !== 'undefined' ? data.hp : g.enemyMaxHp;
+      g.eventCrystals = data.crystals || 0;
+      g.eventItems = data.items || {};
+      g.eventItemExpiry = data.expiry || {};
+    } catch(e) {
+      console.error('Dungeon load error:', e);
+    }
+  }
+}
+
+function saveDungeonState() {
+  const g = getGameObj();
+  if (!g) return;
+  const dungeonData = {
+    floor: g.dungeonFloor || 1,
+    maxFloor: g.maxDungeonFloor || g.dungeonFloor || 1,
+    hp: typeof g.enemyHp !== 'undefined' ? g.enemyHp : 100,
+    maxHp: g.enemyMaxHp || 100,
+    crystals: g.eventCrystals || 0,
+    items: g.eventItems || {},
+    expiry: g.eventItemExpiry || {}
+  };
+  localStorage.setItem('aether_dungeon_only_save', JSON.stringify(dungeonData));
+}
+
+function resetDungeonData() {
+  localStorage.removeItem('aether_dungeon_only_save');
+  const g = getGameObj();
+  if (g) {
+    g.dungeonFloor = 1;
+    g.maxDungeonFloor = 1;
+    g.enemyMaxHp = 100;
+    g.enemyHp = 100;
+    g.eventCrystals = 0;
+    g.eventItems = {};
+    g.eventItemExpiry = {};
+  }
+  if (typeof updateDungeonUI === 'function') updateDungeonUI();
+  if (typeof updateEventUI === 'function') updateEventUI();
+}
+
+// ページ読み込み完了後にデータを安全にロード
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(loadDungeonState, 500);
+});
+
+
+// --- 2. 戦闘・UI更新 ---
+function onDefeatEnemy() {
+  const g = getGameObj();
+  if (!g) return;
+  
+  g.dungeonFloor = (g.dungeonFloor || 1) + 1;
+  g.maxDungeonFloor = Math.max(g.maxDungeonFloor || 1, g.dungeonFloor);
+  
+  const reward = Math.floor(g.dungeonFloor * 5 + Math.random() * 5);
+  g.eventCrystals = (g.eventCrystals || 0) + reward;
+
+  g.enemyMaxHp = Math.floor(100 * Math.pow(1.4, g.dungeonFloor - 1));
+  g.enemyHp = g.enemyMaxHp;
+
+  updateDungeonUI();
+  updateEventUI();
+  saveDungeonState();
+}
+
+function updateDungeonUI() {
+  const g = getGameObj();
+  if (!g) return;
+  const floorEl = document.getElementById('dungeon-floor');
+  const hpTextEl = document.getElementById('enemy-hp-text');
+  const hpBarEl = document.getElementById('enemy-hp-bar');
+
+  if (floorEl) floorEl.innerText = g.dungeonFloor || 1;
+  if (hpTextEl) hpTextEl.innerText = `${Math.max(0, Math.ceil(g.enemyHp || 0))} / ${g.enemyMaxHp || 100}`;
+  if (hpBarEl) {
+    const pct = Math.max(0, ((g.enemyHp || 0) / (g.enemyMaxHp || 100)) * 100);
+    hpBarEl.style.width = `${pct}%`;
+  }
+}
+
+function buyEventItem(itemId, cost) {
+  const g = getGameObj();
+  if (!g) return;
+  if ((g.eventCrystals || 0) < cost) {
+    showNotification('次元の結晶が足りません！');
+    return;
+  }
+
+  if (itemId === 'title1') {
+    if (g.eventItems && g.eventItems[itemId]) {
+      showNotification('既に獲得済みです！');
+      return;
+    }
+    g.eventCrystals -= cost;
+    g.eventItems = g.eventItems || {};
+    g.eventItems[itemId] = true;
+    g.currentTitle = '次元の探究者';
+    showNotification('称号「次元の探究者」を獲得しました！');
+  } else {
+    const now = Date.now();
+    const duration = 30 * 60 * 1000;
+    const currentExpiry = (g.eventItemExpiry && g.eventItemExpiry[itemId]) || 0;
+    const baseTime = currentExpiry > now ? currentExpiry : now;
+
+    g.eventCrystals -= cost;
+    g.eventItemExpiry = g.eventItemExpiry || {};
+    g.eventItemExpiry[itemId] = baseTime + duration;
+    showNotification('ブースト効果が30分間延長されました！');
+  }
+
+  updateEventUI();
+  saveDungeonState();
+}
+
+function updateEventUI() {
+  const g = getGameObj();
+  if (!g) return;
+  const countEl = document.getElementById('event-crystal-count');
+  if (countEl) countEl.innerText = `${g.eventCrystals || 0} 💎`;
+
+  const now = Date.now();
+  ['boost1', 'boost2', 'title1'].forEach(id => {
+    const btn = document.getElementById(`btn-buy-${id}`);
+    if (!btn) return;
+    if (id === 'title1') {
+      if (g.eventItems && g.eventItems[id]) {
+        btn.innerText = '獲得済み';
+        btn.disabled = true;
         btn.style.opacity = '0.5';
       }
     } else {
-      const expiry = game.eventItemExpiry && game.eventItemExpiry[id] ? game.eventItemExpiry[id] : 0;
+      const expiry = g.eventItemExpiry && g.eventItemExpiry[id] ? g.eventItemExpiry[id] : 0;
       if (expiry > now) {
         btn.innerText = `効果中 (残り${Math.ceil((expiry - now) / 60000)}分)`;
       } else {
@@ -2271,32 +2421,31 @@ window.buyEventItem = buyEventItem;
 window.resetDungeonData = resetDungeonData;
 
 
-// --- 3. 自動攻撃ループ（1秒に1回安定処理） ---
+// --- 3. 自動攻撃ループ（メインの起動を待ってから動作） ---
 setInterval(() => {
-  if (typeof game === 'undefined') return;
+  const g = getGameObj();
+  if (!g) return;
 
-  // 敵のHP初期化
-  if (typeof game.enemyHp === 'undefined' || game.enemyHp <= 0) {
-    game.dungeonFloor = game.dungeonFloor || 1;
-    game.enemyMaxHp = Math.floor(100 * Math.pow(1.4, game.dungeonFloor - 1));
-    game.enemyHp = game.enemyMaxHp;
+  if (typeof g.enemyHp === 'undefined' || g.enemyHp <= 0) {
+    g.dungeonFloor = g.dungeonFloor || 1;
+    g.enemyMaxHp = Math.floor(100 * Math.pow(1.4, g.dungeonFloor - 1));
+    g.enemyHp = g.enemyMaxHp;
     updateDungeonUI();
   }
 
-  // 秒間生産量の取得
   let cps = 0;
   if (typeof getProductionRate === 'function') cps = getProductionRate();
   else if (typeof getAetherPerSec === 'function') cps = getAetherPerSec();
   else if (typeof getEnergyPerSec === 'function') cps = getEnergyPerSec();
-  else cps = game.energyPerSec || game.cps || game.productionRate || 1;
+  else cps = g.energyPerSec || g.cps || g.productionRate || 1;
 
-  const boost1 = (game.eventItemExpiry && game.eventItemExpiry.boost1 > Date.now()) ? 1.5 : 1;
-  const boost2 = (game.eventItemExpiry && game.eventItemExpiry.boost2 > Date.now()) ? 2.0 : 1;
-  const autoDamage = cps * boost1 * boost2; // 1秒周期なのでそのまま加算
+  const boost1 = (g.eventItemExpiry && g.eventItemExpiry.boost1 > Date.now()) ? 1.5 : 1;
+  const boost2 = (g.eventItemExpiry && g.eventItemExpiry.boost2 > Date.now()) ? 2.0 : 1;
+  const autoDamage = cps * boost1 * boost2;
 
-  if (autoDamage > 0 && game.enemyHp > 0) {
-    game.enemyHp -= autoDamage;
-    if (game.enemyHp <= 0) {
+  if (autoDamage > 0 && g.enemyHp > 0) {
+    g.enemyHp -= autoDamage;
+    if (g.enemyHp <= 0) {
       onDefeatEnemy();
     } else {
       updateDungeonUI();
@@ -2318,22 +2467,23 @@ document.body.addEventListener('pointerdown', (e) => {
                    e.target.tagName === 'CIRCLE' ||
                    e.target.tagName === 'SVG';
 
-  if (isTarget && typeof game !== 'undefined') {
-    if (game.enemyHp <= 0) return;
+  if (isTarget) {
+    const g = getGameObj();
+    if (!g || g.enemyHp <= 0) return;
 
     let tapDmg = 1;
     if (typeof getEnergyPerTap === 'function') tapDmg = getEnergyPerTap();
     else if (typeof getTapPower === 'function') tapDmg = getTapPower();
     else if (typeof getClickPower === 'function') tapDmg = getClickPower();
-    else tapDmg = game.energyPerTap || game.clickPower || game.tapPower || 1;
+    else tapDmg = g.energyPerTap || g.clickPower || g.tapPower || 1;
 
-    if (game.eventItemExpiry && game.eventItemExpiry.boost1 > Date.now()) {
+    if (g.eventItemExpiry && g.eventItemExpiry.boost1 > Date.now()) {
       tapDmg *= 1.5;
     }
 
-    game.enemyHp -= tapDmg;
+    g.enemyHp -= tapDmg;
 
-    if (game.enemyHp <= 0) {
+    if (g.enemyHp <= 0) {
       onDefeatEnemy();
     } else {
       updateDungeonUI();
