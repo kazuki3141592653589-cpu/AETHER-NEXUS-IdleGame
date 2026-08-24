@@ -2140,32 +2140,67 @@ function updateEventUI() {
 window.attackDungeonByTap = attackDungeonByTap;
 window.buyEventItem = buyEventItem;
 
- // ダンジョン初期化＆自動攻撃（秒産ダメージ連動）
+  // 自動攻撃＆タップ攻撃（関数呼び出し・最新強化値に完全リアルタイム連動）
 setInterval(() => {
   if (typeof game !== 'undefined') {
-    // 敵のHPが存在しない場合、強制的に1階層目の敵を出現させる
-    if (!game.enemyHp || game.enemyHp <= 0) {
+    // 1. 敵の初期化
+    if (typeof game.enemyHp === 'undefined' || game.enemyHp <= 0) {
       game.dungeonFloor = game.dungeonFloor || 1;
-      game.enemyMaxHp = game.enemyMaxHp || 100;
+      game.enemyMaxHp = Math.floor(100 * Math.pow(1.4, game.dungeonFloor - 1));
       game.enemyHp = game.enemyMaxHp;
       if (typeof updateDungeonUI === 'function') updateDungeonUI();
     }
-    
-    // 自動攻撃の実行
-    if (typeof updateDungeonBattle === 'function') {
-      updateDungeonBattle(0.1);
+
+    // 2. 最新の秒産威力を取得（関数定義があれば実行、なければ変数から取得）
+    let cps = 0;
+    if (typeof getEnergyPerSec === 'function') cps = getEnergyPerSec();
+    else if (typeof getCps === 'function') cps = getCps();
+    else cps = game.energyPerSec || game.cps || game.autoPower || 0;
+
+    // ブースト計算
+    const boost1 = (game.eventItemExpiry && game.eventItemExpiry.boost1 > Date.now()) ? 1.5 : 1;
+    const boost2 = (game.eventItemExpiry && game.eventItemExpiry.boost2 > Date.now()) ? 2.0 : 1;
+    const finalDamage = (cps * 0.1) * boost1 * boost2;
+
+    // 自動ダメージ適用
+    if (finalDamage > 0 && game.enemyHp > 0) {
+      game.enemyHp -= finalDamage;
+      if (game.enemyHp <= 0 && typeof onDefeatEnemy === 'function') {
+        onDefeatEnemy();
+      } else if (typeof updateDungeonUI === 'function') {
+        updateDungeonUI();
+      }
     }
   }
 }, 100);
 
-// タップ攻撃（タップ威力ダメージ連動）
+// タップ攻撃（タップ威力の最新強化値に完全連動）
 document.body.addEventListener('pointerdown', (e) => {
   if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
-  if (typeof attackDungeonByTap === 'function') {
-    attackDungeonByTap();
+
+  if (typeof game !== 'undefined' && game.enemyHp > 0) {
+    // 最新のタップ威力を取得
+    let tapDmg = 1;
+    if (typeof getEnergyPerTap === 'function') tapDmg = getEnergyPerTap();
+    else if (typeof getClickPower === 'function') tapDmg = getClickPower();
+    else tapDmg = game.energyPerTap || game.clickPower || game.tapPower || 1;
+
+    // ブースト適用
+    if (game.eventItemExpiry && game.eventItemExpiry.boost1 > Date.now()) {
+      tapDmg *= 1.5;
+    }
+
+    game.enemyHp -= tapDmg;
+
+    if (game.enemyHp <= 0 && typeof onDefeatEnemy === 'function') {
+      onDefeatEnemy();
+    } else if (typeof updateDungeonUI === 'function') {
+      updateDungeonUI();
+    }
   }
 });
+      
 
- </script>
+</script>
 </body>
 </html>
