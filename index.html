@@ -2140,23 +2140,32 @@ function updateEventUI() {
 window.attackDungeonByTap = attackDungeonByTap;
 window.buyEventItem = buyEventItem;
 
-// 自動攻撃をメインループに強制連動（秒産ダメージ）
+ // ダンジョン初期化＆自動攻撃（秒産ダメージ連動）
 setInterval(() => {
-  if (typeof updateDungeonBattle === 'function') {
-    updateDungeonBattle(0.1);
+  if (typeof game !== 'undefined') {
+    // 敵のHPが存在しない場合、強制的に1階層目の敵を出現させる
+    if (!game.enemyHp || game.enemyHp <= 0) {
+      game.dungeonFloor = game.dungeonFloor || 1;
+      game.enemyMaxHp = game.enemyMaxHp || 100;
+      game.enemyHp = game.enemyMaxHp;
+      if (typeof updateDungeonUI === 'function') updateDungeonUI();
+    }
+    
+    // 自動攻撃の実行
+    if (typeof updateDungeonBattle === 'function') {
+      updateDungeonBattle(0.1);
+    }
   }
 }, 100);
 
-// タップ攻撃をコアに強制連動（タップ威力ダメージ）
-　document.body.addEventListener('pointerdown', () => {
-  const coreEl = document.getElementById('core-btn') || document.querySelector('.core') || document.getElementById('app');
-  if (coreEl && (e.target === coreEl || coreEl.contains(e.target))) {
-    if (typeof attackDungeonByTap === 'function') {
-      attackDungeonByTap();
-    }
+// タップ攻撃（タップ威力ダメージ連動）
+document.body.addEventListener('pointerdown', (e) => {
+  if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+  if (typeof attackDungeonByTap === 'function') {
+    attackDungeonByTap();
   }
 });
- 
+
  </script>
 </body>
 </html>
