@@ -2192,11 +2192,18 @@ setInterval(() => {
   }
 }, 100);
 
-// 3. タップ攻撃（タップ威力連動）
+// 3. コアタップ時のみダンジョンへダメージを与える
 document.body.addEventListener('pointerdown', (e) => {
   if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
 
-  if (typeof game !== 'undefined' && game.enemyHp > 0) {
+  // コア（青い球体）またはメインタップ領域を押したか判定
+  const isCore = e.target.closest('#core-btn') || 
+                 e.target.closest('.core') || 
+                 e.target.closest('#app-core') ||
+                 e.target.tagName === 'CIRCLE' ||
+                 e.target.tagName === 'SVG';
+
+  if (isCore && typeof game !== 'undefined' && game.enemyHp > 0) {
     let tapDmg = 1;
     if (typeof getEnergyPerTap === 'function') tapDmg = getEnergyPerTap();
     else if (typeof getTapPower === 'function') tapDmg = getTapPower();
@@ -2216,7 +2223,6 @@ document.body.addEventListener('pointerdown', (e) => {
     }
   }
 });
-
 
 </script>
 </body>
