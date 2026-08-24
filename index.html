@@ -491,45 +491,6 @@
         #achievement-popup.show {
             right: 20px;
         }
-
-        .guide-box {
-            background: rgba(0, 243, 255, 0.015);
-            border: 1px solid rgba(0, 243, 255, 0.15);
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 15px;
-            text-align: left;
-        }
-        .secret-toggle-btn {
-            background: transparent;
-            border: none;
-            color: var(--sub-text);
-            padding: 4px 0;
-            cursor: pointer;
-            font-size: 0.8rem;
-            width: 100%;
-            text-align: left;
-            transition: color 0.2s;
-            pointer-events: auto !important;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .secret-toggle-btn:hover {
-            color: var(--accent-color);
-        }
-        .secret-content {
-            display: none;
-            margin-top: 10px;
-            font-size: 0.8rem;
-            line-height: 1.6;
-            color: var(--text-color);
-            border-top: 1px solid rgba(0, 243, 255, 0.1);
-            padding-top: 8px;
-        }
-        .secret-content.active {
-            display: block;
-        }
     </style>
 </head>
 <body>
@@ -604,79 +565,75 @@
             </div>
             <div class="panel-content" id="upgrade-list"></div>
         </div>
+
         <!-- イベントパネル -->
-<div id="panel-event" class="sub-panel">
-  <div class="panel-header">
-    <span>🎉 ダンジョン: 次元の結晶</span>
-    <button class="close-btn" onclick="closePanel()">閉じる</button>
-  </div>
-  
-  <div class="panel-content">
-    <!-- 所持結晶表示 -->
-    <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 15px; border: 1px solid #3b82f6;">
-      <span style="font-size: 0.9rem; color: #93c5fd;">現在の所持数:</span>
-      <div style="font-size: 2rem; font-weight: bold; color: #60a5fa; margin: 4px 0;" id="event-crystal-count">0 💎</div>
-    </div>
+        <div id="panel-event" class="sub-panel">
+          <div class="panel-header">
+            <span>🎉 ダンジョン: 次元の結晶</span>
+            <button class="close-btn" onclick="closePanel()">閉じる</button>
+          </div>
+          
+          <div class="panel-content">
+            <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 15px; border: 1px solid #3b82f6;">
+              <span style="font-size: 0.9rem; color: #93c5fd;">現在の所持数:</span>
+              <div style="font-size: 2rem; font-weight: bold; color: #60a5fa; margin: 4px 0;" id="event-crystal-count">0 💎</div>
+            </div>
 
-    <!-- ダンジョン（全自動バトル）エリア -->
-    <div style="background: rgba(15, 23, 42, 0.9); border: 2px solid #ef4444; border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 20px;">
-      <h3 style="color: #f87171; margin-top: 0; font-size: 1.1rem;">⚔️ 次元の亀裂（自動討伐）</h3>
-      <p style="font-size: 0.8rem; color: #cbd5e1; margin-bottom: 10px;">発電装置の出力で、謎のエネルギーを自動攻撃</p>
+            <div style="background: rgba(15, 23, 42, 0.9); border: 2px solid #ef4444; border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 20px;">
+              <h3 style="color: #f87171; margin-top: 0; font-size: 1.1rem;">⚔️ 次元の亀裂（自動討伐）</h3>
+              <p style="font-size: 0.8rem; color: #cbd5e1; margin-bottom: 10px;">発電装置の出力で、謎のエネルギーを自動攻撃</p>
 
-      <!-- 丸く赤い敵 -->
-      <div style="position: relative; width: 110px; height: 110px; margin: 10px auto; display: flex; align-items: center; justify-content: center;">
-        <div id="dungeon-enemy" style="width: 90px; height: 90px; border-radius: 50%; background: radial-gradient(circle, #ff4d4d 0%, #990000 70%, #4a0000 100%); box-shadow: 0 0 20px #ef4444, inset 0 0 10px #ffffff; transition: transform 0.08s ease;"></div>
-      </div>
+              <div style="position: relative; width: 110px; height: 110px; margin: 10px auto; display: flex; align-items: center; justify-content: center;">
+                <div id="dungeon-enemy" style="width: 90px; height: 90px; border-radius: 50%; background: radial-gradient(circle, #ff4d4d 0%, #990000 70%, #4a0000 100%); box-shadow: 0 0 20px #ef4444, inset 0 0 10px #ffffff; transition: transform 0.08s ease;"></div>
+              </div>
 
-      <!-- 敵情報 -->
-      <div style="font-weight: bold; font-size: 0.95rem; color: #fca5a5; margin-bottom: 6px;">
-        階層: <span id="dungeon-floor">1</span> F | 謎のエネルギー
-      </div>
-      
-      <!-- HPバー -->
-      <div style="width: 100%; background: #334155; border-radius: 8px; height: 14px; overflow: hidden; margin-bottom: 6px; border: 1px solid #475569;">
-        <div id="enemy-hp-bar" style="width: 100%; height: 100%; background: linear-gradient(90deg, #ef4444, #f87171); transition: width 0.2s;"></div>
-      </div>
-      <div style="font-size: 0.8rem; color: #94a3b8;">
-        HP: <span id="enemy-hp-text">100 / 100</span>
-      </div>
-    </div>
+              <div style="font-weight: bold; font-size: 0.95rem; color: #fca5a5; margin-bottom: 6px;">
+                階層: <span id="dungeon-floor">1</span> F | 謎のエネルギー
+              </div>
+              
+              <div style="width: 100%; background: #334155; border-radius: 8px; height: 14px; overflow: hidden; margin-bottom: 6px; border: 1px solid #475569;">
+                <div id="enemy-hp-bar" style="width: 100%; height: 100%; background: linear-gradient(90deg, #ef4444, #f87171); transition: width 0.2s;"></div>
+              </div>
+              <div style="font-size: 0.8rem; color: #94a3b8;">
+                HP: <span id="enemy-hp-text">100 / 100</span>
+              </div>
+            </div>
 
-    <!-- イベント限定ショップ -->
-    <h3 style="font-size: 1rem; color: #var(--accent-color);">💎 イベント交換ショップ</h3>
-    <div style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px;">
-      
-      <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid #334155; padding: 12px; border-radius: 8px;">
-        <h4 style="margin: 0 0 5px 0; color: #f8fafc; font-size: 0.95rem;">次元のタップブースト (30分間)</h4>
-        <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;">タップ時の獲得量が <b>+50%</b> アップ！</p>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span style="color: #60a5fa; font-weight: bold; font-size: 0.85rem;">必要: 500 💎</span>
-          <button class="buy-btn" id="btn-buy-boost1" onclick="buyEventItem('boost1', 500)">交換する</button>
+            <h3 style="font-size: 1rem; color: var(--accent-color);">💎 イベント交換ショップ</h3>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px;">
+              
+              <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid #334155; padding: 12px; border-radius: 8px;">
+                <h4 style="margin: 0 0 5px 0; color: #f8fafc; font-size: 0.95rem;">次元のタップブースト (30分間)</h4>
+                <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;">タップ時の獲得量が <b>+50%</b> アップ！</p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span style="color: #60a5fa; font-weight: bold; font-size: 0.85rem;">必要: 500 💎</span>
+                  <button class="buy-btn" id="btn-buy-boost1" onclick="buyEventItem('boost1', 500)">交換する</button>
+                </div>
+              </div>
+
+              <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid #334155; padding: 12px; border-radius: 8px;">
+                <h4 style="margin: 0 0 5px 0; color: #f8fafc; font-size: 0.95rem;">限定称号「次元の探求者」</h4>
+                <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;">特別称号を獲得・装着。</p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span style="color: #60a5fa; font-weight: bold; font-size: 0.85rem;">必要: 1,000 💎</span>
+                  <button class="buy-btn" id="btn-buy-title1" onclick="buyEventItem('title1', 1000)">交換する</button>
+                </div>
+              </div>
+
+              <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid #334155; padding: 12px; border-radius: 8px;">
+                <h4 style="margin: 0 0 5px 0; color: #f8fafc; font-size: 0.95rem;">時空オーバークロック (30分間)</h4>
+                <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;">すべての発電機の生産効率が <b>2倍</b> に増加！</p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span style="color: #60a5fa; font-weight: bold; font-size: 0.85rem;">必要: 3,000 💎</span>
+                  <button class="buy-btn" id="btn-buy-boost2" onclick="buyEventItem('boost2', 3000)">交換する</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid #334155; padding: 12px; border-radius: 8px;">
-        <h4 style="margin: 0 0 5px 0; color: #f8fafc; font-size: 0.95rem;">限定称号「次元の探究者」</h4>
-        <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;">特別称号を獲得・装着。</p>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span style="color: #60a5fa; font-weight: bold; font-size: 0.85rem;">必要: 1,000 💎</span>
-          <button class="buy-btn" id="btn-buy-title1" onclick="buyEventItem('title1', 1000)">交換する</button>
-        </div>
-      </div>
-
-      <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid #334155; padding: 12px; border-radius: 8px;">
-        <h4 style="margin: 0 0 5px 0; color: #f8fafc; font-size: 0.95rem;">時空オーバークロック (30分間)</h4>
-        <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;">すべての発電機の生産効率が <b>2倍</b> に増加！</p>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span style="color: #60a5fa; font-weight: bold; font-size: 0.85rem;">必要: 3,000 💎</span>
-          <button class="buy-btn" id="btn-buy-boost2" onclick="buyEventItem('boost2', 3000)">交換する</button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-     <div id="panel-achievements" class="sub-panel">
+        <div id="panel-achievements" class="sub-panel">
             <div class="panel-header">
                 <span>🏆 実績図鑑 (<span id="ach-count-display">0</span> / <span id="ach-total-display">150</span>)</span>
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
@@ -851,40 +808,38 @@
         <button class="nav-tab" onclick="switchTab('ranking')">ランキング</button>
     </nav>
 
-    <!-- 実績ヒントのポップアップ（既存デザイン共通スタイル適用版） -->
     <div id="hint-modal" class="modal-overlay" onclick="outsideClose(event, 'hint-modal')">
         <div class="modal-box" style="max-width: 350px;">
             <div class="panel-header">
                 <span>実績のヒント</span>
                 <button class="close-btn" id="close-x-btn">×</button>
             </div>
-              <div class="modal-body" style="text-align: center;">
+            <div class="modal-body" style="text-align: center;">
                 <div style="font-weight: bold; margin-bottom: 12px; color: var(--accent-color);">【裏・攻略情報】隠し実績のヒント</div>
                 <p style="font-size: 0.85rem; color: var(--sub-text); margin-bottom: 15px; text-align: left; line-height: 1.6;">
                  <strong>1. 深夜のエネ学者:</strong> 深夜（0:00〜3:00）に観測せよ<br>
                  <strong>2. 石器時代の忘れ物:</strong> 発電機0台で人力1,000回タップ<br>
                  <strong>3. ゾロ目の奇跡:</strong> 所持エネルギーの下4桁を同じ数字に<br>
                  <strong>4. 何もしない贅沢:</strong> 1分間タップせずじっと見守る
-   　　         </p>
-               <button class="buy-btn" id="close-main-btn" style="width: 100%;">閉じる</button>
-             </div>
+                </p>
+                <button class="buy-btn" id="close-main-btn" style="width: 100%;">閉じる</button>
             </div>
-           </div>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
         import { getFirestore, collection, doc, setDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBmpKJk4NgmUA0V2zn8HKO_9CfI9pZ0Y5c",
-      authDomain: "aether-nexus-cc105.firebaseapp.com",
-      projectId: "aether-nexus-cc105",
-      storageBucket: "aether-nexus-cc105.firebasestorage.app",
-      messagingSenderId: "1009860638284",
-      appId: "1:1009860638284:web:aece14f139e46b238166e9",
-      measurementId: "G-G3HPXVVWRK"    
-    };
-
+        const firebaseConfig = {
+          apiKey: "AIzaSyBmpKJk4NgmUA0V2zn8HKO_9CfI9pZ0Y5c",
+          authDomain: "aether-nexus-cc105.firebaseapp.com",
+          projectId: "aether-nexus-cc105",
+          storageBucket: "aether-nexus-cc105.firebasestorage.app",
+          messagingSenderId: "1009860638284",
+          appId: "1:1009860638284:web:aece14f139e46b238166e9",
+          measurementId: "G-G3HPXVVWRK"    
+        };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -1226,6 +1181,13 @@
             playerName: "名無しのパイレット",
             buyMode: 1,
             unlockedAchievements: {},
+            dungeonFloor: 1,
+            maxDungeonFloor: 1,
+            enemyMaxHp: 100,
+            enemyHp: 100,
+            eventCrystals: 0,
+            eventItems: {},
+            eventItemExpiry: {},
             generators: generatorData.map(g => ({
                 name: g.name,
                 cost: g.baseCost,
@@ -1302,7 +1264,7 @@
         function formatShortNumber(num) {
             if (num === null || num === undefined || isNaN(num)) return "0";
             let n = Number(num);
-            if (n < 10000000) {
+            if (n < 1000000) {
                 return Math.floor(n).toLocaleString('en-US');
             }
             const units = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
@@ -1378,6 +1340,10 @@
             window.lastTapTimestamp = Date.now();
 
             let gain = game.tapPower * game.prestigeMultiplier;
+            if (game.eventItemExpiry && game.eventItemExpiry.boost1 && Date.now() < game.eventItemExpiry.boost1) {
+                gain *= 1.5;
+            }
+
             game.energy += gain;
             game.totalEarned += gain;
             game.totalTaps++;
@@ -1498,7 +1464,11 @@
                 }
             });
 
-            return cps * additiveBonus * game.prestigeMultiplier;
+            let finalCps = cps * additiveBonus * game.prestigeMultiplier;
+            if (game.eventItemExpiry && game.eventItemExpiry.boost2 && Date.now() < game.eventItemExpiry.boost2) {
+                finalCps *= 2.0;
+            }
+            return finalCps;
         }
 
         function doPrestige() {
@@ -1536,6 +1506,7 @@
         function executeHardReset() {
             isResetting = true;
             localStorage.removeItem('aether_nexus_save');
+            localStorage.removeItem('aether_dungeon_save');
             closeModal('resetConfirmModal');
             showCustomAlert("セーブデータをリセットしました。<br>画面を再読み込みします。", () => {
                 location.reload();
@@ -1686,8 +1657,6 @@
                     costToShow = Math.floor(getBatchCost(gen, targetCount));
                 }
 
-                let itemCps = baseCps * (game.buyMode === 'MAX' ? (targetCount > 0 ? targetCount : 1) : targetCount);
-                
                 const isUnlocked = gen.count > 0;
                 const displayName = isUnlocked ? `${formatRankingNumber(index + 1)}. ${gen.name}` : `${formatRankingNumber(index + 1)}. ？？？ (未解放)`;
                 const displayCps = isUnlocked ? `生産: +${formatShortNumber(baseCps * (game.buyMode === 'MAX' ? (targetCount > 0 ? targetCount : 1) : targetCount))} Λ/s` : `生産: ？？？`;
@@ -1731,6 +1700,36 @@
         function saveGame() {
             if (isResetting) return;
             localStorage.setItem('aether_nexus_save', JSON.stringify(game));
+            saveDungeonData();
+        }
+
+        function saveDungeonData() {
+            const dungeonData = {
+                dungeonFloor: game.dungeonFloor || 1,
+                enemyHp: game.enemyHp,
+                enemyMaxHp: game.enemyMaxHp,
+                eventCrystals: game.eventCrystals || 0,
+                eventItems: game.eventItems || {},
+                eventItemExpiry: game.eventItemExpiry || {}
+            };
+            localStorage.setItem('aether_dungeon_save', JSON.stringify(dungeonData));
+        }
+
+        function loadDungeonData() {
+            const saved = localStorage.getItem('aether_dungeon_save');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    game.dungeonFloor = data.dungeonFloor || 1;
+                    game.enemyMaxHp = data.enemyMaxHp || 100;
+                    game.enemyHp = (typeof data.enemyHp !== 'undefined') ? data.enemyHp : game.enemyMaxHp;
+                    game.eventCrystals = data.eventCrystals || 0;
+                    game.eventItems = data.eventItems || {};
+                    game.eventItemExpiry = data.eventItemExpiry || {};
+                } catch (e) {
+                    console.error("ダンジョンデータの読み込みエラー", e);
+                }
+            }
         }
 
         function loadGame() {
@@ -1781,6 +1780,7 @@
                 document.getElementById('initial-name-input').value = "";
                 document.getElementById('name-modal').classList.add('active');
             }
+            loadDungeonData();
             document.getElementById('player-name-input').value = game.playerName;
             checkAchievements();
         }
@@ -1806,17 +1806,6 @@
                 updateRankAndStats();
                 if (window.syncScoreToFirebase) window.syncScoreToFirebase();
                 showCustomAlert("パイレット名を更新し、<br>ランキングに同期しました！");
-            }
-        }
-
-        function toggleSecretGuide() {
-            const content = document.getElementById('secret-guide-content');
-            const arrow = document.getElementById('secret-arrow');
-            content.classList.toggle('active');
-            if (content.classList.contains('active')) {
-                arrow.textContent = "▼";
-            } else {
-                arrow.textContent = "▶";
             }
         }
 
@@ -1879,6 +1868,69 @@
             }
         }
 
+        // ダンジョンバトル進行処理
+        function updateDungeonBattle(deltaTime) {
+            let baseCps = calculateCPS();
+            if (baseCps <= 0) baseCps = 0.1; // 最低保証ダメージ
+
+            let damage = baseCps * deltaTime;
+            game.enemyHp -= damage;
+
+            if (game.enemyHp <= 0) {
+                // 敵撃破：結晶を獲得
+                let rewardCrystals = Math.floor(game.dungeonFloor * 5 + Math.random() * 10);
+                game.eventCrystals = (game.eventCrystals || 0) + rewardCrystals;
+
+                // 次の階層へ
+                game.dungeonFloor++;
+                game.enemyMaxHp = Math.floor(100 * Math.pow(1.15, game.dungeonFloor - 1));
+                game.enemyHp = game.enemyMaxHp;
+                saveDungeonData();
+            }
+
+            // ダンジョンUI更新
+            const hpBar = document.getElementById('enemy-hp-bar');
+            const hpText = document.getElementById('enemy-hp-text');
+            const floorEl = document.getElementById('dungeon-floor');
+            const crystalEl = document.getElementById('event-crystal-count');
+
+            if (hpBar && hpText && floorEl && crystalEl) {
+                let hpPercent = Math.max(0, (game.enemyHp / game.enemyMaxHp) * 100);
+                hpBar.style.width = hpPercent + '%';
+                hpText.textContent = `${Math.floor(Math.max(0, game.enemyHp))} / ${formatShortNumber(game.enemyMaxHp)}`;
+                floorEl.textContent = game.dungeonFloor;
+                crystalEl.textContent = `${formatShortNumber(game.eventCrystals)} 💎`;
+            }
+        }
+
+        // イベントショップのアイテム購入
+        window.buyEventItem = function(type, cost) {
+            if (!game.eventCrystals) game.eventCrystals = 0;
+            if (game.eventCrystals < cost) {
+                showCustomAlert("次元の結晶が不足しています！");
+                return;
+            }
+
+            game.eventCrystals -= cost;
+            let now = Date.now();
+            if (!game.eventItemExpiry) game.eventItemExpiry = {};
+
+            if (type === 'boost1') {
+                game.eventItemExpiry.boost1 = now + 30 * 60 * 1000;
+                showCustomAlert("「次元のタップブースト」を交換しました！（効果時間: 30分）");
+            } else if (type === 'title1') {
+                game.playerName = "【次元の探求者】 " + game.playerName.replace(/^【.*?】\s*/, '');
+                showCustomAlert("限定称号「次元の探求者」を獲得し、装着しました！");
+                updateRankAndStats();
+            } else if (type === 'boost2') {
+                game.eventItemExpiry.boost2 = now + 30 * 60 * 1000;
+                showCustomAlert("「時空オーバークロック」を交換しました！（効果時間: 30分）");
+            }
+
+            saveDungeonData();
+            updateUI();
+        };
+
         let lastTime = performance.now();
 
         function gameLoop(currentTime) {
@@ -1899,8 +1951,7 @@
                 checkAchievements();
             }
 
-        updateDungeonBattle();
-    
+            updateDungeonBattle(deltaTime);
             updateUI();
             requestAnimationFrame(gameLoop);
         }
@@ -1924,7 +1975,6 @@
             requestAnimationFrame(gameLoop);
         };
 
-        // 実績ヒントポップアップのイベントを設定
         document.addEventListener('DOMContentLoaded', () => {
             const trigger = document.getElementById('achievement-trigger');
             const modal = document.getElementById('hint-modal');
@@ -1955,429 +2005,8 @@
         window.switchTab = switchTab;
         window.tapCore = tapCore;
         window.switchAchTab = switchAchTab;
-        window.toggleSecretGuide = toggleSecretGuide;
         window.showAchievementHint = showAchievementHint;
         window.setBuyMode = setBuyMode;
-    // --- イベント・ダンジョンロジック ---
-game.dungeonFloor = game.dungeonFloor || 1;
-game.enemyMaxHp = game.enemyMaxHp || 100;
-game.enemyHp = game.enemyHp || game.enemyMaxHp;
-game.eventCrystals = game.eventCrystals || 0;
-game.eventItems = game.eventItems || {};
-        
-// ==========================================
-// AETHER NEXUS - 完全セーブ同期・ダンジョンシステム
-// ==========================================
-
-function getGameObj() {
-  if (typeof game !== 'undefined' && game) return game;
-  if (typeof window.game !== 'undefined' && window.game) return window.game;
-  window.game = window.game || {};
-  return window.game;
-}
-
-// 1. メインのセーブ関数に完全フック（または上書き）
-const originalSaveGame = window.saveGame;
-window.saveGame = function() {
-  const g = getGameObj();
-  // ダンジョンデータをgameオブジェクトのプロパティに常に同期
-  g.dungeonData = {
-    dungeonFloor: g.dungeonFloor || 1,
-    maxDungeonFloor: g.maxDungeonFloor || g.dungeonFloor || 1,
-    enemyHp: typeof g.enemyHp !== 'undefined' ? g.enemyHp : 100,
-    enemyMaxHp: g.enemyMaxHp || 100,
-    eventCrystals: g.eventCrystals || 0,
-    eventItems: g.eventItems || {},
-    eventItemExpiry: g.eventItemExpiry || {}
-  };
-  
-  // 元のセーブ関数を実行（存在すれば）
-  if (typeof originalSaveGame === 'function') {
-    originalSaveGame();
-  } else {
-    // 独自にlocalStorageへ保存
-    localStorage.setItem('aether_game_save', JSON.stringify(g));
-  }
-};
-
-// 2. データのロード時にダンジョンデータも確実に復元
-const originalLoadGame = window.loadGame;
-window.loadGame = function() {
-  if (typeof originalLoadGame === 'function') {
-    originalLoadGame();
-  }
-  const g = getGameObj();
-  if (g.dungeonData) {
-    g.dungeonFloor = g.dungeonData.dungeonFloor || 1;
-    g.maxDungeonFloor = g.dungeonData.maxDungeonFloor || g.dungeonFloor || 1;
-    g.enemyMaxHp = g.dungeonData.enemyMaxHp || 100;
-    g.enemyHp = (typeof g.dungeonData.enemyHp !== 'undefined') ? g.dungeonData.enemyHp : g.enemyMaxHp;
-    g.eventCrystals = g.dungeonData.eventCrystals || 0;
-    g.eventItems = g.dungeonData.eventItems || {};
-    g.eventItemExpiry = g.dungeonData.eventItemExpiry || {};
-  }
-  if (typeof updateDungeonUI === 'function') updateDungeonUI();
-  if (typeof updateEventUI === 'function') updateEventUI();
-};
-
-// 起動時ロード
-window.loadGame();
-
-
-// --- 戦闘・UI更新 ---
-function onDefeatEnemy() {
-  const g = getGameObj();
-  g.dungeonFloor = (g.dungeonFloor || 1) + 1;
-  g.maxDungeonFloor = Math.max(g.maxDungeonFloor || 1, g.dungeonFloor);
-  
-  const reward = Math.floor(g.dungeonFloor * 5 + Math.random() * 5);
-  g.eventCrystals = (g.eventCrystals || 0) + reward;
-
-  g.enemyMaxHp = Math.floor(100 * Math.pow(1.4, g.dungeonFloor - 1));
-  g.enemyHp = g.enemyMaxHp;
-
-  updateDungeonUI();
-  updateEventUI();
-  saveGame(); // メイン＆ダンジョン一括セーブ
-}
-
-function updateDungeonUI() {
-  const g = getGameObj();
-  const floorEl = document.getElementById('dungeon-floor');
-  const hpTextEl = document.getElementById('enemy-hp-text');
-  const hpBarEl = document.getElementById('enemy-hp-bar');
-
-  if (floorEl) floorEl.innerText = g.dungeonFloor || 1;
-  if (hpTextEl) hpTextEl.innerText = `${Math.max(0, Math.ceil(g.enemyHp || 0))} / ${g.enemyMaxHp || 100}`;
-  if (hpBarEl) {
-    const pct = Math.max(0, ((g.enemyHp || 0) / (g.enemyMaxHp || 100)) * 100);
-    hpBarEl.style.width = `${pct}%`;
-  }
-}
-
-function buyEventItem(itemId, cost) {
-  const g = getGameObj();
-  if ((g.eventCrystals || 0) < cost) {
-    showNotification('次元の結晶が足りません！');
-    return;
-  }
-
-  if (itemId === 'title1') {
-    if (g.eventItems && g.eventItems[itemId]) {
-      showNotification('既に獲得済みです！');
-      return;
-    }
-    g.eventCrystals -= cost;
-    g.eventItems = g.eventItems || {};
-    g.eventItems[itemId] = true;
-    g.currentTitle = '次元の探究者';
-    showNotification('称号「次元の探究者」を獲得しました！');
-  } else {
-    const now = Date.now();
-    const duration = 30 * 60 * 1000;
-    const currentExpiry = (g.eventItemExpiry && g.eventItemExpiry[itemId]) || 0;
-    const baseTime = currentExpiry > now ? currentExpiry : now;
-
-    g.eventCrystals -= cost;
-    g.eventItemExpiry = g.eventItemExpiry || {};
-    g.eventItemExpiry[itemId] = baseTime + duration;
-    showNotification('ブースト効果が30分間延長されました！');
-  }
-
-  updateEventUI();
-  saveGame();
-}
-
-function updateEventUI() {
-  const g = getGameObj();
-  const countEl = document.getElementById('event-crystal-count');
-  if (countEl) countEl.innerText = `${g.eventCrystals || 0} 💎`;
-
-// ==========================================
-// AETHER NEXUS - 超安定・独立型ダンジョンシステム
-// ==========================================
-
-// --- 1. 独立セーブ・ロード管理 ---
-function loadDungeonState() {
-  if (typeof game === 'undefined') return;
-  const saved = localStorage.getItem('aether_dungeon_only_save');
-  if (saved) {
-    try {
-      const data = JSON.parse(saved);
-      game.dungeonFloor = data.floor || 1;
-      game.maxDungeonFloor = data.maxFloor || data.floor || 1;
-      game.enemyMaxHp = data.maxHp || 100;
-      game.enemyHp = typeof data.hp !== 'undefined' ? data.hp : game.enemyMaxHp;
-      game.eventCrystals = data.crystals || 0;
-      game.eventItems = data.items || {};
-      game.eventItemExpiry = data.expiry || {};
-    } catch(e) {
-      console.error('Dungeon load error:', e);
-    }
-  }
-}
-
-function saveDungeonState() {
-  if (typeof game === 'undefined') return;
-  const dungeonData = {
-    floor: game.dungeonFloor || 1,
-    maxFloor: game.maxDungeonFloor || game.dungeonFloor || 1,
-    hp: typeof game.enemyHp !== 'undefined' ? game.enemyHp : 100,
-    maxHp: game.enemyMaxHp || 100,
-    crystals: game.eventCrystals || 0,
-    items: game.eventItems || {},
-    expiry: game.eventItemExpiry || {}
-  };
-  localStorage.setItem('aether_dungeon_only_save', JSON.stringify(dungeonData));
-}
-
-function resetDungeonData() {
-  localStorage.removeItem('aether_dungeon_only_save');
-  if (typeof game !== 'undefined') {
-    game.dungeonFloor = 1;
-    game.maxDungeonFloor = 1;
-    game.enemyMaxHp = 100;
-    game.enemyHp = 100;
-    game.eventCrystals = 0;
-    game.eventItems = {};
-    game.eventItemExpiry = {};
-  }
-  if (typeof updateDungeonUI === 'function') updateDungeonUI();
-  if (typeof updateEventUI === 'function') updateEventUI();
-}
-
-// 起動時にロード
-loadDungeonState();
-
-
-// --- 2. 戦闘・UI更新 ---
-function onDefeatEnemy() {
-  if (typeof game === 'undefined') return;
-  
-  game.dungeonFloor = (game.dungeonFloor || 1) + 1;
-  game.maxDungeonFloor = Math.max(game.maxDungeonFloor || 1, game.dungeonFloor);
-  
-  const reward = Math.floor(game.dungeonFloor * 5 + Math.random() * 5);
-  game.eventCrystals = (game.eventCrystals || 0) + reward;
-
-  game.enemyMaxHp = Math.floor(100 * Math.pow(1.4, game.dungeonFloor - 1));
-  game.enemyHp = game.enemyMaxHp;
-
-  updateDungeonUI();
-  updateEventUI();
-  saveDungeonState();
-}
-
-function updateDungeonUI() {
-  if (typeof game === 'undefined') return;
-  const floorEl = document.getElementById('dungeon-floor');
-  const hpTextEl = document.getElementById('enemy-hp-text');
-  const hpBarEl = document.getElementById('enemy-hp-bar');
-
-  if (floorEl) floorEl.innerText = game.dungeonFloor || 1;
-  if (hpTextEl) hpTextEl.innerText = `${Math.max(0, Math.ceil(game.enemyHp || 0))} / ${game.enemyMaxHp || 100}`;
-  if (hpBarEl) {
-    const pct = Math.max(0, ((game.enemyHp || 0) / (game.enemyMaxHp || 100)) * 100);
-    hpBarEl.style.width = `${pct}%`;
-  }
-}
-
-function buyEventItem(itemId, cost) {
-  if (typeof game === 'undefined') return;
-  if ((game.eventCrystals || 0) < cost) {
-    showNotification('次元の結晶が足りません！');
-    return;
-  }
-
-  if (itemId === 'title1') {
-    if (game.eventItems && game.eventItems[itemId]) {
-      showNotification('既に獲得済みです！');
-      return;
-    }
-    game.eventCrystals -= cost;
-    game.eventItems = game.eventItems || {};
-    game.eventItems[itemId] = true;
-    game.currentTitle = '次元の探究者';
-    showNotification('称号「次元の探究者」を獲得しました！');
-  } else {
-    const now = Date.now();
-    const duration = 30 * 60 * 1000;
-    const currentExpiry = (game.eventItemExpiry && game.eventItemExpiry[itemId]) || 0;
-    const baseTime = currentExpiry > now ? currentExpiry : now;
-
-    game.eventCrystals -= cost;
-    game.eventItemExpiry = game.eventItemExpiry || {};
-    game.eventItemExpiry[itemId] = baseTime + duration;
-    showNotification('ブースト効果が30分間延長されました！');
-  }
-
-  updateEventUI();
-  saveDungeonState();
-}
-
-function updateEventUI() {
-  if (typeof game === 'undefined') return;
-  const countEl = document.getElementById('event-crystal-count');
-  if (countEl) countEl.innerText = `${game.eventCrystals || 0} 💎`;
-
-  const now = Date.now();
-  ['boost1', 'boost2', 'title1'].forEach(id => {
-    const btn = document.getElementById(`btn-buy-${id}`);
-    if (!btn) return;
-    if (id === 'title1') {
-      if (game.eventItems && game.eventItems[id]) {
-        btn.innerText = '獲得済み';
-        btn.disabled = true;
-// ==========================================
-// AETHER NEXUS - 安全同期型ダンジョンシステム
-// ==========================================
-
-// --- 1. 安全なデータ管理 ---
-function getGameObj() {
-  if (typeof window.game !== 'undefined' && window.game) return window.game;
-  if (typeof game !== 'undefined' && game) return game;
-  return null;
-}
-
-function loadDungeonState() {
-  const g = getGameObj();
-  if (!g) return;
-  const saved = localStorage.getItem('aether_dungeon_only_save');
-  if (saved) {
-    try {
-      const data = JSON.parse(saved);
-      g.dungeonFloor = data.floor || 1;
-      g.maxDungeonFloor = data.maxFloor || data.floor || 1;
-      g.enemyMaxHp = data.maxHp || 100;
-      g.enemyHp = typeof data.hp !== 'undefined' ? data.hp : g.enemyMaxHp;
-      g.eventCrystals = data.crystals || 0;
-      g.eventItems = data.items || {};
-      g.eventItemExpiry = data.expiry || {};
-    } catch(e) {
-      console.error('Dungeon load error:', e);
-    }
-  }
-}
-
-function saveDungeonState() {
-  const g = getGameObj();
-  if (!g) return;
-  const dungeonData = {
-    floor: g.dungeonFloor || 1,
-    maxFloor: g.maxDungeonFloor || g.dungeonFloor || 1,
-    hp: typeof g.enemyHp !== 'undefined' ? g.enemyHp : 100,
-    maxHp: g.enemyMaxHp || 100,
-    crystals: g.eventCrystals || 0,
-    items: g.eventItems || {},
-    expiry: g.eventItemExpiry || {}
-  };
-  localStorage.setItem('aether_dungeon_only_save', JSON.stringify(dungeonData));
-}
-
-function resetDungeonData() {
-  localStorage.removeItem('aether_dungeon_only_save');
-  const g = getGameObj();
-  if (g) {
-    g.dungeonFloor = 1;
-    g.maxDungeonFloor = 1;
-    g.enemyMaxHp = 100;
-    g.enemyHp = 100;
-    g.eventCrystals = 0;
-    g.eventItems = {};
-    g.eventItemExpiry = {};
-  }
-  if (typeof updateDungeonUI === 'function') updateDungeonUI();
-  if (typeof updateEventUI === 'function') updateEventUI();
-}
-
-// ページ読み込み完了後にデータを安全にロード
-window.addEventListener('DOMContentLoaded', () => {
-  setTimeout(loadDungeonState, 500);
-});
-
-
-// --- 2. 戦闘・UI更新 ---
-function onDefeatEnemy() {
-  const g = getGameObj();
-  if (!g) return;
-  
-  g.dungeonFloor = (g.dungeonFloor || 1) + 1;
-  g.maxDungeonFloor = Math.max(g.maxDungeonFloor || 1, g.dungeonFloor);
-  
-  const reward = Math.floor(g.dungeonFloor * 5 + Math.random() * 5);
-  g.eventCrystals = (g.eventCrystals || 0) + reward;
-
-  g.enemyMaxHp = Math.floor(100 * Math.pow(1.4, g.dungeonFloor - 1));
-  g.enemyHp = g.enemyMaxHp;
-
-  updateDungeonUI();
-  updateEventUI();
-  saveDungeonState();
-}
-
-function updateDungeonUI() {
-  const g = getGameObj();
-  if (!g) return;
-  const floorEl = document.getElementById('dungeon-floor');
-  const hpTextEl = document.getElementById('enemy-hp-text');
-  const hpBarEl = document.getElementById('enemy-hp-bar');
-
-  if (floorEl) floorEl.innerText = g.dungeonFloor || 1;
-  if (hpTextEl) hpTextEl.innerText = `${Math.max(0, Math.ceil(g.enemyHp || 0))} / ${g.enemyMaxHp || 100}`;
-  if (hpBarEl) {
-    const pct = Math.max(0, ((g.enemyHp || 0) / (g.enemyMaxHp || 100)) * 100);
-    hpBarEl.style.width = `${pct}%`;
-  }
-}
-
-function buyEventItem(itemId, cost) {
-  const g = getGameObj();
-  if (!g) return;
-  if ((g.eventCrystals || 0) < cost) {
-    showNotification('次元の結晶が足りません！');
-    return;
-  }
-
-  if (itemId === 'title1') {
-    if (g.eventItems && g.eventItems[itemId]) {
-      showNotification('既に獲得済みです！');
-      return;
-    }
-    g.eventCrystals -= cost;
-    g.eventItems = g.eventItems || {};
-    g.eventItems[itemId] = true;
-    g.currentTitle = '次元の探究者';
-    showNotification('称号「次元の探究者」を獲得しました！');
-  } else {
-    const now = Date.now();
-    const duration = 30 * 60 * 1000;
-    const currentExpiry = (g.eventItemExpiry && g.eventItemExpiry[itemId]) || 0;
-    const baseTime = currentExpiry > now ? currentExpiry : now;
-
-    g.eventCrystals -= cost;
-    g.eventItemExpiry = g.eventItemExpiry || {};
-    g.eventItemExpiry[itemId] = baseTime + duration;
-    showNotification('ブースト効果が30分間延長されました！');
-  }
-
-  updateEventUI();
-  saveDungeonState();
-}
-
-function updateEventUI() {
-  const g = getGameObj();
-  if (!g) return;
-  const countEl = document.getElementById('event-crystal-count');
-  if (countEl) countEl.innerText = `${g.eventCrystals || 0} 💎`;
-
-  const now = Date.now();
-  ['boost1', 'boost2', 'title1'].forEach(id => {
-    const btn = document.getElementById(`btn-buy-${id}`);
-    if (!btn) return;
-    if (id === 'title1') {
-      if (g.eventItems && g.eventItems[id]) {
-        btn.innerText = '獲得済み';
-        btn.disabled = true;
-</script>
+    </script>
 </body>
 </html>
