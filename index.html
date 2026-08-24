@@ -562,6 +562,7 @@
             <button class="menu-btn" onclick="openPanel('panel-achievements')">🏆 実績</button>
             <button class="menu-btn" onclick="openPanel('panel-prestige')">転生</button>
             <button class="menu-btn" onclick="openPanel('panel-ranking')">🌐 ランキング</button>
+            <button class="menu-btn" onclick="openPanel('panel-event')">🎉 イベント</button> 
         </div>
 
         <div id="panel-guide" class="sub-panel">
@@ -603,8 +604,79 @@
             </div>
             <div class="panel-content" id="upgrade-list"></div>
         </div>
+        <!-- イベントパネル -->
+<div id="panel-event" class="sub-panel">
+  <div class="panel-header">
+    <span>🎉 期間限定イベント: 次元の結晶</span>
+    <button class="close-btn" onclick="closePanel()">閉じる</button>
+  </div>
+  
+  <div class="panel-content">
+    <!-- 所持結晶表示 -->
+    <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 15px; border: 1px solid #3b82f6;">
+      <span style="font-size: 0.9rem; color: #93c5fd;">現在の所持数:</span>
+      <div style="font-size: 2rem; font-weight: bold; color: #60a5fa; margin: 4px 0;" id="event-crystal-count">0 💎</div>
+    </div>
 
-        <div id="panel-achievements" class="sub-panel">
+    <!-- ダンジョン（全自動バトル）エリア -->
+    <div style="background: rgba(15, 23, 42, 0.9); border: 2px solid #ef4444; border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 20px;">
+      <h3 style="color: #f87171; margin-top: 0; font-size: 1.1rem;">⚔️ 次元の亀裂（全自動討伐中）</h3>
+      <p style="font-size: 0.8rem; color: #cbd5e1; margin-bottom: 10px;">発電装置の出力で、丸く赤い敵を全自動攻撃中！</p>
+
+      <!-- 丸く赤い敵 -->
+      <div style="position: relative; width: 110px; height: 110px; margin: 10px auto; display: flex; align-items: center; justify-content: center;">
+        <div id="dungeon-enemy" style="width: 90px; height: 90px; border-radius: 50%; background: radial-gradient(circle, #ff4d4d 0%, #990000 70%, #4a0000 100%); box-shadow: 0 0 20px #ef4444, inset 0 0 10px #ffffff; transition: transform 0.08s ease;"></div>
+      </div>
+
+      <!-- 敵情報 -->
+      <div style="font-weight: bold; font-size: 0.95rem; color: #fca5a5; margin-bottom: 6px;">
+        階層: <span id="dungeon-floor">1</span> F | 謎の赤色エネルギー
+      </div>
+      
+      <!-- HPバー -->
+      <div style="width: 100%; background: #334155; border-radius: 8px; height: 14px; overflow: hidden; margin-bottom: 6px; border: 1px solid #475569;">
+        <div id="enemy-hp-bar" style="width: 100%; height: 100%; background: linear-gradient(90deg, #ef4444, #f87171); transition: width 0.2s;"></div>
+      </div>
+      <div style="font-size: 0.8rem; color: #94a3b8;">
+        HP: <span id="enemy-hp-text">100 / 100</span>
+      </div>
+    </div>
+
+    <!-- イベント限定ショップ -->
+    <h3 style="font-size: 1rem; color: #var(--accent-color);">💎 イベント交換ショップ</h3>
+    <div style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px;">
+      
+      <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid #334155; padding: 12px; border-radius: 8px;">
+        <h4 style="margin: 0 0 5px 0; color: #f8fafc; font-size: 0.95rem;">次元のタップブースト (永久)</h4>
+        <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;">タップ時の獲得量が <b>+50%</b> アップ！</p>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="color: #60a5fa; font-weight: bold; font-size: 0.85rem;">必要: 500 💎</span>
+          <button class="buy-btn" id="btn-buy-boost1" onclick="buyEventItem('boost1', 500)">交換する</button>
+        </div>
+      </div>
+
+      <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid #334155; padding: 12px; border-radius: 8px;">
+        <h4 style="margin: 0 0 5px 0; color: #f8fafc; font-size: 0.95rem;">限定称号「次元の探究者」</h4>
+        <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;">特別称号を獲得・装着。</p>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="color: #60a5fa; font-weight: bold; font-size: 0.85rem;">必要: 1,000 💎</span>
+          <button class="buy-btn" id="btn-buy-title1" onclick="buyEventItem('title1', 1000)">交換する</button>
+        </div>
+      </div>
+
+      <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid #334155; padding: 12px; border-radius: 8px;">
+        <h4 style="margin: 0 0 5px 0; color: #f8fafc; font-size: 0.95rem;">時空オーバークロック (永久)</h4>
+        <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;">すべての発電機の生産効率が <b>2倍</b> に増加！</p>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="color: #60a5fa; font-weight: bold; font-size: 0.85rem;">必要: 3,000 💎</span>
+          <button class="buy-btn" id="btn-buy-boost2" onclick="buyEventItem('boost2', 3000)">交換する</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+     <div id="panel-achievements" class="sub-panel">
             <div class="panel-header">
                 <span>🏆 実績図鑑 (<span id="ach-count-display">0</span> / <span id="ach-total-display">150</span>)</span>
                 <button class="close-btn" onclick="closePanel()">閉じる</button>
@@ -1827,6 +1899,8 @@
                 checkAchievements();
             }
 
+        updateDungeonBattle();
+    
             updateUI();
             requestAnimationFrame(gameLoop);
         }
@@ -1884,6 +1958,99 @@
         window.toggleSecretGuide = toggleSecretGuide;
         window.showAchievementHint = showAchievementHint;
         window.setBuyMode = setBuyMode;
+    // --- イベント・ダンジョンロジック ---
+game.dungeonFloor = game.dungeonFloor || 1;
+game.enemyMaxHp = game.enemyMaxHp || 100;
+game.enemyHp = game.enemyHp || game.enemyMaxHp;
+game.eventCrystals = game.eventCrystals || 0;
+game.eventItems = game.eventItems || {};
+
+function updateDungeonBattle() {
+  if (!game.enemyHp || game.enemyHp <= 0) return;
+
+  const autoAttackPower = Math.max(1, Math.floor((game.energyPerSec || 1) * 0.1));
+  game.enemyHp -= autoAttackPower;
+
+  const enemyEl = document.getElementById('dungeon-enemy');
+  if (enemyEl && autoAttackPower > 0) {
+    enemyEl.style.transform = 'scale(0.95)';
+    setTimeout(() => { if(enemyEl) enemyEl.style.transform = 'scale(1)'; }, 80);
+  }
+
+  if (game.enemyHp <= 0) {
+    onDefeatEnemy();
+  } else {
+    updateDungeonUI();
+  }
+}
+
+function onDefeatEnemy() {
+  const rewardCrystals = Math.floor(game.dungeonFloor * 5 + Math.random() * 5);
+  game.eventCrystals = (game.eventCrystals || 0) + rewardCrystals;
+
+  game.dungeonFloor += 1;
+  game.enemyMaxHp = Math.floor(100 * Math.pow(1.4, game.dungeonFloor - 1));
+  game.enemyHp = game.enemyMaxHp;
+
+  updateDungeonUI();
+  updateEventUI();
+  if (typeof saveGame === 'function') saveGame();
+}
+
+function updateDungeonUI() {
+  const floorEl = document.getElementById('dungeon-floor');
+  const hpTextEl = document.getElementById('enemy-hp-text');
+  const hpBarEl = document.getElementById('enemy-hp-bar');
+
+  if (floorEl) floorEl.innerText = game.dungeonFloor;
+  if (hpTextEl) hpTextEl.innerText = `${Math.max(0, game.enemyHp)} / ${game.enemyMaxHp}`;
+  if (hpBarEl) {
+    const pct = Math.max(0, (game.enemyHp / game.enemyMaxHp) * 100);
+    hpBarEl.style.width = `${pct}%`;
+  }
+}
+
+function updateEventUI() {
+  const countEl = document.getElementById('event-crystal-count');
+  if (countEl) countEl.innerText = `${game.eventCrystals || 0} 💎`;
+
+  const items = ['boost1', 'boost2', 'title1'];
+  items.forEach(id => {
+    const btn = document.getElementById(`btn-buy-${id}`);
+    if (btn && game.eventItems && game.eventItems[id]) {
+      btn.innerText = '交換済み';
+      btn.disabled = true;
+      btn.style.opacity = '0.5';
+    }
+  });
+}
+
+function buyEventItem(itemId, cost) {
+  if ((game.eventCrystals || 0) < cost) {
+    alert('次元の結晶が足りません！');
+    return;
+  }
+  if (game.eventItems && game.eventItems[itemId]) {
+    alert('既に交換済みです！');
+    return;
+  }
+
+  game.eventCrystals -= cost;
+  game.eventItems[itemId] = true;
+
+  if (itemId === 'title1') {
+    game.currentTitle = '次元の探究者';
+    alert('称号「次元の探究者」を獲得しました！');
+  } else {
+    alert('アイテムを獲得しました！');
+  }
+
+  updateEventUI();
+  if (typeof saveGame === 'function') saveGame();
+}
+
+window.buyEventItem = buyEventItem;
+
     </script>
 </body>
 </html>
