@@ -1965,15 +1965,14 @@ game.enemyHp = game.enemyHp || game.enemyMaxHp;
 game.eventCrystals = game.eventCrystals || 0;
 game.eventItems = game.eventItems || {};
         
+// --- ダンジョン＆イベント統合処理 ---
+
+// 1. 自動攻撃処理（秒産＝秒間ダメージ）
 function updateDungeonBattle(deltaTime) {
   if (!game.enemyHp || game.enemyHp <= 0) return;
 
-  // 秒産の値をそのまま1秒あたりの攻撃力にする（秒産2なら毎秒2ダメ）
   const attackPerSec = game.energyPerSec || 0;
-  
-  // 経過時間(deltaTime)を掛けてフレーム毎のダメージを計算
   const damage = attackPerSec * (deltaTime || 0.016);
-  
   if (damage <= 0) return;
 
   game.enemyHp -= damage;
@@ -1984,7 +1983,8 @@ function updateDungeonBattle(deltaTime) {
     updateDungeonUI();
   }
 }
-        
+
+// 2. タップ攻撃処理
 function attackDungeonByTap() {
   if (!game.enemyHp || game.enemyHp <= 0) return;
 
@@ -2004,14 +2004,12 @@ function attackDungeonByTap() {
   }
 }
 
-window.attackDungeonByTap = attackDungeonByTap;
-
-        
+// 敵を倒した時の処理
 function onDefeatEnemy() {
   const rewardCrystals = Math.floor(game.dungeonFloor * 5 + Math.random() * 5);
   game.eventCrystals = (game.eventCrystals || 0) + rewardCrystals;
 
-  game.dungeonFloor += 1;
+  game.dungeonFloor = (game.dungeonFloor || 1) + 1;
   game.enemyMaxHp = Math.floor(100 * Math.pow(1.4, game.dungeonFloor - 1));
   game.enemyHp = game.enemyMaxHp;
 
@@ -2020,42 +2018,78 @@ function onDefeatEnemy() {
   if (typeof saveGame === 'function') saveGame();
 }
 
+// ダンジョンUI更新（整数表示）
 function updateDungeonUI() {
   const floorEl = document.getElementById('dungeon-floor');
   const hpTextEl = document.getElementById('enemy-hp-text');
   const hpBarEl = document.getElementById('enemy-hp-bar');
 
-  if (floorEl) floorEl.innerText = game.dungeonFloor;
-  if (hpTextEl) hpTextEl.innerText = `${Math.max(0, Math.ceil(game.enemyHp))} / ${game.enemyMaxHp}`;
+  if (floorEl) floorEl.innerText = game.dungeonFloor || 1;
+  if (hpTextEl) hpTextEl.innerText = `${Math.max(0, Math.ceil(game.enemyHp || 0))} / ${game.enemyMaxHp || 100}`;
   if (hpBarEl) {
-    const pct = Math.max(0, (game.enemyHp / game.enemyMaxHp) * 100);
+    const pct = Math.max(0, ((game.enemyHp || 0) / (game.enemyMaxHp || 100)) * 100);
     hpBarEl.style.width = `${pct}%`;
   }
 }
 
-  function buyEventItem(itemId, cost) {
+// カスタム通知（ダークサイバー風トースト）
+function showNotification(msg) {
+  let toast = document.getElementById('game-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'game-toast';
+    toast.style.cssText = `
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(15, 23, 42, 0.95);
+      color: #38bdf8;
+      border: 1px solid #0284c7;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    `;
+    document.body.appendChild(toast);
+  }
+
+  toast.innerText = msg;
+  toast.style.opacity = '1';
+  toast.style.transform = 'translateX(-50%) translateY(0)';
+
+  if (window.toastTimer) clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(-50%) translateY(-20px)';
+  }, 2500);
+}
+
+// ショップ購入処理
+function buyEventItem(itemId, cost) {
   if ((game.eventCrystals || 0) < cost) {
-    alert('次元の結晶が足りません！');
+    showNotification('次元の結晶が足りません！');
     return;
   }
 
-  // 称号は一度取得したら永久
   if (itemId === 'title1') {
     if (game.eventItems && game.eventItems[itemId]) {
-      alert('既に獲得済みです！');
+      showNotification('既に獲得済みです！');
       return;
     }
     game.eventCrystals -= cost;
     game.eventItems = game.eventItems || {};
     game.eventItems[itemId] = true;
     game.currentTitle = '次元の探究者';
-    alert('称号「次元の探究者」を獲得しました！');
-  } 
-  // ブースト系アイテム（30分間有効・重ねがけ延長可能）
-  else {
+    showNotification('称号「次元の探究者」を獲得しました！');
+  } else {
     const now = Date.now();
-    const duration = 30 * 60 * 1000; // 30分
-    
+    const duration = 30 * 60 * 1000;
     const currentExpiry = (game.eventItemExpiry && game.eventItemExpiry[itemId]) || 0;
     const baseTime = currentExpiry > now ? currentExpiry : now;
     
@@ -2063,13 +2097,14 @@ function updateDungeonUI() {
     game.eventItemExpiry = game.eventItemExpiry || {};
     game.eventItemExpiry[itemId] = baseTime + duration;
     
-    alert('ブースト効果が30分間延長されました！');
+    showNotification('ブースト効果が30分間延長されました！');
   }
 
   updateEventUI();
   if (typeof saveGame === 'function') saveGame();
 }
 
+// イベントUI更新
 function updateEventUI() {
   const countEl = document.getElementById('event-crystal-count');
   if (countEl) countEl.innerText = `${game.eventCrystals || 0} 💎`;
@@ -2101,7 +2136,9 @@ function updateEventUI() {
   });
 }
 
+// グローバル公開
+window.attackDungeonByTap = attackDungeonByTap;
 window.buyEventItem = buyEventItem;
-  </script>
+ </script>
 </body>
 </html>
