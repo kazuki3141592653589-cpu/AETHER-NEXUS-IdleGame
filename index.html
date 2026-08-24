@@ -1964,17 +1964,37 @@ game.enemyMaxHp = game.enemyMaxHp || 100;
 game.enemyHp = game.enemyHp || game.enemyMaxHp;
 game.eventCrystals = game.eventCrystals || 0;
 game.eventItems = game.eventItems || {};
-
-function updateDungeonBattle() {
+        
+function updateDungeonBattle(deltaTime) {
   if (!game.enemyHp || game.enemyHp <= 0) return;
 
-  const autoAttackPower = Math.max(1, Math.floor((game.energyPerSec || 1) * 0.1));
-  game.enemyHp -= autoAttackPower;
+  // 秒産の値をそのまま1秒あたりの攻撃力にする（秒産2なら毎秒2ダメ）
+  const attackPerSec = game.energyPerSec || 0;
+  
+  // 経過時間(deltaTime)を掛けてフレーム毎のダメージを計算
+  const damage = attackPerSec * (deltaTime || 0.016);
+  
+  if (damage <= 0) return;
+
+  game.enemyHp -= damage;
+
+  if (game.enemyHp <= 0) {
+    onDefeatEnemy();
+  } else {
+    updateDungeonUI();
+  }
+}
+        
+function attackDungeonByTap() {
+  if (!game.enemyHp || game.enemyHp <= 0) return;
+
+  const tapPower = game.energyPerTap || 1;
+  game.enemyHp -= tapPower;
 
   const enemyEl = document.getElementById('dungeon-enemy');
-  if (enemyEl && autoAttackPower > 0) {
-    enemyEl.style.transform = 'scale(0.95)';
-    setTimeout(() => { if(enemyEl) enemyEl.style.transform = 'scale(1)'; }, 80);
+  if (enemyEl) {
+    enemyEl.style.transform = 'scale(0.92)';
+    setTimeout(() => { if(enemyEl) enemyEl.style.transform = 'scale(1)'; }, 60);
   }
 
   if (game.enemyHp <= 0) {
@@ -1984,6 +2004,9 @@ function updateDungeonBattle() {
   }
 }
 
+window.attackDungeonByTap = attackDungeonByTap;
+
+        
 function onDefeatEnemy() {
   const rewardCrystals = Math.floor(game.dungeonFloor * 5 + Math.random() * 5);
   game.eventCrystals = (game.eventCrystals || 0) + rewardCrystals;
@@ -2003,7 +2026,7 @@ function updateDungeonUI() {
   const hpBarEl = document.getElementById('enemy-hp-bar');
 
   if (floorEl) floorEl.innerText = game.dungeonFloor;
-  if (hpTextEl) hpTextEl.innerText = `${Math.max(0, game.enemyHp)} / ${game.enemyMaxHp}`;
+  if (hpTextEl) hpTextEl.innerText = `${Math.max(0, Math.ceil(game.enemyHp))} / ${game.enemyMaxHp}`;
   if (hpBarEl) {
     const pct = Math.max(0, (game.enemyHp / game.enemyMaxHp) * 100);
     hpBarEl.style.width = `${pct}%`;
