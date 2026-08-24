@@ -2139,6 +2139,24 @@ function updateEventUI() {
 // グローバル公開
 window.attackDungeonByTap = attackDungeonByTap;
 window.buyEventItem = buyEventItem;
+
+// 自動攻撃をメインループに強制連動（秒産ダメージ）
+setInterval(() => {
+  if (typeof updateDungeonBattle === 'function') {
+    updateDungeonBattle(0.1);
+  }
+}, 100);
+
+// タップ攻撃をコアに強制連動（タップ威力ダメージ）
+　document.body.addEventListener('pointerdown', () => {
+  const coreEl = document.getElementById('core-btn') || document.querySelector('.core') || document.getElementById('app');
+  if (coreEl && (e.target === coreEl || coreEl.contains(e.target))) {
+    if (typeof attackDungeonByTap === 'function') {
+      attackDungeonByTap();
+    }
+  }
+});
+ 
  </script>
 </body>
 </html>
