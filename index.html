@@ -2010,47 +2010,75 @@ function updateDungeonUI() {
   }
 }
 
-function updateEventUI() {
-  const countEl = document.getElementById('event-crystal-count');
-  if (countEl) countEl.innerText = `${game.eventCrystals || 0} 💎`;
-
-  const items = ['boost1', 'boost2', 'title1'];
-  items.forEach(id => {
-    const btn = document.getElementById(`btn-buy-${id}`);
-    if (btn && game.eventItems && game.eventItems[id]) {
-      btn.innerText = '交換済み';
-      btn.disabled = true;
-      btn.style.opacity = '0.5';
-    }
-  });
-}
-
-function buyEventItem(itemId, cost) {
+  function buyEventItem(itemId, cost) {
   if ((game.eventCrystals || 0) < cost) {
     alert('次元の結晶が足りません！');
     return;
   }
-  if (game.eventItems && game.eventItems[itemId]) {
-    alert('既に交換済みです！');
-    return;
-  }
 
-  game.eventCrystals -= cost;
-  game.eventItems[itemId] = true;
-
+  // 称号は一度取得したら永久
   if (itemId === 'title1') {
+    if (game.eventItems && game.eventItems[itemId]) {
+      alert('既に獲得済みです！');
+      return;
+    }
+    game.eventCrystals -= cost;
+    game.eventItems = game.eventItems || {};
+    game.eventItems[itemId] = true;
     game.currentTitle = '次元の探究者';
     alert('称号「次元の探究者」を獲得しました！');
-  } else {
-    alert('アイテムを獲得しました！');
+  } 
+  // ブースト系アイテム（30分間有効・重ねがけ延長可能）
+  else {
+    const now = Date.now();
+    const duration = 30 * 60 * 1000; // 30分
+    
+    const currentExpiry = (game.eventItemExpiry && game.eventItemExpiry[itemId]) || 0;
+    const baseTime = currentExpiry > now ? currentExpiry : now;
+    
+    game.eventCrystals -= cost;
+    game.eventItemExpiry = game.eventItemExpiry || {};
+    game.eventItemExpiry[itemId] = baseTime + duration;
+    
+    alert('ブースト効果が30分間延長されました！');
   }
 
   updateEventUI();
   if (typeof saveGame === 'function') saveGame();
 }
 
-window.buyEventItem = buyEventItem;
+function updateEventUI() {
+  const countEl = document.getElementById('event-crystal-count');
+  if (countEl) countEl.innerText = `${game.eventCrystals || 0} 💎`;
 
-    </script>
+  const now = Date.now();
+  const items = ['boost1', 'boost2', 'title1'];
+  
+  items.forEach(id => {
+    const btn = document.getElementById(`btn-buy-${id}`);
+    if (!btn) return;
+
+    if (id === 'title1') {
+      if (game.eventItems && game.eventItems[id]) {
+        btn.innerText = '獲得済み';
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+      }
+    } else {
+      const expiry = game.eventItemExpiry && game.eventItemExpiry[id] ? game.eventItemExpiry[id] : 0;
+      if (expiry > now) {
+        const remainingMin = Math.ceil((expiry - now) / 60000);
+        btn.innerText = `効果中 (残り${remainingMin}分)`;
+      } else {
+        btn.innerText = '交換する';
+        btn.disabled = false;
+        btn.style.opacity = '1';
+      }
+    }
+  });
+}
+
+window.buyEventItem = buyEventItem;
+  </script>
 </body>
 </html>
