@@ -2073,7 +2073,7 @@ function showNotification(msg) {
 // ショップ購入処理
 function buyEventItem(itemId, cost) {
   if ((game.eventCrystals || 0) < cost) {
-    showNotification('次元の結晶が足りません！');
+    showNotification('結晶が足りません！');
     return;
   }
 
