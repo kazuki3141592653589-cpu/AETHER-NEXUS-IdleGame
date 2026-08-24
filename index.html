@@ -2133,17 +2133,34 @@ function updateEventUI() {
         btn.style.opacity = '1';
       }
     }
-  });
+  })
 }
 
 // グローバル公開
 window.attackDungeonByTap = attackDungeonByTap;
 window.buyEventItem = buyEventItem;
 
-  // 自動攻撃＆タップ攻撃（関数呼び出し・最新強化値に完全リアルタイム連動）
+ let lastEnergyVal = 0;
+let detectedAetherPerSec = 0;
+
+// 1. エネルギーの増分からリアルタイム秒産(A/s)を常時自動計測
 setInterval(() => {
   if (typeof game !== 'undefined') {
-    // 1. 敵の初期化
+    const currentEnergy = game.energy || 0;
+    const diff = currentEnergy - lastEnergyVal;
+    
+    // タップによる一括増加（10以上などの急増）以外の、放置・秒産による増加分を計測
+    if (diff > 0 && diff < 10) { 
+      detectedAetherPerSec = diff * 10; // 0.1秒ごとの増分を秒産に換算
+    }
+    lastEnergyVal = currentEnergy;
+  }
+}, 100);
+
+// 2. ダンジョン自動攻撃（秒産連動）
+setInterval(() => {
+  if (typeof game !== 'undefined') {
+    // 敵の初期化
     if (typeof game.enemyHp === 'undefined' || game.enemyHp <= 0) {
       game.dungeonFloor = game.dungeonFloor || 1;
       game.enemyMaxHp = Math.floor(100 * Math.pow(1.4, game.dungeonFloor - 1));
@@ -2151,20 +2168,21 @@ setInterval(() => {
       if (typeof updateDungeonUI === 'function') updateDungeonUI();
     }
 
-    // 2. 最新の秒産威力を取得（関数定義があれば実行、なければ変数から取得）
+    // 秒産パワーの取得 (関数の網羅 ＋ 自動計測値のバックアップ)
     let cps = 0;
-    if (typeof getEnergyPerSec === 'function') cps = getEnergyPerSec();
-    else if (typeof getCps === 'function') cps = getCps();
-    else cps = game.energyPerSec || game.cps || game.autoPower || 0;
+    if (typeof getProductionRate === 'function') cps = getProductionRate();
+    else if (typeof getAetherPerSec === 'function') cps = getAetherPerSec();
+    else if (typeof getEnergyPerSec === 'function') cps = getEnergyPerSec();
+    else cps = game.energyPerSec || game.cps || game.productionRate || detectedAetherPerSec || 0;
 
-    // ブースト計算
+    // イベントブースト計算
     const boost1 = (game.eventItemExpiry && game.eventItemExpiry.boost1 > Date.now()) ? 1.5 : 1;
     const boost2 = (game.eventItemExpiry && game.eventItemExpiry.boost2 > Date.now()) ? 2.0 : 1;
-    const finalDamage = (cps * 0.1) * boost1 * boost2;
+    const autoDamage = (cps * 0.1) * boost1 * boost2;
 
-    // 自動ダメージ適用
-    if (finalDamage > 0 && game.enemyHp > 0) {
-      game.enemyHp -= finalDamage;
+    // 自動ダメージを適用
+    if (autoDamage > 0 && game.enemyHp > 0) {
+      game.enemyHp -= autoDamage;
       if (game.enemyHp <= 0 && typeof onDefeatEnemy === 'function') {
         onDefeatEnemy();
       } else if (typeof updateDungeonUI === 'function') {
@@ -2174,18 +2192,17 @@ setInterval(() => {
   }
 }, 100);
 
-// タップ攻撃（タップ威力の最新強化値に完全連動）
+// 3. タップ攻撃（タップ威力連動）
 document.body.addEventListener('pointerdown', (e) => {
   if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
 
   if (typeof game !== 'undefined' && game.enemyHp > 0) {
-    // 最新のタップ威力を取得
     let tapDmg = 1;
     if (typeof getEnergyPerTap === 'function') tapDmg = getEnergyPerTap();
+    else if (typeof getTapPower === 'function') tapDmg = getTapPower();
     else if (typeof getClickPower === 'function') tapDmg = getClickPower();
     else tapDmg = game.energyPerTap || game.clickPower || game.tapPower || 1;
 
-    // ブースト適用
     if (game.eventItemExpiry && game.eventItemExpiry.boost1 > Date.now()) {
       tapDmg *= 1.5;
     }
@@ -2199,7 +2216,7 @@ document.body.addEventListener('pointerdown', (e) => {
     }
   }
 });
-      
+
 
 </script>
 </body>
